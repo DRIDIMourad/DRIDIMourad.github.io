@@ -1,9 +1,9 @@
 site_name: Mourad DRIDI
-site_url: https://votrepseudo.github.io/
+site_url: https://dridimourad.github.io/
 site_description: Mourad DRIDI, enseignant-chercheur à ESIEE Paris (DISC) et au LIGM (équipe LRT)
 copyright: © Mourad DRIDI
 
-repo_url: https://github.com/votrepseudo/votrepseudo.github.io
+repo_url: https://github.com/DRIDIMourad/dridimourad.github.io
 repo_name: Git
 
 theme:
@@ -76,3 +76,8 @@ nav:
       - UE exemple:
           - units/ue-exemple/index.md
           - TP1: units/ue-exemple/tp/tp1.md
+      - IA embarquée:
+          - units/ia-embarquee/index.md
+          - TPs:
+              - units/ia-embarquee/tp/index.md
+              - "TP1 : Classification d'images sur NPU": units/ia-embarquee/tp/tp1/index.md
