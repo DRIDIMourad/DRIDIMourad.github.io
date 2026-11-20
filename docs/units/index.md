@@ -7,3 +7,4 @@ J'enseigne à **[Établissement]**, auprès des étudiants de [niveaux / filièr
 | Code | Intitulé | Niveau | Contenu |
 |---|---|---|---|
 | [UE exemple](ue-exemple/index.md) | Programmation en C | 1re année | CM · TD · TP |
+| [IA embarquée](ia-embarquee/index.md) | IA embarquée sur microcontrôleur et NPU | — | TP |
