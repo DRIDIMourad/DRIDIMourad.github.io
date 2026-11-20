@@ -5,7 +5,7 @@
 
 À la fin de ce TP, vous saurez faire tourner un réseau de neurones de classification d'images sur le NPU eIQ Neutron d'un MCX N947. Vous saurez aussi changer l'image à classer, lire l'architecture du modèle et mesurer le gain du NPU : **12 ms sur le NPU contre 336 ms sur le CPU seul** (mesuré sur FRDM-MCXN947, configuration Debug).
 
-**Public :** débutants en IA embarquée, à l'aise avec le C et un IDE Eclipse.
+
 
 **Matériel**
 
