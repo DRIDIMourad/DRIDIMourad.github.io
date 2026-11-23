@@ -9,8 +9,8 @@ repo_name: Git
 theme:
   name: material
   language: fr
-  logo: assets/photo.svg
-  favicon: assets/photo.svg
+  logo: assets/avatar.jpg
+  favicon: assets/avatar.jpg
   palette:
     - scheme: default
       primary: custom
@@ -40,6 +40,10 @@ theme:
 
 extra_css:
   - stylesheets/extra.css
+  - stylesheets/sections.css
+
+extra_javascript:
+  - javascripts/sections.js
 
 extra:
   social:
@@ -73,9 +77,6 @@ nav:
       - Stages encadrés: research/encadrement.md
   - Enseignements:
       - units/index.md
-      - UE exemple:
-          - units/ue-exemple/index.md
-          - TP1: units/ue-exemple/tp/tp1.md
       - IA embarquée:
           - units/ia-embarquee/index.md
           - TPs:
