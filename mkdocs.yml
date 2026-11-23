@@ -64,6 +64,18 @@ markdown_extensions:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
 
+# --- Corrigés non publics -------------------------------------------------
+# Chaque ligne ci-dessous cache un corrigé : il n'est pas mis sur le site
+# (ni page, ni fichiers, ni entrée de menu).
+# Pour PUBLIER un corrigé : mettre un # devant sa ligne (ou la supprimer).
+# Pour le CACHER à nouveau : enlever le #.
+# Attention : le dépôt GitHub étant public, les fichiers restent lisibles sur GitHub.
+exclude_docs: |
+  units/ia-embarquee/tp/tp2/corrige/
+# ---------------------------------------------------------------------------
+hooks:
+  - hooks/corriges.py
+
 nav:
   - Accueil: index.md
   - Recherche:
@@ -82,3 +94,4 @@ nav:
               - units/ia-embarquee/tp/index.md
               - "TP1 : Classification d'images sur NPU": units/ia-embarquee/tp/tp1/index.md
               - "TP2 : Entraîner son modèle avec eIQ Portal": units/ia-embarquee/tp/tp2/index.md
+              - "Corrigé TP2": units/ia-embarquee/tp/tp2/corrige/index.md
