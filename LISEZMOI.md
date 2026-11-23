@@ -14,12 +14,12 @@
 
 - `mkdocs.yml` : votre nom, l'adresse du site, téléphone, e-mail, et le menu (`nav`).
 - `docs/index.md` : page d'accueil (présentation + contact).
-- `docs/assets/photo.svg` : remplacez par votre photo (ex. `photo.jpg`, et changez le nom dans `mkdocs.yml` et `index.md`).
+- `docs/assets/photo.PNG` : votre photo (page d'accueil) ; `docs/assets/avatar.jpg` : la même, recadrée, pour le petit cercle de l'en-tête.
 - `docs/research/index.md` : recherche et publications.
 
 ## Ajouter une UE
 
-1. Copiez le dossier `docs/units/ue-exemple` et renommez-le (ex. `ue-reseaux`).
+1. Copiez le dossier `docs/units/ia-embarquee` et renommez-le (ex. `ue-reseaux`).
 2. Mettez vos PDF dans `cm/`, `td/`, `tp/` et listez-les dans le `index.md` de l'UE.
 3. Ajoutez l'UE dans `nav` de `mkdocs.yml` et dans le tableau de `docs/units/index.md`.
 
