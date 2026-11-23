@@ -40,7 +40,8 @@ Au TP2, vous avez entraîné un classifieur de fleurs. Dans ce TP, on applique *
 | 5 | Exporter en int8 et convertir pour le NPU |
 | 6 | Intégrer le modèle dans le projet label\_image |
 | 7 | Ajouter l'alerte : LED rouge ou verte |
-| 8 | Tester sur la carte et choisir le seuil d'alerte |
+| 8 | Tester plusieurs images avec le bouton SW2 |
+| 9 | Tester sur la carte et choisir le seuil d'alerte |
 | Bonus | Fumée, CPU contre NPU, vos propres photos |
 
 ## Partie 0 — Le principe
@@ -67,7 +68,7 @@ Avec deux classes, le modèle peut se tromper de deux façons, et elles n'ont pa
 - Une **fausse alarme** dérange, mais on peut vérifier.
 - Un **feu manqué** peut être grave.
 
-Pour un détecteur de feu, on préfère donc quelques fausses alarmes plutôt que des feux manqués. On mesurera les deux à la partie 4, et on réglera le compromis avec le **seuil d'alerte** à la partie 8.
+Pour un détecteur de feu, on préfère donc quelques fausses alarmes plutôt que des feux manqués. On mesurera les deux à la partie 4, et on réglera le compromis avec le **seuil d'alerte** à la partie 9.
 
 **Deux nombres à connaître**
 
@@ -361,7 +362,7 @@ python img2c.py feu_1.jpg feu_1
 
 Le script doit afficher `(128, 128, 3) = 49152 octets`. Remplacer `source/image/image_data.h` par le fichier créé (en sortant l'ancien de `source/`).
 
-**6.5 Premier essai.** **Clean**, **Build**, **Debug** → **Resume**, terminal série 115200 8N1. La carte doit afficher `Detected: feu (…%)`.
+**6.5 Premier essai.** **Clean**, **Build**, **Debug** → **Resume**, terminal série 115200 8N1. La carte doit afficher `Detected: feu (…%)`, puis `Camera data processing: Camera input is currently not supported on this device`. Ce second message est normal : l'exemple traite une seule image, puis s'arrête (on changera ça en partie 8).
 
 ## Partie 7 — Ajouter l'alerte : LED rouge ou verte
 
@@ -438,11 +439,161 @@ static int ScoreFeu(const uint8_t* data, tensor_type_t type)
 
 **Clean**, **Build**, **Debug** → **Resume**. Avec `feu_1.jpg`, la LED doit être **rouge** et le terminal doit afficher `*** ALERTE FEU ***`. Refaire 6.4 avec `pas_de_feu_1.jpg` : la LED doit être **verte**.
 
-## Partie 8 — Tester sur la carte et choisir le seuil d'alerte
+![Alerte feu dans le terminal](img/06_alerte_feu.png)
 
-**8.1 Tester les 9 photos**
+*Figure 6 — Le modèle reconnaît le feu (100 %) en 16 ms sur le NPU, et la nouvelle ligne `*** ALERTE FEU ***` s'affiche avec le score et le seuil.*
 
-Pour chaque photo de `photos_carte\` : refaire 6.4 (img2c), **Build**, **Debug**, puis noter le résultat. Les photos `fumee_*` sont des pièges : de la fumée sans flammes visibles, une classe que le modèle n'a jamais vue.
+## Partie 8 — Tester plusieurs images avec le bouton SW2
+
+Jusqu'ici, pour changer d'image, il faut reconvertir, recompiler et reflasher. On va mettre **plusieurs images dans le firmware** : la carte analyse la première, affiche le résultat, puis passe à l'image suivante **à chaque appui sur le bouton SW2**. Après la dernière, elle revient à la première.
+
+**8.1 Comment l'exemple choisit l'image**
+
+Ouvrir `source/image/image_load.c`. La fonction `IMAGE_GetImage` est appelée par `main()` avant chaque inférence :
+
+- au **premier** appel, elle copie le tableau `image_data` (le fichier `image_data.h`) vers l'entrée du modèle ;
+- au **deuxième** appel, elle affiche `Camera input is currently not supported on this device` et bloque la carte dans une boucle sans fin (`for (;;)`). C'est le message vu en 6.5.
+
+On va remplacer ce fichier : à chaque appel après le premier, on **attend un appui sur SW2**, puis on prend l'image suivante.
+
+**8.2 Convertir plusieurs images en un seul fichier**
+
+Le script `img2c.py` ne convertit qu'une image. Le script `img2c_multi.py` ci-dessous en convertit plusieurs et les range dans un seul fichier `images_data.h`, avec un tableau par image (`image_0`, `image_1`…), la liste des tableaux (`images[]`), la liste des noms (`noms_images[]`) et leur nombre (`NB_IMAGES`).
+
+1. Enregistrer le script dans `tools/` :
+
+```python
+# img2c_multi.py : convertit plusieurs images en un seul images_data.h
+# Usage : python img2c_multi.py feu_1.jpg pas_de_feu_1.jpg fumee_1.jpg
+import os, sys
+import cv2
+
+if len(sys.argv) < 2:
+    sys.exit("Usage : python img2c_multi.py image1.jpg image2.jpg ...")
+
+noms = []
+with open("images_data.h", "w") as f:
+    for i, src in enumerate(sys.argv[1:]):
+        img = cv2.imread(src)                      # lit en BGR
+        if img is None:
+            sys.exit("Impossible de lire " + src)
+        h, w = img.shape[:2]
+        c = min(h, w)                              # recadrage carre centre
+        img = img[(h - c) // 2:(h - c) // 2 + c, (w - c) // 2:(w - c) // 2 + c]
+        img = cv2.resize(img, (128, 128), interpolation=cv2.INTER_AREA)
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  # le modele attend du RGB
+        f.write("static const uint8_t image_%d[] = {\n" % i)
+        img.tofile(f, ", ", "0x%02X")
+        f.write("\n};\n\n")
+        noms.append(os.path.splitext(os.path.basename(src))[0])
+        print("image_%d : %-15s %s = %d octets" % (i, noms[-1], img.shape, img.size))
+    n = len(noms)
+    f.write("#define NB_IMAGES %d\n" % n)
+    f.write("static const uint8_t* const images[NB_IMAGES] = {%s};\n"
+            % ", ".join("image_%d" % i for i in range(n)))
+    f.write("static const char* const noms_images[NB_IMAGES] = {%s};\n"
+            % ", ".join('"%s"' % s for s in noms))
+print("images_data.h ecrit :", n, "images")
+```
+
+2. Copier dans `tools/` trois photos de `C:\TP3-IA\photos_carte\`, puis :
+
+```
+python img2c_multi.py feu_1.jpg pas_de_feu_1.jpg fumee_1.jpg
+```
+
+3. Le script affiche une ligne par image, chacune de `(128, 128, 3) = 49152 octets`, puis `images_data.h ecrit : 3 images`.
+4. Copier `images_data.h` dans `source/image/`, à côté de `image_data.h` (on peut laisser l'ancien fichier : il ne sera plus inclus).
+
+Chaque image occupe 48 Ko de Flash : 3 images font 144 Ko, 9 images environ 430 Ko. La Flash du MCX N947 (2 Mo) a la place.
+
+**8.3 Remplacer `image_load.c`**
+
+Remplacer **tout le contenu** de `source/image/image_load.c` par :
+
+```c
+/* image_load.c (TP3) : plusieurs images, on passe a la suivante avec SW2 */
+#include "demo_config.h"
+#include "fsl_debug_console.h"
+#include "image.h"
+#include "image_utils.h"
+#include "images_data.h"   /* NB_IMAGES, images[], noms_images[] (img2c_multi.py) */
+#include "board.h"         /* BOARD_SW2_GPIO, BOARD_SW2_GPIO_PIN, fonctions GPIO */
+
+static int s_index = -1;   /* image en cours (-1 : pas encore commence) */
+const char* s_imageName = "";
+
+/* Bouton SW2 = broche P0_23 en entree. Elle vaut 1 au repos, 0 quand on appuie. */
+static void BOUTON_Init(void)
+{
+    gpio_pin_config_t entree = {kGPIO_DigitalInput, 0};
+    CLOCK_EnableClock(kCLOCK_Gpio0);
+    /* fonction GPIO (MUX 0), entree numerique activee (IBE),
+       resistance de tirage vers le haut (PE + PS) */
+    PORT0->PCR[BOARD_SW2_GPIO_PIN] = PORT_PCR_MUX(0) | PORT_PCR_IBE_MASK
+                                   | PORT_PCR_PE_MASK | PORT_PCR_PS_MASK;
+    GPIO_PinInit(BOARD_SW2_GPIO, BOARD_SW2_GPIO_PIN, &entree);
+}
+
+/* Attend un appui complet sur SW2 (appui puis relachement) */
+static void BOUTON_Attendre(void)
+{
+    PRINTF(EOL "Appuyez sur SW2 pour l'image suivante..." EOL);
+    while (GPIO_PinRead(BOARD_SW2_GPIO, BOARD_SW2_GPIO_PIN) == 1) {}  /* attendre l'appui */
+    SDK_DelayAtLeastUs(20000, SystemCoreClock);                        /* anti-rebond 20 ms */
+    while (GPIO_PinRead(BOARD_SW2_GPIO, BOARD_SW2_GPIO_PIN) == 0) {}  /* attendre le relachement */
+    SDK_DelayAtLeastUs(20000, SystemCoreClock);
+}
+
+status_t IMAGE_GetImage(uint8_t* dstData, int32_t dstWidth, int32_t dstHeight, int32_t dstChannels)
+{
+    if (s_index < 0)
+    {
+        BOUTON_Init();     /* premier appel : premiere image, sans attendre */
+        s_index = 0;
+    }
+    else
+    {
+        BOUTON_Attendre();
+        s_index = (s_index + 1) % NB_IMAGES;   /* apres la derniere, retour a la premiere */
+    }
+    s_imageName = noms_images[s_index];
+    PRINTF(EOL "Image %d/%d : %s" EOL, s_index + 1, NB_IMAGES, s_imageName);
+    return IMAGE_Decode(images[s_index], dstData, dstWidth, dstHeight, dstChannels);
+}
+
+const char* IMAGE_GetImageName()
+{
+    return s_imageName;
+}
+```
+
+**Quelques explications**
+
+- **`PORT0->PCR[...]`** : comme pour les LED (partie 7), on choisit la fonction de la broche. Pour une **entrée**, il faut en plus activer le tampon d'entrée (`IBE`), sinon la broche se lit toujours à 0. La résistance de tirage vers le haut (`PE` + `PS`) donne un 1 stable quand le bouton est relâché.
+- **Anti-rebond** : quand on appuie sur un bouton, le contact rebondit pendant quelques millisecondes et produit plusieurs 0 et 1. Sans la pause de 20 ms, un seul appui pourrait faire sauter plusieurs images.
+- **`% NB_IMAGES`** (reste de la division) : après la dernière image, l'indice revient à 0.
+- On **attend le relâchement** : si on garde le doigt appuyé, la carte ne fait défiler qu'une seule image.
+
+**8.4 Essai**
+
+1. **Clean**, **Build**. Dans le résumé mémoire, la taille de **PROGRAM\_FLASH** augmente d'environ 48 Ko par image.
+2. **Debug** → **Resume**. Le terminal affiche :
+    - `Image 1/3 : feu_1`, le résultat, la LED **rouge** ;
+    - `Appuyez sur SW2 pour l'image suivante...`.
+3. Appuyer sur **SW2** : `Image 2/3 : pas_de_feu_1`, LED **verte**. Puis encore : `Image 3/3 : fumee_1`. Encore : retour à `Image 1/3`.
+
+**Questions :**
+
+1. Que se passe-t-il si on retire l'anti-rebond (les deux lignes `SDK_DelayAtLeastUs`) ? Essayez.
+2. Pendant l'attente de l'appui, le processeur tourne sans rien faire dans la boucle `while`. Comment pourrait-on économiser de l'énergie ? (Indice : interruption du GPIO et mode basse consommation.)
+3. Combien d'images pourrait-on mettre au maximum dans la Flash du MCX N947, en gardant le modèle ?
+
+## Partie 9 — Tester sur la carte et choisir le seuil d'alerte
+
+**9.1 Tester les 9 photos**
+
+Avec le firmware de la partie 8, convertir d'un coup les 9 photos de `photos_carte\` (`python img2c_multi.py feu_1.jpg feu_2.jpg ...`), **Build**, **Debug**, puis faire défiler les images avec **SW2** et noter chaque résultat. Les photos `fumee_*` sont des pièges : de la fumée sans flammes visibles, une classe que le modèle n'a jamais vue.
 
 | Image | Il y a un feu ? | `Detected:` (classe et %) | Score feu (%) | LED | Temps (ms) |
 | --- | --- | --- | --- | --- | --- |
@@ -457,11 +608,11 @@ Pour chaque photo de `photos_carte\` : refaire 6.4 (img2c), **Build**, **Debug**
 | `fumee_3` | ? | | | | |
 | Votre photo : coucher de soleil, bougie, lampe orange… | non | | | | |
 
-**8.2 Choisir le seuil**
+**9.2 Choisir le seuil**
 
 Avec 2 classes, le score `feu` et le score `pas_de_feu` font environ 100 % à eux deux. Un seuil de 50 % revient donc à prendre la classe gagnante.
 
-1. Pas besoin de tout recompiler : à partir du **score feu** noté en 8.1, déduire pour chaque photo si l'alerte se déclencherait avec un seuil de **20 %**, de **50 %** et de **80 %**.
+1. Pas besoin de tout recompiler : à partir du **score feu** noté en 9.1, déduire pour chaque photo si l'alerte se déclencherait avec un seuil de **20 %**, de **50 %** et de **80 %**.
 2. Vérifier un des cas sur la carte : changer `SEUIL_ALERTE_FEU`, **Build**, **Debug**, et regarder la LED.
 3. Remplir :
 
@@ -484,7 +635,7 @@ Avec 2 classes, le score `feu` et le score `pas_de_feu` font environ 100 % à eu
 
 **B.2 Comparer CPU et NPU.** Comme au bonus B.1 du TP2 : intégrer `feu_int8.tflite` (non converti) avec les opérateurs CPU dans le resolver, et comparer les temps d'inférence.
 
-**B.3 Réduire les fausses alarmes.** Prendre au téléphone une dizaine de photos de la salle avec des objets orange ou lumineux (lampes, écrans, soleil par la fenêtre), les recadrer en 128 × 128 et les ajouter dans `dataset_feu/train/pas_de_feu/`. Réentraîner : les fausses alarmes de la partie 8 diminuent-elles ?
+**B.3 Réduire les fausses alarmes.** Prendre au téléphone une dizaine de photos de la salle avec des objets orange ou lumineux (lampes, écrans, soleil par la fenêtre), les recadrer en 128 × 128 et les ajouter dans `dataset_feu/train/pas_de_feu/`. Réentraîner : les fausses alarmes de la partie 9 diminuent-elles ?
 
 **B.4 Plus de données.** Relancer `python prepare_dataset_feu.py 900` (900 images par classe, dans un nouveau dossier) et comparer le rappel de la classe `feu`.
 
@@ -499,6 +650,9 @@ Avec 2 classes, le score `feu` et le score `pas_de_feu` font environ 100 % à eu
 | LED d'alerte allumée à l'envers (rouge sans feu) | `CLASSE_FEU` ne correspond pas à l'ordre de `labels.h` | `CLASSE_FEU 0` si `feu` est en premier |
 | Les LED ne s'allument pas, le texte est correct | `LED_Init()` pas appelée, ou broches pas en GPIO | Vérifier l'ajout de la partie 7.3 (étape 2) et `PORT_SetPinMux` |
 | `LED_RED_ON` ou `kCLOCK_Gpio0` inconnu à la compilation | `#include "board.h"` manquant | Ajouter l'include (partie 7.3, étape 1) |
+| `images_data.h: No such file or directory` | Fichier pas copié dans `source/image/` ou pas de **Refresh** | Copier `images_data.h` (partie 8.2), puis **F5** sur le projet |
+| Appuyer sur SW2 ne fait rien | Broche pas en entrée (`IBE` manquant) ou mauvais bouton | Vérifier `BOUTON_Init` (partie 8.3) et appuyer sur **SW2**, pas sur RESET |
+| Un appui fait sauter plusieurs images | Rebonds du bouton | Garder les deux `SDK_DelayAtLeastUs` (partie 8.3) |
 | Labels `test` et `train` dans eIQ Portal | Dossier sélectionné un niveau trop haut | Sélectionner `dataset_feu` (partie 2) |
 | Le script s'arrête au téléchargement | Pas d'accès à GitHub depuis le PC (proxy) | Télécharger l'archive dans un navigateur et la poser à côté du script |
 | Toujours `feu` (ou toujours `pas_de_feu`) quelle que soit l'image | Modèle exporté en float32, ou image mal convertie | Vérifier l'entrée int8 dans Netron (5.1), refaire `img2c.py` |
@@ -511,7 +665,7 @@ Avec 2 classes, le score `feu` et le score `pas_de_feu` font environ 100 % à eu
 4. Citez deux situations réelles où ce modèle se tromperait, et une façon d'améliorer le système (données, capteurs, plusieurs images…).
 5. Qu'avez-vous changé dans le firmware pour passer du TP2 au TP3 ? Qu'est-ce qui n'a pas changé ?
 
-**À vérifier selon votre installation :** les noms exacts des fichiers dans votre projet (`output_postproc.cpp`, `board.h`, cas A ou B du modèle) dépendent de la version du SDK. Le code de la partie 7 a été écrit à partir des fichiers de la carte FRDM-MCXN947 dans le SDK MCUXpresso actuel (LED rouge P0\_10, verte P0\_27, bleue P1\_2, allumées à l'état bas) : vérifiez les macros `LED_..._ON` dans `board/board.h` de votre projet 2.14.0. Les tableaux de résultats sont à remplir avec vos propres mesures.
+**À vérifier selon votre installation :** ce TP suit le projet `tflm_label_image` du SDK FRDM-MCXN947 **2.14.0** (fichiers `source/model/output_postproc.cpp` et `source/image/image_load.c`, LED rouge P0\_10, verte P0\_27, bouton SW2 sur P0\_23). Avec une autre version du SDK, les noms et l'emplacement des fichiers peuvent changer : vérifier les macros `LED_..._ON` et `BOARD_SW2_...` dans `board.h`. Les tableaux de résultats sont à remplir avec vos propres mesures.
 
 **À propos du jeu de données :** FIRE-SMOKE-DATASET est publié sur GitHub par DeepQuestAI, sans licence précisée. Les images proviennent d'Internet. On l'utilise ici dans un cadre pédagogique : ne redistribuez pas les images.
 
