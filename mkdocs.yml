@@ -3,11 +3,9 @@ site_url: https://dridimourad.github.io/
 site_description: Mourad DRIDI, enseignant-chercheur à ESIEE Paris (DISC) et au LIGM (équipe LRT)
 copyright: © Mourad DRIDI
 
-repo_url: https://github.com/DRIDIMourad/dridimourad.github.io
-repo_name: Git
-
 theme:
   name: material
+  custom_dir: overrides
   language: fr
   logo: assets/avatar.jpg
   favicon: assets/avatar.jpg
@@ -35,8 +33,6 @@ theme:
     - search.suggest
     - search.highlight
     - content.code.copy
-  icon:
-    repo: fontawesome/brands/git-alt
 
 extra_css:
   - stylesheets/extra.css
@@ -50,6 +46,12 @@ extra:
     - icon: fontawesome/brands/google-scholar
       link: https://scholar.google.com/citations?user=CFmoyZIAAAAJ&hl=fr
       name: Google Scholar
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/in/mourad-dridi-285862a8/
+      name: LinkedIn
+    - icon: fontawesome/brands/researchgate
+      link: https://www.researchgate.net/profile/Mourad-Dridi/research
+      name: ResearchGate
     - icon: material/email
       link: mailto:mourad.dridi@univ-eiffel.fr
       name: E-mail

@@ -34,3 +34,32 @@
   .grid-about { grid-template-columns: 1fr; }
   .photo { margin: 0 auto; display: block; }
 }
+
+/* Liens personnels dans l'en-tête (à la place du lien GitHub) */
+.md-header__social {
+  display: flex;
+  align-items: center;
+  gap: .2rem;
+  margin-left: .6rem;
+}
+.md-header__social-link {
+  display: inline-flex;
+  padding: .4rem;
+  border-radius: 50%;
+  color: var(--md-primary-bg-color);
+  opacity: .85;
+  transition: opacity .2s ease, background-color .2s ease;
+}
+.md-header__social-link:hover,
+.md-header__social-link:focus {
+  opacity: 1;
+  background-color: rgba(255, 255, 255, .15);
+}
+.md-header__social-link svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  fill: currentColor;
+}
+@media screen and (max-width: 59.984em) {
+  .md-header__social { display: none; } /* sur mobile : liens dans le pied de page */
+}
