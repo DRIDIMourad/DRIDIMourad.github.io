@@ -5,3 +5,4 @@
 | [TP1](tp1/index.md) | Classification d'images sur NPU : import du projet eIQ label_image, exécution, changement d'image, visualisation du modèle (Netron, eIQ), comparaison CPU / NPU et task mapping | FRDM-MCXN947 |
 | [TP2](tp2/index.md) | Entraîner son propre modèle : jeu de données de fleurs, entraînement et validation dans eIQ Portal, export TFLite int8, conversion Neutron, déploiement dans label_image | FRDM-MCXN947 |
 | [TP3](tp3/index.md) | Détecter un feu : jeu de données feu / pas de feu, entraînement dans eIQ Portal, faux positifs et faux négatifs, conversion Neutron, alerte par LED et choix du seuil sur la carte | FRDM-MCXN947 |
+| [Projet](projet/index.md) | **Projet évalué** — drone de surveillance des départs de feu : trajectoire simulée, prise de photo avec SW2, détection sur le NPU, LED d'alerte, messages d'alerte avec la position aux drones voisins, architecture en tâches | FRDM-MCXN947 |
