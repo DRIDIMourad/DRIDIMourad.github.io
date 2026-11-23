@@ -1,10 +1,12 @@
-# Projet : Drone de surveillance des accidents sur autoroute (FRDM-MCXN947)
+# Projet 1 : Flotte de drones de détection d'accidents (FRDM-MCXN947)
+
+![Une flotte de drones survole l'autoroute : celui qui voit l'accident allume sa LED rouge et envoie sa position aux voisins](img/flotte_drones.svg)
 
 Projet **évalué**, en binôme, **une séance de 4 h**. Le sujet fixe ce que le système doit faire ; à vous de concevoir et d'écrire le code.
 
 ## Le sujet
 
-Un drone survole une autoroute, prend des photos et les analyse **à bord** avec un réseau de neurones sur le NPU. S'il voit un accident, il allume une LED rouge et **prévient les drones voisins** en envoyant **sa position**. Sinon, LED verte.
+Une flotte de drones survole une autoroute. Chaque drone prend des photos et les analyse **à bord** avec un réseau de neurones sur le NPU. S'il voit un accident, il allume une LED rouge et **prévient les drones voisins** en envoyant **sa position**. Sinon, LED verte.
 
 Le drone est la carte **FRDM-MCXN947**. Tout le reste est simulé :
 
