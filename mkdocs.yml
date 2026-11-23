@@ -84,3 +84,6 @@ nav:
               - "TP1 : Classification d'images sur NPU": units/ia-embarquee/tp/tp1/index.md
               - "TP2 : Entraîner son modèle avec eIQ Portal": units/ia-embarquee/tp/tp2/index.md
               - "TP3 : Détecter un feu sur le NPU": units/ia-embarquee/tp/tp3/index.md
+          - Projets:
+              - units/ia-embarquee/projet/index.md
+              - "Projet 1 : Flotte de drones de détection d'accidents": units/ia-embarquee/projet/projet1/index.md
