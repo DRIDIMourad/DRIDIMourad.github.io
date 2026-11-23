@@ -219,6 +219,10 @@ Ouvrir quelques images de `dataset_feu\train\feu` et de `dataset_feu\train\pas_d
 - **2 labels** : `feu` et `pas_de_feu`, chacun avec **400** images en *Train*, **100** en *Test* et **500** au *Total* ;
 - **Unlabeled Images : 0** et **All Images : 1000**.
 
+![Data Set Curator : bon import](img/01_curator.png)
+
+*Figure 1 — Bon import : 2 labels, 400 images en Train et 100 en Test pour chacun, 1 000 images au total, aucune image sans label.*
+
 Si vous voyez les labels `test` et `train`, ou *Unlabeled Images : 1000*, vous avez sélectionné le mauvais dossier : voir le TP2, partie 2.
 
 ## Partie 3 — Choisir le modèle de base et entraîner
@@ -237,11 +241,21 @@ Cliquer **SELECT MODEL** et répondre comme au TP2 : **Classification**, **Perfo
 | **Batch Size** | `10` (par défaut) |
 | **Epochs To Train** | `10` |
 
-Laisser le reste par défaut et cliquer **START TRAINING**. Avec 800 images d'entraînement (contre 1 200 au TP2), l'entraînement est un peu plus court.
+Laisser le reste par défaut et cliquer **START TRAINING**. Avec 800 images d'entraînement (contre 1 200 au TP2), l'entraînement est plus court : environ **1 min 30** (84 s) lors de notre essai.
 
 **3.3 Lire les courbes**
 
 Comme au TP2, regarder **Train Accuracy** et surtout **Evaluation Accuracy** (images de test).
+
+![Courbe de précision](img/02_trainer_precision.png)
+
+*Figure 2 — Précision (Metric) sur 10 époques : la précision d'entraînement (ligne) dépasse 0,95 dès la 2e époque et finit près de 1 ; la précision d'évaluation (points) reste entre 0,8 et 0,9.*
+
+![Courbe de perte](img/03_trainer_perte.png)
+
+*Figure 3 — Perte (Loss) : la perte d'entraînement (ligne) descend de 0,35 à 0,03 ; la perte d'évaluation (points) reste autour de 0,1 à 0,12.*
+
+**Comment lire les figures 2 et 3 :** avec 2 classes très différentes, le modèle apprend très vite, dès la 2e époque. Ensuite la courbe d'entraînement continue de s'améliorer, mais l'évaluation ne progresse plus : c'est encore le début du **surapprentissage**, comme au TP2. Ici, 3 ou 4 époques suffiraient.
 
 | Époque | Train Accuracy | Evaluation Accuracy | Train Loss | Evaluation Loss |
 | --- | --- | --- | --- | --- |
@@ -254,12 +268,16 @@ Comme au TP2, regarder **Train Accuracy** et surtout **Evaluation Accuracy** (im
 ## Partie 4 — Valider : feux manqués et fausses alarmes
 
 1. Cliquer **VALIDATE**, laisser **Input/Output Data Type** sur `float32` et **Softmax Threshold** à 0, puis cliquer le bouton jaune **VALIDATE**.
-2. La matrice de confusion n'a plus que 2 lignes et 2 colonnes utiles (ignorer *Background*). Recopier les quatre valeurs :
+2. La matrice de confusion n'a plus que 2 lignes et 2 colonnes utiles (ignorer *Background*). Passer la souris sur une case pour lire le nombre d'images. Recopier les quatre valeurs :
 
 | | Prédit `feu` | Prédit `pas_de_feu` |
 | --- | --- | --- |
 | **Réel `feu`** (100 images) | VP = | FN = |
 | **Réel `pas_de_feu`** (100 images) | FP = | VN = |
+
+![Matrice de confusion](img/04_confusion.png)
+
+*Figure 4 — Matrice de confusion obtenue lors de notre essai. La ligne `feu` n'a pas d'erreur visible (case `pas_de_feu` blanche) : aucun feu manqué. La ligne `pas_de_feu` a une case rose sous `feu` : quelques fausses alarmes.*
 
 3. Calculer :
     - le **rappel** de la classe `feu` : VP / (VP + FN) = ……… % ;
@@ -279,6 +297,11 @@ Comme au TP2, regarder **Train Accuracy** et surtout **Evaluation Accuracy** (im
 1. **DEPLOY** : **TensorFlow Lite**, **Input Data Type : int8**, **Output Data Type : int8**, **Export Quantized Model** activé, **Per Channel**.
 2. Vérifier la ligne **Labels** du résumé : `feu, pas_de_feu`.
 3. **EXPORT MODEL** → `C:\TP3-IA\feu_int8.tflite`.
+
+![Export du modèle](img/05_export.png)
+
+*Figure 5 — Les réglages d'export : TensorFlow Lite, int8 en entrée et en sortie, modèle quantifié Per Channel. Le résumé indique le modèle de base (mobilenet\_v2), les 2 labels `feu, pas_de_feu`, 10 époques en 84 s.*
+
 4. **Checkpoint Netron :** entrée `int8` `[1, 128, 128, 3]`, sortie `[1, 2]`.
 
 **5.2 Vérifier les versions** (comme au TP2, partie 7.1)
