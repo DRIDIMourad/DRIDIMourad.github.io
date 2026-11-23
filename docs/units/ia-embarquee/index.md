@@ -8,3 +8,4 @@
 
 - [TP1 : Classification d'images sur NPU (eIQ label_image, FRDM-MCXN947)](tp/tp1/index.md)
 - [TP2 : Entraîner son propre modèle avec eIQ Portal et le déployer sur le NPU](tp/tp2/index.md)
+- [TP3 : Détecter un feu avec un réseau de neurones sur le NPU](tp/tp3/index.md)
