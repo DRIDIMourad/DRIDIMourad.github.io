@@ -178,7 +178,7 @@ print("Termine : importer le dossier dataset_feu dans eIQ Portal")
 
 1. Ouvrir un terminal (Invite de commandes ou Git Bash) dans `C:\TP3-IA\`.
 2. Lancer : `python prepare_dataset_feu.py`
-3. Le téléchargement (320 Mo) prend quelques minutes. Le script affiche ensuite :
+3. Le téléchargement (320 Mo) prend quelques minutes. S'il échoue (lien GitHub inaccessible, proxy de l'établissement), voir l'[annexe](#annexe-telechargement-de-secours-du-jeu-de-donnees). Le script affiche ensuite :
 
 ```
 feu        : 400 train, 100 test
@@ -654,7 +654,7 @@ Avec 2 classes, le score `feu` et le score `pas_de_feu` font environ 100 % à eu
 | Appuyer sur SW2 ne fait rien | Broche pas en entrée (`IBE` manquant) ou mauvais bouton | Vérifier `BOUTON_Init` (partie 8.3) et appuyer sur **SW2**, pas sur RESET |
 | Un appui fait sauter plusieurs images | Rebonds du bouton | Garder les deux `SDK_DelayAtLeastUs` (partie 8.3) |
 | Labels `test` et `train` dans eIQ Portal | Dossier sélectionné un niveau trop haut | Sélectionner `dataset_feu` (partie 2) |
-| Le script s'arrête au téléchargement | Pas d'accès à GitHub depuis le PC (proxy) | Télécharger l'archive dans un navigateur et la poser à côté du script |
+| Le script s'arrête au téléchargement | Pas d'accès à GitHub depuis le PC (proxy) | Télécharger l'archive depuis le lien de secours ([annexe](#annexe-telechargement-de-secours-du-jeu-de-donnees)) et la poser à côté du script |
 | Toujours `feu` (ou toujours `pas_de_feu`) quelle que soit l'image | Modèle exporté en float32, ou image mal convertie | Vérifier l'entrée int8 dans Netron (5.1), refaire `img2c.py` |
 
 **Questions de synthèse**
@@ -670,3 +670,14 @@ Avec 2 classes, le score `feu` et le score `pas_de_feu` font environ 100 % à eu
 **À propos du jeu de données :** FIRE-SMOKE-DATASET est publié sur GitHub par DeepQuestAI, sans licence précisée. Les images proviennent d'Internet. On l'utilise ici dans un cadre pédagogique : ne redistribuez pas les images.
 
 **Sources :** [FIRE-SMOKE-DATASET (DeepQuestAI)](https://github.com/DeepQuestAI/Fire-Smoke-Dataset) · [NXP — MCXN947: How to Train and Deploy Customer ML model to NPU](https://community.nxp.com/t5/MCX-Microcontrollers-Knowledge/MCXN947-How-to-Train-and-Deploy-Customer-ML-model-to-NPU/ta-p/1899497) · [Notes de version eIQ Toolkit (EIQTRN)](https://www.nxp.com/docs/en/release-note/EIQTRN.pdf) · [Compatibilité Neutron SDK / MCUXpresso SDK](https://eiq.nxp.com/learning-hub/tools/neutronSdk/userGuide/mcuxCompatMatrix.html) · [README tflm\_label\_image](https://docs.mcuxpresso.nxp.com/mcuxsdk/latest/html/examples/eiq_examples/tflm_label_image/readme.html) · [Exemples MCUXpresso SDK (board.h FRDM-MCXN947)](https://github.com/nxp-mcuxpresso/mcuxsdk-examples) · [Netron](https://netron.app)
+
+## Annexe — Téléchargement de secours du jeu de données {#annexe-telechargement-de-secours-du-jeu-de-donnees}
+
+Si le script `prepare_dataset_feu.py` n'arrive pas à télécharger l'archive depuis GitHub (message d'erreur `urlopen error`, `HTTP Error 404`, ou téléchargement bloqué par le proxy de l'établissement) :
+
+1. Télécharger l'archive depuis ce lien de secours : [FIRE-SMOKE-DATASET.zip (Google Drive)](https://drive.google.com/file/d/1F9gAzX5ZceMVGw7Q0In7PXp8Tigu5HgI/view?usp=drive_link).
+2. L'enregistrer dans le dossier de travail `C:\TP3-IA\`, à côté du script, **sous le nom exact `FIRE-SMOKE-DATASET.zip`** (renommer le fichier si le navigateur a changé son nom, par exemple `FIRE-SMOKE-DATASET (1).zip`).
+3. Relancer `python prepare_dataset_feu.py`. Le script trouve l'archive, ne la télécharge pas une seconde fois et passe directement à la décompression.
+
+Si un téléchargement interrompu a laissé un fichier `FIRE-SMOKE-DATASET.zip` incomplet, le supprimer avant de déposer celui du lien de secours, sinon la décompression échoue (`BadZipFile`).
+
