@@ -22,8 +22,12 @@
   object-fit: cover;
 }
 .md-header__button.md-logo img {
-  border-radius: 50%;
+  width: 2rem;
   height: 2rem;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, .85);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, .15);
 }
 
 @media (max-width: 760px) {

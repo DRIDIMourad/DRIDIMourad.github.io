@@ -1,0 +1,127 @@
+/* Parties repliables des pages de TP (voir javascripts/sections.js) */
+
+.tps-page {
+  --tps-accent: #2e2a8c;
+  --tps-bg: rgba(46, 42, 140, .05);
+  --tps-bg-hover: rgba(46, 42, 140, .10);
+}
+[data-md-color-scheme="slate"] .tps-page {
+  --tps-accent: #9fa8ff;
+  --tps-bg: rgba(159, 168, 255, .07);
+  --tps-bg-hover: rgba(159, 168, 255, .14);
+}
+
+/* Barre « Tout ouvrir / Tout fermer » */
+.tps-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .5rem;
+  margin: 1.5rem 0 .8rem;
+}
+.tps-bar__hint {
+  flex: 1 1 auto;
+  color: var(--md-default-fg-color--light);
+  font-size: .75rem;
+}
+.md-typeset .tps-bar__btn {
+  padding: .25em 1em;
+  font-size: .7rem;
+  margin: 0;
+  color: var(--tps-accent);
+  border-color: var(--tps-accent);
+}
+.md-typeset .tps-bar__btn:hover,
+.md-typeset .tps-bar__btn:focus {
+  background: var(--tps-accent);
+  border-color: var(--tps-accent);
+  color: #fff;
+}
+
+/* Une partie = une carte */
+.tps {
+  margin: 0 0 .7rem;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-left: 4px solid var(--tps-accent);
+  border-radius: .4rem;
+  background: var(--md-default-bg-color);
+  transition: box-shadow .25s ease;
+}
+.tps:hover,
+.tps--open {
+  box-shadow: 0 2px 10px rgba(0, 0, 0, .08);
+}
+
+/* Titre de partie cliquable */
+.md-typeset h2.tps-head {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  margin: 0;
+  padding: .7rem 1rem;
+  font-size: 1.15em;
+  font-weight: 500;
+  line-height: 1.35;
+  cursor: pointer;
+  user-select: none;
+  border-radius: .3rem;
+  background: var(--tps-bg);
+  transition: background-color .2s ease;
+}
+.md-typeset h2.tps-head:hover {
+  background: var(--tps-bg-hover);
+}
+.md-typeset h2.tps-head:focus-visible {
+  outline: 2px solid var(--tps-accent);
+  outline-offset: 2px;
+}
+.tps--open > h2.tps-head {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+/* Chevron qui tourne */
+.tps-chevron {
+  flex: 0 0 auto;
+  width: .55rem;
+  height: .55rem;
+  border-right: 2px solid var(--tps-accent);
+  border-bottom: 2px solid var(--tps-accent);
+  transform: rotate(-45deg);
+  transition: transform .35s ease;
+}
+.tps--open .tps-chevron {
+  transform: rotate(45deg);
+}
+
+/* Contenu : hauteur animée par le script */
+.tps-body {
+  transition: height .35s ease;
+}
+.tps-inner {
+  padding: .2rem 1.2rem 1rem;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity .35s ease, transform .35s ease;
+}
+.tps--open .tps-inner {
+  opacity: 1;
+  transform: none;
+}
+.tps-inner > :first-child { margin-top: .8rem; }
+
+/* La barre d'en-tête fixe ne doit pas masquer une ancre ouverte */
+.tps-page [id] { scroll-margin-top: 4rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  .tps-body, .tps-inner, .tps-chevron { transition: none; }
+}
+
+/* Impression : tout est visible, sans décor */
+@media print {
+  .tps-bar, .tps-chevron { display: none; }
+  .tps { border: 0; box-shadow: none; }
+  .md-typeset h2.tps-head { background: none; padding: 0; margin-top: 1.5em; }
+  .tps-body[hidden] { display: block !important; content-visibility: visible !important; }
+  .tps-inner { opacity: 1; transform: none; padding: 0; }
+}
