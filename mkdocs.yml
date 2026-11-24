@@ -89,3 +89,8 @@ nav:
           - Projets:
               - units/ia-embarquee/projet/index.md
               - "Projet 1 : Flotte de drones de détection d'accidents": units/ia-embarquee/projet/projet1/index.md
+      - "3R-TR1 · Physique pour la transition énergétique":
+          - units/3r-tr1/index.md
+          - Cours:
+              - units/3r-tr1/cours/index.md
+              - "CM1 : Systèmes de numération et arithmétique binaire": units/3r-tr1/cours/cm1/index.md
