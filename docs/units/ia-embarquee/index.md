@@ -10,6 +10,12 @@ Faire tourner un réseau de neurones **sur un microcontrôleur**, sans PC ni clo
 
 <div class="grid cards" markdown>
 
+-   ![Feu tricolore sur la FRDM-MCXN947](img/td1.svg)
+
+    **[TD1 : Prise en main de la carte](td/td1/index.md)**
+
+    LED RGB, boutons, FreeRTOS, puis un feu tricolore avec bouton piéton.
+
 -   ![Classification sur NPU](img/tp1.svg)
 
     **[TP1 : Classification d'images sur NPU](tp/tp1/index.md)**
