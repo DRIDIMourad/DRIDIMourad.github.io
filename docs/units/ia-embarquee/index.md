@@ -14,7 +14,7 @@ Faire tourner un réseau de neurones **sur un microcontrôleur**, sans PC ni clo
 
     **[TD1 : Prise en main de la carte](td/td1/index.md)**
 
-    LED RGB, boutons, FreeRTOS, puis un feu tricolore avec bouton piéton.
+    LED RGB, boutons, FreeRTOS, puis un feu tricolore noté.
 
 -   ![Classification sur NPU](img/tp1.svg)
 

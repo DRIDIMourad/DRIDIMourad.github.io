@@ -3,7 +3,10 @@
 
 ## Objectifs, prérequis et déroulé
 
-Dans ce TD, on découvre la carte NXP **FRDM-MCXN947** en programmant ses entrées et sorties. On ne part jamais d'une page blanche : chaque étape commence par un **exemple du SDK** qui fonctionne déjà, qu'on compile, qu'on lit, puis qu'on **enrichit pas à pas**. À la fin, vous programmez un **feu tricolore avec bouton piéton** sous FreeRTOS.
+Dans ce TD, on découvre la carte NXP **FRDM-MCXN947** en programmant ses entrées et sorties. On ne part jamais d'une page blanche : chaque étape commence par un **exemple du SDK** qui fonctionne déjà, qu'on compile, qu'on lit, puis qu'on **enrichit pas à pas**. Les parties 1 à 4 sont **guidées** : le code est donné et expliqué, chaque question a sa réponse (à déplier **après** avoir cherché). La partie 5, un **feu tricolore avec bouton piéton** sous FreeRTOS, est un **travail à rendre et noté** : vous y réutilisez seuls tout ce que vous avez compris avant.
+
+!!! tip "Comment travailler"
+    Pour chaque partie : lire, taper (ou copier) le code, **compiler et essayer sur la carte**, puis répondre aux questions **avant** d'ouvrir les réponses. Le projet noté vérifiera que vous avez compris, pas seulement recopié.
 
 | Étape | Exemple du SDK de départ | Ce qu'on ajoute |
 | --- | --- | --- |
@@ -11,7 +14,7 @@ Dans ce TD, on découvre la carte NXP **FRDM-MCXN947** en programmant ses entré
 | 2 | (le même) | Les trois couleurs de la LED RGB et leurs mélanges |
 | 3 | `gpio_input_interrupt` | Les boutons SW2 et SW3 par interruption, l'anti-rebond |
 | 4 | `freertos_hello` | Des tâches FreeRTOS, `vTaskDelay`, un sémaphore donné par le bouton |
-| Projet | (le projet de l'étape 4) | Un feu tricolore : machine à états, bouton piéton, mode nuit |
+| 5 — **noté** | (le projet de l'étape 4) | Un feu tricolore : machine à états, bouton piéton. **À rendre** |
 
 **Matériel**
 
@@ -22,7 +25,7 @@ Dans ce TD, on découvre la carte NXP **FRDM-MCXN947** en programmant ses entré
 - MCUXpresso IDE et le **SDK FRDM-MCXN947 2.14.0** (avec le composant **FreeRTOS**, coché par défaut dans le SDK Builder).
 - Un terminal série : celui de MCUXpresso IDE suffit (**115200 bauds, 8 bits, pas de parité, 1 bit de stop**).
 
-**Durée :** environ 3 h (étapes 1 à 4 : 1 h 30, projet : 1 h 30).
+**Durée :** environ 3 h en séance (parties 1 à 4 : 1 h 30 à 2 h, projet : le reste de la séance), puis le projet est terminé et rendu à la date fixée par l'enseignant.
 
 ## Partie 0 — La carte et ses broches
 
@@ -47,6 +50,9 @@ Les trois LED sont en fait **une seule LED RGB** : trois petites diodes (rouge, 
 1. **L'horloge** du module : sans horloge, un périphérique ne fonctionne pas (`CLOCK_EnableClock(kCLOCK_Gpio0)`, `kCLOCK_Port0`…).
 2. **Le PORT** : il choisit la *fonction* de la broche (GPIO, UART, PWM…) et ses réglages électriques (résistance de tirage, entrée numérique). C'est le rôle du fichier `board/pin_mux.c`.
 3. **Le GPIO** : il choisit le *sens* (entrée ou sortie), puis lit ou écrit la valeur (`GPIO_PinInit`, `GPIO_PinWrite`, `GPIO_PinRead`).
+
+!!! abstract "À retenir"
+    Une broche s'appelle **Px\_n** : port x, broche n. Pour s'en servir : **horloge** (`CLOCK_EnableClock`), **PORT** (quelle fonction : `kPORT_MuxAlt0` = GPIO), **GPIO** (entrée ou sortie, lecture, écriture). Les LED de la carte s'allument avec un **0**.
 
 ## Partie 1 — Faire clignoter la LED rouge (exemple gpio\_led\_output)
 
@@ -105,6 +111,16 @@ int main(void)
 3. Remplacer `800000` par `200000`. Que se passe-t-il ? Chronométrez 10 clignotements et estimez la durée d'un `delay()`.
 4. Pourquoi cette façon d'attendre est-elle imprécise ? (Pensez à la fréquence du processeur et aux options d'optimisation du compilateur.)
 5. Ouvrir `board/pin_mux.c`. Quelles broches sont configurées par `BOARD_InitPins()` ? Remplacer `BOARD_LED_RED_GPIO` par `BOARD_LED_BLUE_GPIO` (et le `_PIN`) : que manque-t-il pour que la LED bleue fonctionne ? (Indice : regarder son port et son module GPIO dans le tableau de la partie 0.)
+
+??? success "Réponses de la partie 1"
+    1. `1u << 10` vaut `0x400` : un nombre dont **seul le bit 10** est à 1. Les fonctions `GPIO_Port...` travaillent sur les 32 broches d'un port à la fois : chaque bit à 1 désigne une broche. Avec `10` (= `0b1010`), on inverserait les broches 1 et 3 !
+    2. Elle est **allumée** : la LED est active à l'état bas, donc la valeur 0 l'allume.
+    3. La LED clignote **4 fois plus vite** (la boucle est 4 fois plus courte). Un `delay()` dure une **demi-période** : la LED est allumée pendant un `delay()`, puis éteinte pendant le suivant. Durée d'un `delay()` ≈ (temps de 10 clignotements) / 20.
+    4. La durée dépend de la **fréquence du processeur**, du **compilateur** (en mode *Release*, l'optimisation change le nombre d'instructions par tour) et des **interruptions** qui volent du temps. On ne sait pas combien de millisecondes dure la boucle sans la mesurer.
+    5. `BOARD_InitPins()` configure **P0\_10** (LED rouge) en GPIO et **P1\_8, P1\_9** pour la liaison série (FlexComm 4). La LED bleue est sur **P1\_2** : sa broche n'est pas configurée en GPIO, et l'horloge du module **GPIO1** n'est pas activée (seul `kCLOCK_Gpio0` l'est). On règle ça à la partie 2.
+
+!!! abstract "À retenir"
+    Un exemple du SDK = `main()` qui initialise la carte (`BOARD_InitPins`, `BOARD_InitBootClocks`, `BOARD_InitDebugConsole`), puis une boucle infinie `while (1)`. Les noms `BOARD_...` viennent de `board.h` : on s'en sert pour ne pas écrire les numéros de broche à la main.
 
 Remettre la LED rouge avant de passer à la suite.
 
@@ -263,11 +279,59 @@ Dans `main()`, supprimer `GPIO_PinInit(...)` et la boucle `while (1)`, et les re
     }
     ```
 
+Sortie attendue dans le terminal :
+
+```
+TD1 - etape 2 : les couleurs de la LED RGB
+LED rouge
+LED vert
+LED bleu
+LED rouge
+...
+```
+
 **À vous**
 
 1. Modifier la séquence pour afficher les **8 couleurs** de `NOIR` à `BLANC`, avec leur nom dans le terminal.
 2. Le jaune obtenu ressemble-t-il à du jaune ? Et à de l'orange ? Pourquoi est-ce difficile d'obtenir un vrai orange en allumant simplement les LED rouge et verte ? (Indice : il faudrait régler la *luminosité* de chaque LED, avec un signal PWM.)
 3. Écrire une fonction `LED_Clignoter(int couleur, int nb, int periode_ms)` qui fait clignoter `nb` fois une couleur. L'utiliser pour faire clignoter 3 fois le magenta au démarrage.
+
+??? success "Réponses de la partie 2"
+    1. Il suffit de parcourir les nombres de 0 à 7, puisque chaque couleur **est** un nombre :
+
+        ```c
+        const char *const noms[] = {"noir", "rouge", "vert", "jaune", "bleu", "magenta", "cyan", "blanc"};
+        while (1)
+        {
+            for (int c = NOIR; c <= BLANC; c++)
+            {
+                LED_Couleur(c);
+                PRINTF("Couleur %d : %s\r\n", c, noms[c]);
+                SDK_DelayAtLeastUs(500000U, SystemCoreClock);
+            }
+        }
+        ```
+
+    2. On obtient un jaune-vert : la LED verte paraît plus lumineuse que la rouge. Pour un orange, il faudrait **moins** de vert que de rouge. Une broche GPIO ne sait faire que « tout ou rien » ; pour doser la luminosité, on allume et on éteint la LED très vite (plus vite que l'œil) avec un rapport cyclique réglable : c'est la **PWM**.
+    3. Une solution :
+
+        ```c
+        static void LED_Clignoter(int couleur, int nb, int periode_ms)
+        {
+            for (int i = 0; i < nb; i++)
+            {
+                LED_Couleur(couleur);
+                SDK_DelayAtLeastUs(periode_ms * 1000U / 2, SystemCoreClock);
+                LED_Couleur(NOIR);
+                SDK_DelayAtLeastUs(periode_ms * 1000U / 2, SystemCoreClock);
+            }
+        }
+        /* dans main(), apres LED_Init() : */
+        LED_Clignoter(MAGENTA, 3, 400);
+        ```
+
+!!! abstract "À retenir"
+    `LED_Init()` (horloges + PORT + GPIO des trois LED) et `LED_Couleur()` resserviront dans toute la suite du TD **et dans le projet noté**. Une couleur est un nombre de 3 bits : on teste un bit avec `&`.
 
 ## Partie 3 — Réagir aux boutons (exemple gpio\_input\_interrupt)
 
@@ -317,6 +381,13 @@ Le code contient aussi une variante `#if ... PORT_SetPinInterruptConfig ...` pou
 3. Pourquoi le `PRINTF` est-il dans la boucle principale et pas dans la fonction d'interruption ?
 4. Que se passerait-il si on oubliait d'acquitter l'interruption (`GPIO_GpioClearInterruptFlags`) ?
 5. Quelle différence entre cette méthode et une lecture en boucle de `GPIO_PinRead` (scrutation, ou *polling*) ?
+
+??? success "Réponses (3.2)"
+    1. L'interruption se déclenche quand la broche **passe de 1 à 0** (front descendant). Au repos, la résistance de tirage met la broche à 1 ; l'appui la relie à la masse : 0. Donc front descendant = début de l'appui.
+    2. `g_ButtonPress` est modifiée par l'interruption, « dans le dos » de `main()`. Sans `volatile`, le compilateur peut garder sa valeur dans un registre et ne jamais relire la mémoire : la boucle ne verrait jamais l'appui.
+    3. Une fonction d'interruption doit être **la plus courte possible** : pendant qu'elle s'exécute, le reste du programme est arrêté. `PRINTF` est lent (envoi caractère par caractère sur la liaison série). L'interruption note l'événement, la boucle principale fait le travail.
+    4. Le drapeau reste levé : dès la sortie de la fonction, l'interruption repart, en boucle. Le programme principal ne s'exécute plus jamais.
+    5. En **scrutation**, le processeur relit sans arrêt la broche : il ne fait rien d'autre et peut rater un appui très court s'il est occupé ailleurs. Avec une **interruption**, le matériel surveille la broche et prévient le processeur : il réagit tout de suite, même s'il fait autre chose.
 
 **3.3 Enrichir : SW3 = couleur suivante, SW2 = couleur précédente**
 
@@ -510,6 +581,23 @@ avec, au début de `main()` :
 2. Pourquoi `(couleur + 7) % 8` et pas `(couleur - 1) % 8` ? (Calculer les deux pour `couleur = 0`.)
 3. Pendant que le programme attend un appui, que fait le processeur ? Est-ce économe en énergie ?
 
+Sortie attendue (en appuyant SW3, SW3, SW2) :
+
+```
+TD1 - etape 3 : SW3 = couleur suivante, SW2 = couleur precedente
+Couleur 2 : vert
+Couleur 3 : jaune
+Couleur 2 : vert
+```
+
+??? success "Réponses (3.3)"
+    1. Oui : un contact mécanique **rebondit** pendant quelques millisecondes en se fermant. La broche fait 1, 0, 1, 0… avant de rester à 0, ce qui produit plusieurs fronts descendants donc plusieurs interruptions pour un seul appui. Attendre 50 ms puis effacer les drapeaux fait oublier ces faux appuis.
+    2. En C, `(0 - 1) % 8` vaut **-1** (le reste garde le signe) : `noms[-1]` lit en dehors du tableau. `(0 + 7) % 8` vaut 7 : on revient bien au blanc. Ajouter 7 revient à retirer 1, « modulo 8 ».
+    3. Il tourne dans `while (1)` et teste sans arrêt les deux variables : il consomme autant que s'il calculait. On pourrait l'endormir avec l'instruction `__WFI()` (*wait for interrupt*) : il se réveille à l'interruption suivante. Un RTOS fait ça automatiquement quand aucune tâche n'a de travail (partie 4).
+
+!!! abstract "À retenir"
+    Interruption = **fonction appelée par le matériel**. Elle doit : savoir **qui** l'a déclenchée (`GPIO_GpioGetInterruptFlags`), **acquitter** (`GPIO_GpioClearInterruptFlags`), être **courte** (lever un drapeau `volatile`). Un bouton **rebondit** : il faut un anti-rebond. Une entrée a besoin de `IBE` et d'une résistance de tirage.
+
 ## Partie 4 — Passer sous FreeRTOS (exemple freertos\_hello)
 
 Jusqu'ici, tout se passe dans une seule boucle `while (1)`. Dès qu'on veut faire **plusieurs choses en même temps** (clignoter, surveiller un bouton, afficher…), cette boucle devient difficile à écrire. Un **système d'exploitation temps réel** (RTOS) comme **FreeRTOS** permet de découper le programme en **tâches** indépendantes, chacune avec sa propre boucle. L'**ordonnanceur** de FreeRTOS partage le processeur entre elles.
@@ -552,6 +640,10 @@ Ouvrir `source/FreeRTOSConfig.h` et relever : `configTICK_RATE_HZ` (fréquence d
 
 1. Remplacer `vTaskSuspend(NULL);` par `vTaskDelay(pdMS_TO_TICKS(1000));`. Que se passe-t-il ?
 2. Avec `configTICK_RATE_HZ` = 200, combien de ticks dure `pdMS_TO_TICKS(1000)` ? Quelle est la plus petite attente possible ?
+
+??? success "Réponses (4.2)"
+    1. `Hello world.` s'affiche **toutes les secondes** : la tâche dort 1 s, se réveille, affiche, se rendort.
+    2. 200 ticks par seconde : `pdMS_TO_TICKS(1000)` = **200 ticks**. Un tick dure 1/200 s = **5 ms** : c'est la plus petite attente, et toutes les durées sont arrondies à 5 ms près.
 
 **4.3 Enrichir : trois tâches**
 
@@ -769,25 +861,37 @@ int main(void)
 **Questions**
 
 1. Comparer `tache_rouge` avec la boucle de la partie 1 : qui s'occupe de compter le temps ?
-2. Dans `tache_rouge`, remplacer `vTaskDelay(...)` par `SDK_DelayAtLeastUs(500000U, SystemCoreClock)`. Le bleu clignote-t-il toujours ? Et si on donne à `tache_rouge` la priorité 3 ? Expliquez (on parle de **famine**).
+2. Dans `tache_rouge`, remplacer `vTaskDelay(...)` par `SDK_DelayAtLeastUs(500000U, SystemCoreClock)`. Le bleu clignote-t-il toujours ? Le bouton SW2 marche-t-il encore ? Expliquez (on parle de **famine**). Remettre `vTaskDelay` ensuite.
 3. Pourquoi la tâche bouton a-t-elle une priorité plus haute (2) que les tâches de clignotement (1) ?
 4. Que se passe-t-il si on appuie 5 fois très vite sur SW2 ? Un sémaphore **binaire** peut-il compter les appuis ? (Pour aller plus loin : sémaphore à compteur, ou **file de messages** `xQueueSendFromISR`.)
 
-## Partie 5 — Projet : feu tricolore avec bouton piéton
+??? success "Réponses (4.3)"
+    1. Dans la partie 1, c'est **notre boucle** `delay()` qui compte le temps, en occupant le processeur. Ici, c'est **FreeRTOS** : `vTaskDelay` endort la tâche, et l'ordonnanceur la réveille au bon tick. Pendant ce temps, les autres tâches s'exécutent.
+    2. Le bleu **s'arrête** : `SDK_DelayAtLeastUs` est une **attente active**, la tâche rouge ne rend jamais la main. La tâche bleue a la même priorité, et dans ce projet `configUSE_TIME_SLICING` vaut 0 (pas de partage du temps entre tâches de même priorité) : elle n'est plus jamais choisie, c'est la **famine**. SW2 marche encore, car la tâche bouton (priorité 2) est **plus prioritaire** : FreeRTOS interrompt la tâche rouge pour elle.
+    3. Pour que l'appui soit traité **tout de suite**, même si une tâche de clignotement est en train de s'exécuter : la tâche la plus prioritaire prête passe toujours en premier.
+    4. Un sémaphore binaire vaut 0 ou 1 : plusieurs « give » avant un « take » ne comptent qu'une fois, des appuis sont **perdus**. Un sémaphore **à compteur** (`xSemaphoreCreateCounting`) les compterait ; une **file de messages** peut en plus transporter une information (quel bouton, à quel moment…).
 
-On réutilise le projet de la partie 4. La LED RGB devient un **feu tricolore** pour les voitures : **vert**, **orange** (rouge + vert, `JAUNE`), **rouge**. Le bouton **SW2** est le **bouton piéton**.
+!!! abstract "À retenir"
+    Une **tâche** = une fonction avec sa boucle infinie, sa pile et sa priorité. Une tâche doit toujours **se bloquer** (`vTaskDelay`, `xSemaphoreTake`…) pour laisser le processeur aux autres : jamais d'attente active. L'interruption **donne** un sémaphore, la tâche le **prend** : c'est la façon propre de réveiller une tâche sur un événement. Une interruption qui appelle FreeRTOS doit avoir une priorité réglée avec `NVIC_SetPriority`.
+
+## Partie 5 — Travail noté : feu tricolore avec bouton piéton
+
+!!! warning "Travail à rendre, noté"
+    Cette partie est **évaluée**. Elle vérifie que vous avez compris les parties 1 à 4 : les broches et la LED RGB, les interruptions et l'anti-rebond, les tâches et le sémaphore FreeRTOS. Il n'y a **pas de corrigé** ici : à vous de concevoir et d'écrire le programme. Vous pouvez réutiliser tout le code des parties 1 à 4.
+
+On part du projet de la partie 4. La LED RGB devient un **feu tricolore** pour les voitures : **vert**, **orange** (rouge + vert, `JAUNE`), **rouge**. Le bouton **SW2** est le **bouton piéton**.
 
 **5.1 Cahier des charges**
 
 | N° | Exigence |
 | --- | --- |
 | F1 | Cycle normal : **vert 6 s → orange 2 s → rouge 5 s →** vert… Le feu démarre au **rouge**. |
-| F2 | À chaque changement d'état, le terminal affiche l'heure en ms depuis le démarrage et l'état, par exemple `[ 13000 ms] VERT`. |
-| F3 | Un appui sur **SW2** pendant le vert affiche `Demande pieton enregistree` et **raccourcit le vert** : on passe à l'orange tout de suite… |
+| F2 | À chaque changement d'état, le terminal affiche le temps en ms depuis le démarrage et l'état, par exemple `[ 13000 ms] VERT`. |
+| F3 | Un appui sur **SW2** pendant le vert affiche `Demande pieton enregistree` et **raccourcit le vert** : on passe à l'orange sans attendre la fin des 6 s… |
 | F4 | … mais le vert dure **au moins 2 s** au total (les voitures doivent pouvoir passer). |
-| F5 | Après une demande piéton, le rouge dure **8 s** au lieu de 5 s. Un appui pendant l'orange ou le rouge ne compte pas. |
-| F6 | Une seule tâche gère le feu ; le bouton est lu **par interruption**, jamais en scrutation. |
-| Bonus | **Mode nuit** : un appui sur **SW3** met le feu en **orange clignotant** (1 Hz). Un nouvel appui revient au cycle normal, en commençant par le rouge. |
+| F5 | Après une demande piéton, le rouge dure **8 s** au lieu de 5 s. Un appui pendant l'orange ou le rouge **ne compte pas**. Un appui ne compte qu'une fois, même s'il rebondit. |
+| F6 | **Une seule tâche** gère le feu. Le bouton est lu **par interruption** et réveille la tâche par un **sémaphore** (pas de variable lue en boucle). Aucune attente active. |
+| Bonus | **Mode nuit** : un appui sur **SW3** met le feu en **orange clignotant** (1 Hz) ; un nouvel appui revient au cycle normal, **en commençant par le rouge**. |
 
 **5.2 Une machine à états**
 
@@ -801,7 +905,7 @@ Un feu tricolore est une **machine à états** : à chaque instant, il est dans 
   └────────────────────────────────────── ROUGE
 ```
 
-On écrit une tâche avec un `switch` sur l'état courant. Commencer par ce squelette (à mettre à la place de `tache_rouge`, `tache_bleue` et `tache_bouton`) :
+Point de départ imposé : une tâche avec un `switch` sur l'état courant. Le cas `FEU_VERT` est donné **dans sa version la plus simple** (il ne gère pas encore le bouton) ; tout le reste est à écrire.
 
 ```c
 #define DUREE_VERT_MS          6000
@@ -833,56 +937,62 @@ static void tache_feu(void *pvParameters)
                 break;
 
             case FEU_ORANGE:
-                /* A completer */
+                /* A ecrire */
                 break;
 
             case FEU_ROUGE:
-                /* A completer */
+                /* A ecrire */
                 break;
         }
     }
 }
 ```
 
-Dans `main()`, ne créer que `tache_feu` (priorité 2, pile `configMINIMAL_STACK_SIZE + 200`).
+**5.3 Indications**
 
-**5.3 Travail demandé, étape par étape**
+- Avancez **exigence par exigence** et testez sur la carte après chacune : F1 et F2, puis F3, puis F4, puis F5.
+- Pendant le vert, la tâche doit attendre **soit** la fin de la durée, **soit** un appui. Relisez la documentation de `xSemaphoreTake` : que se passe-t-il si on lui donne un délai maximal autre que `portMAX_DELAY` ? Que renvoie-t-elle dans chaque cas ?
+- Un appui fait pendant le rouge « reste » dans le sémaphore. Comment l'oublier au bon moment ?
+- Pour le bonus : un sémaphore dit « il s'est passé quelque chose », mais pas **quoi**. Quel outil FreeRTOS transporte une information ?
 
-1. **F1 et F2.** Compléter les états `FEU_ORANGE` et `FEU_ROUGE`. Vérifier les durées dans le terminal.
-2. **F3.** Pendant le vert, la tâche ne doit plus dormir « aveuglément » : remplacer `vTaskDelay(...)` par une **attente du sémaphore avec délai maximal** :
+**5.4 Tests à faire et à noter (à rendre)**
 
-    ```c
-    if (xSemaphoreTake(s_semSW2, pdMS_TO_TICKS(DUREE_VERT_MS)) == pdTRUE)
-    {
-        /* reveillee par SW2 avant la fin du vert */
-    }
-    else
-    {
-        /* les 6 s sont passees sans appui */
-    }
-    ```
+| Test | Résultat attendu | Obtenu (copie du terminal) | OK ? |
+| --- | --- | --- | --- |
+| Aucun appui pendant 30 s | Vert 6 s, orange 2 s, rouge 5 s, en boucle | | |
+| SW2 à 1 s de vert | Le vert dure 2 s, puis orange, puis rouge **8 s** | | |
+| SW2 à 4 s de vert | Orange tout de suite, puis rouge 8 s | | |
+| SW2 pendant le rouge, puis plus rien | Le vert suivant dure 6 s (l'appui est oublié) | | |
+| SW2 appuyé 10 fois très vite pendant le vert | Une seule demande enregistrée | | |
+| Bonus : SW3 à n'importe quel moment | Orange clignotant ; SW3 à nouveau : retour au rouge | | |
 
-    La fonction rend `pdTRUE` dès que le bouton est appuyé, ou `pdFALSE` au bout de 6 s : une seule ligne remplace l'attente **et** la surveillance du bouton.
-3. **F4.** Si l'appui arrive avant 2 s de vert, attendre le temps qui manque. Utiliser `Maintenant_ms()` pour mesurer le temps passé dans l'état.
-4. **F5.** Mémoriser la demande dans une variable `demandePieton` pour choisir la durée du rouge. En entrant dans le vert, **vider** le sémaphore (`xSemaphoreTake(s_semSW2, 0)`) pour oublier un appui fait pendant le rouge. Pensez aussi à l'anti-rebond.
-5. **Bonus.** SW3 doit aussi réveiller la tâche, avec une information différente (« piéton » ou « nuit »). Un sémaphore ne transporte pas d'information : remplacer le sémaphore par une **file de messages** (`xQueueCreate`, `xQueueSendFromISR` dans l'interruption, `xQueueReceive` avec délai dans la tâche). Ajouter un état `FEU_NUIT`.
+**5.5 Questions (à rendre)**
 
-**5.4 Tests à faire et à noter**
+1. Dessinez la machine à états de **votre** programme (avec le mode nuit si vous l'avez fait) : états, transitions, et ce qui déclenche chaque transition.
+2. Pourquoi faut-il démarrer (et revenir du mode nuit) par le **rouge**, plutôt que par le vert ?
+3. Quelle est la précision des durées affichées dans le terminal ? D'où vient-elle ?
+4. Pourquoi l'appel à `NVIC_SetPriority` est-il indispensable dans votre programme ?
+5. Comment ajouteriez-vous un **feu piéton** (bonhomme rouge / vert) sur deux autres broches ? Faudrait-il une deuxième tâche ? Justifiez.
 
-| Test | Résultat attendu | OK ? |
-| --- | --- | --- |
-| Aucun appui pendant 30 s | Vert 6 s, orange 2 s, rouge 5 s, en boucle | |
-| SW2 à 1 s de vert | Le vert dure 2 s, puis orange, puis rouge **8 s** | |
-| SW2 à 4 s de vert | Orange tout de suite, puis rouge 8 s | |
-| SW2 pendant le rouge, puis plus rien | Le vert suivant dure 6 s (l'appui est oublié) | |
-| SW2 appuyé 10 fois très vite pendant le vert | Une seule demande enregistrée | |
-| Bonus : SW3 à n'importe quel moment | Orange clignotant ; SW3 à nouveau : retour au rouge | |
+**5.6 Ce qu'il faut rendre**
 
-**Questions**
+1. Le fichier source **`freertos_hello.c`** complet et commenté, renommé `feu_NOM1_NOM2.c`.
+2. Un **compte rendu** (PDF, 3 pages maximum) : le tableau de tests rempli avec les copies du terminal, et les réponses aux questions de la partie 5.5.
+3. Une **démonstration** sur la carte à l'enseignant (ou une courte vidéo si demandé).
 
-1. Pourquoi faut-il démarrer (et revenir du mode nuit) par le **rouge**, plutôt que par le vert ?
-2. Quelle est la précision des durées affichées ? D'où vient-elle (pensez à `configTICK_RATE_HZ`) ?
-3. Comment ajouter un **feu piéton** (bonhomme rouge / vert) sur une autre broche ? Faut-il une deuxième tâche ?
+Date limite et modalités de dépôt : celles indiquées par l'enseignant.
+
+**5.7 Barème indicatif (sur 20)**
+
+| Critère | Points |
+| --- | --- |
+| F1, F2 : cycle normal, durées justes, affichage | 4 |
+| F3, F4 : bouton piéton, vert raccourci, vert minimal de 2 s | 5 |
+| F5 : rouge allongé, appuis pendant orange / rouge ignorés, anti-rebond | 3 |
+| F6 : architecture (une tâche, interruption, sémaphore, priorité de l'interruption, aucune attente active) | 3 |
+| Qualité du code : lisibilité, constantes nommées, commentaires | 2 |
+| Compte rendu : tests et réponses aux questions | 3 |
+| **Bonus** : mode nuit avec une file de messages | +2 |
 
 ## Dépannage, synthèse et sources
 
