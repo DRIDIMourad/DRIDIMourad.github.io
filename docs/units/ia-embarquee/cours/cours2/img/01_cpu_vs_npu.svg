@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 300" font-family="IBM Plex Sans, Arial, sans-serif" font-size="14">
+  <rect width="760" height="300" fill="#ffffff"/>
+  <text x="190" y="28" text-anchor="middle" font-size="17" font-weight="bold" fill="#1f2937">CPU (Cortex-M33)</text>
+  <text x="570" y="28" text-anchor="middle" font-size="17" font-weight="bold" fill="#1f2937">NPU (eIQ Neutron)</text>
+  <!-- CPU -->
+  <rect x="40" y="45" width="300" height="230" rx="10" fill="#f3f4f6" stroke="#9ca3af"/>
+  <rect x="60" y="65" width="120" height="50" rx="6" fill="#dbeafe" stroke="#3b82f6"/>
+  <text x="120" y="95" text-anchor="middle" fill="#1e3a8a">Lecture instr.</text>
+  <rect x="200" y="65" width="120" height="50" rx="6" fill="#dbeafe" stroke="#3b82f6"/>
+  <text x="260" y="95" text-anchor="middle" fill="#1e3a8a">Décodage</text>
+  <rect x="130" y="135" width="120" height="50" rx="6" fill="#fde68a" stroke="#d97706"/>
+  <text x="190" y="158" text-anchor="middle" fill="#78350f">1 à 2 MAC</text>
+  <text x="190" y="176" text-anchor="middle" fill="#78350f">par cycle</text>
+  <rect x="60" y="205" width="260" height="50" rx="6" fill="#e5e7eb" stroke="#6b7280"/>
+  <text x="190" y="228" text-anchor="middle" fill="#111827">Registres, caches, bus</text>
+  <text x="190" y="246" text-anchor="middle" fill="#111827">(généraliste, flexible)</text>
+  <!-- NPU -->
+  <rect x="420" y="45" width="300" height="230" rx="10" fill="#f3f4f6" stroke="#9ca3af"/>
+  <rect x="440" y="65" width="260" height="34" rx="6" fill="#dbeafe" stroke="#3b82f6"/>
+  <text x="570" y="87" text-anchor="middle" fill="#1e3a8a">Contrôleur + microcode + DMA</text>
+  <g fill="#fde68a" stroke="#d97706">
+    <rect x="450" y="112" width="34" height="26"/><rect x="490" y="112" width="34" height="26"/><rect x="530" y="112" width="34" height="26"/><rect x="570" y="112" width="34" height="26"/><rect x="610" y="112" width="34" height="26"/><rect x="650" y="112" width="34" height="26"/>
+    <rect x="450" y="144" width="34" height="26"/><rect x="490" y="144" width="34" height="26"/><rect x="530" y="144" width="34" height="26"/><rect x="570" y="144" width="34" height="26"/><rect x="610" y="144" width="34" height="26"/><rect x="650" y="144" width="34" height="26"/>
+  </g>
+  <text x="570" y="190" text-anchor="middle" fill="#78350f">Matrice de MAC int8 en parallèle</text>
+  <rect x="440" y="205" width="260" height="50" rx="6" fill="#dcfce7" stroke="#16a34a"/>
+  <text x="570" y="228" text-anchor="middle" fill="#14532d">Mémoire locale (TCM) proche</text>
+  <text x="570" y="246" text-anchor="middle" fill="#14532d">des MAC : peu de trafic</text>
+</svg>
