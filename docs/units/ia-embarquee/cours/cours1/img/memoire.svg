@@ -1,0 +1,21 @@
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 760 400' font-family='IBM Plex Sans,Segoe UI,Arial,sans-serif' font-size='13'>
+<rect width='760' height='400' rx='14' fill='#f8fafc' stroke='#cbd5e1'/>
+<text x='380' y='28' text-anchor='middle' font-size='17' font-weight='700' fill='#312e81'>Où va chaque partie du programme (projet label_image du TP1)</text>
+<text x='190' y='58' text-anchor='middle' font-weight='700' fill='#166534'>Flash (non volatile, lecture seule à l'exécution)</text>
+<rect x='60' y='70' width='260' height='26' fill='#14532d'/><text x='190' y='88' text-anchor='middle' fill='#fff'>0x0000 0000 : table des vecteurs</text>
+<rect x='60' y='96' width='260' height='70' fill='#16a34a'/><text x='190' y='124' text-anchor='middle' fill='#fff' font-weight='700'>.text + .rodata</text><text x='190' y='144' text-anchor='middle' fill='#dcfce7' font-size='12'>code, TFLite Micro, pilotes (≈ 152 Ko)</text>
+<rect x='60' y='166' width='260' height='26' fill='#86efac'/><text x='190' y='184' text-anchor='middle' fill='#14532d'>valeurs initiales de .data</text>
+<rect x='60' y='192' width='260' height='36' fill='#f0fdf4' stroke='#86efac'/><text x='190' y='215' text-anchor='middle' fill='#166534' font-size='12'>libre (FLASH0 = 1 Mo)</text>
+<rect x='60' y='234' width='260' height='70' fill='#0e7490'/><text x='190' y='262' text-anchor='middle' fill='#fff' font-weight='700'>0x0010 0000 : FLASH1</text><text x='190' y='282' text-anchor='middle' fill='#cffafe' font-size='12'>poids du modèle (≈ 490 Ko)</text>
+<rect x='60' y='304' width='260' height='36' fill='#ecfeff' stroke='#67e8f9'/><text x='190' y='327' text-anchor='middle' fill='#0e7490' font-size='12'>libre (FLASH1 = 1 Mo)</text>
+<text x='570' y='58' text-anchor='middle' font-weight='700' fill='#312e81'>SRAM (volatile, lecture et écriture)</text>
+<rect x='440' y='70' width='260' height='34' fill='#4338ca'/><text x='570' y='92' text-anchor='middle' fill='#fff'>0x2000 0000 : .data + .bss</text>
+<rect x='440' y='104' width='260' height='92' fill='#6366f1'/><text x='570' y='140' text-anchor='middle' fill='#fff' font-weight='700'>tensor arena</text><text x='570' y='160' text-anchor='middle' fill='#e0e7ff' font-size='12'>entrées, sorties, activations</text><text x='570' y='176' text-anchor='middle' fill='#e0e7ff' font-size='12'>du réseau (≈ 260 à 300 Ko)</text>
+<rect x='440' y='196' width='260' height='30' fill='#a5b4fc'/><text x='570' y='216' text-anchor='middle' fill='#1e1b4b'>tas (heap) : malloc, FreeRTOS</text>
+<rect x='440' y='226' width='260' height='40' fill='#eef2ff' stroke='#a5b4fc'/><text x='570' y='251' text-anchor='middle' fill='#4338ca' font-size='12'>libre</text>
+<rect x='440' y='266' width='260' height='34' fill='#c7d2fe'/><text x='570' y='288' text-anchor='middle' fill='#1e1b4b'>pile (stack) : variables locales ↓</text>
+<text x='570' y='326' text-anchor='middle' fill='#475569' font-size='12'>+ SRAMX 96 Ko (0x0400 0000), SRAMH 32 Ko, USB_RAM 4 Ko</text>
+<path d='M320,180 C370,180 390,87 440,87' stroke='#f59e0b' stroke-width='3' fill='none'/><path d='M432,82 l10,5 l-10,5z' fill='#f59e0b'/>
+<text x='380' y='150' text-anchor='middle' fill='#b45309' font-size='12'>copie</text><text x='380' y='165' text-anchor='middle' fill='#b45309' font-size='12'>au démarrage</text>
+<text x='380' y='372' text-anchor='middle' fill='#334155'>Règle : ce qui ne change pas (code, poids) va en Flash ; ce qui change pendant l'exécution va en SRAM.</text>
+</svg>

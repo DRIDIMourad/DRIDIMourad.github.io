@@ -1,0 +1,17 @@
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 760 240' font-family='IBM Plex Sans,Segoe UI,Arial,sans-serif' font-size='13'>
+<rect width='760' height='240' rx='14' fill='#f8fafc' stroke='#cbd5e1'/>
+<text x='380' y='28' text-anchor='middle' font-size='17' font-weight='700' fill='#312e81'>Du code source à la carte</text>
+<g text-anchor='middle'>
+<rect x='20' y='55' width='130' height='80' rx='10' fill='#e0e7ff' stroke='#6366f1'/><text x='85' y='82' font-weight='700' fill='#312e81'>Sources</text><text x='85' y='102' fill='#312e81' font-size='12'>.c .h (vos fichiers</text><text x='85' y='118' fill='#312e81' font-size='12'>+ SDK)</text>
+<rect x='175' y='55' width='130' height='80' rx='10' fill='#e0e7ff' stroke='#6366f1'/><text x='240' y='82' font-weight='700' fill='#312e81'>Compilation</text><text x='240' y='102' fill='#312e81' font-size='12'>arm-none-eabi-gcc</text><text x='240' y='118' fill='#312e81' font-size='12'>→ fichiers .o</text>
+<rect x='330' y='55' width='130' height='80' rx='10' fill='#e0e7ff' stroke='#6366f1'/><text x='395' y='82' font-weight='700' fill='#312e81'>Édition de liens</text><text x='395' y='102' fill='#312e81' font-size='12'>script .ld (mémoire)</text><text x='395' y='118' fill='#312e81' font-size='12'>→ projet.axf</text>
+<rect x='485' y='55' width='120' height='80' rx='10' fill='#cffafe' stroke='#0e7490'/><text x='545' y='82' font-weight='700' fill='#164e63'>MCU-Link</text><text x='545' y='102' fill='#164e63' font-size='12'>sonde CMSIS-DAP</text><text x='545' y='118' fill='#164e63' font-size='12'>USB, J17</text>
+<rect x='630' y='55' width='110' height='80' rx='10' fill='#dcfce7' stroke='#16a34a'/><text x='685' y='82' font-weight='700' fill='#14532d'>MCX N947</text><text x='685' y='102' fill='#14532d' font-size='12'>écrit en Flash</text><text x='685' y='118' fill='#14532d' font-size='12'>puis exécuté</text>
+</g>
+<path d='M150,95 h20 M305,95 h20 M460,95 h20 M605,95 h20' stroke='#334155' stroke-width='3'/>
+<path d='M685,135 v40 H545 v-40' stroke='#f59e0b' stroke-width='2.5' fill='none' stroke-dasharray='6 4'/>
+<text x='615' y='195' text-anchor='middle' fill='#b45309' font-size='12'>UART (LP_FLEXCOMM4) → port série virtuel</text>
+<text x='615' y='212' text-anchor='middle' fill='#b45309' font-size='12'>PRINTF → terminal 115200 bauds</text>
+<text x='240' y='175' text-anchor='middle' fill='#475569' font-size='12'>Build (marteau) = compilation + édition de liens</text>
+<text x='240' y='195' text-anchor='middle' fill='#475569' font-size='12'>Debug = flash + arrêt sur main() + Resume (F8)</text>
+</svg>

@@ -10,6 +10,12 @@ Faire tourner un réseau de neurones **sur un microcontrôleur**, sans PC ni clo
 
 <div class="grid cards" markdown>
 
+-   ![La carte FRDM-MCXN947](img/cours1.svg)
+
+    **[Cours 1 : Initiation à la carte FRDM-MCXN947](cours/cours1/index.md)**
+
+    Le microcontrôleur, sa mémoire, ses broches et ses outils.
+
 -   ![Classification sur NPU](img/tp1.svg)
 
     **[TP1 : Classification d'images sur NPU](tp/tp1/index.md)**
