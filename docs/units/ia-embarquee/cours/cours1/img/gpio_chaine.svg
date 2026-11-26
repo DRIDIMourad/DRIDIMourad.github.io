@@ -1,0 +1,28 @@
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 760 250' font-family='IBM Plex Sans,Segoe UI,Arial,sans-serif' font-size='13'>
+<rect width='760' height='250' rx='14' fill='#f8fafc' stroke='#cbd5e1'/>
+<text x='380' y='28' text-anchor='middle' font-size='17' font-weight='700' fill='#312e81'>Allumer la LED rouge (P0_10) : trois étages à régler</text>
+<rect x='30' y='55' width='170' height='110' rx='10' fill='#fef3c7' stroke='#f59e0b'/>
+<text x='115' y='80' text-anchor='middle' font-weight='700' fill='#78350f'>1. Horloge</text>
+<text x='115' y='104' text-anchor='middle' fill='#78350f' font-size='12'>CLOCK_EnableClock(</text>
+<text x='115' y='120' text-anchor='middle' fill='#78350f' font-size='12'>kCLOCK_Port0 / Gpio0)</text>
+<text x='115' y='148' text-anchor='middle' fill='#92400e' font-size='12'>sans horloge : rien</text>
+<rect x='225' y='55' width='170' height='110' rx='10' fill='#e0e7ff' stroke='#6366f1'/>
+<text x='310' y='80' text-anchor='middle' font-weight='700' fill='#312e81'>2. PORT</text>
+<text x='310' y='104' text-anchor='middle' fill='#312e81' font-size='12'>PORT_SetPinMux(PORT0,</text>
+<text x='310' y='120' text-anchor='middle' fill='#312e81' font-size='12'>10, kPORT_MuxAlt0)</text>
+<text x='310' y='148' text-anchor='middle' fill='#3730a3' font-size='12'>quelle fonction ? GPIO</text>
+<rect x='420' y='55' width='170' height='110' rx='10' fill='#cffafe' stroke='#0e7490'/>
+<text x='505' y='80' text-anchor='middle' font-weight='700' fill='#164e63'>3. GPIO</text>
+<text x='505' y='104' text-anchor='middle' fill='#164e63' font-size='12'>GPIO_PinInit (sens)</text>
+<text x='505' y='120' text-anchor='middle' fill='#164e63' font-size='12'>GPIO_PinWrite (valeur)</text>
+<text x='505' y='148' text-anchor='middle' fill='#155e75' font-size='12'>PDDR, PDOR, PSOR...</text>
+<path d='M200,110 h20 M395,110 h20 M590,110 h30' stroke='#334155' stroke-width='3'/>
+<text x='690' y='62' text-anchor='middle' fill='#334155' font-size='12'>3,3 V</text>
+<path d='M690,68 v22' stroke='#334155' stroke-width='2'/>
+<rect x='680' y='90' width='20' height='22' fill='#fff' stroke='#334155'/>
+<path d='M690,112 v6 M678,118 h24 l-12,16 z' stroke='#334155' stroke-width='2' fill='#ef4444'/>
+<path d='M678,134 h24 M690,134 v20 M620,154 h70' stroke='#334155' stroke-width='2' fill='none'/>
+<text x='640' y='176' text-anchor='middle' fill='#334155' font-size='12'>broche P0_10</text>
+<text x='380' y='210' text-anchor='middle' fill='#334155'>La LED est reliée au 3,3 V : elle s'allume quand la broche vaut 0 (active à l'état bas).</text>
+<text x='380' y='232' text-anchor='middle' fill='#64748b' font-size='12'>Dans les exemples du SDK, l'étage 2 est fait par BOARD_InitPins() (fichier board/pin_mux.c).</text>
+</svg>
