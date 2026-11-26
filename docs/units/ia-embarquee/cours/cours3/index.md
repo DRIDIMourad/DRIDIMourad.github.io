@@ -274,6 +274,8 @@ Le bon seuil dépend du **coût de chaque erreur** pour l'application. Pour un d
 
 ## 7. La quantification int8
 
+La théorie de la quantification (paramètres S et Z, per-tensor / per-channel, PTQ / QAT) est détaillée au [cours 2](../cours2/index.md). Cette partie se concentre sur ce qu'on règle dans eIQ Portal et sur ce qu'on lit dans les modèles des TP.
+
 **7.1 Pourquoi quantifier ?**
 
 Un modèle entraîné stocke ses poids et ses calculs en **float32** (4 octets par nombre). Sur un microcontrôleur, on passe en **int8** (1 octet) :
@@ -471,7 +473,7 @@ Ce qu'il faut en retenir pour concevoir un modèle :
 - un opérateur non supporté **à la fin** (comme `SOFTMAX`) ne coûte presque rien ;
 - une couche qui traite une grande image (la première) coûte bien plus cher sur le CPU qu'une couche de fin de réseau.
 
-Sur MCX N947, NXP liste comme supportés en int8 (liste de 2024, qui évolue avec les versions) : `ADD`, `AVERAGE_POOL_2D`, `CONV_2D`, `DEPTHWISE_CONV_2D`, `FULLY_CONNECTED`, `LOGISTIC`, `MAX_POOL_2D` ; non supportés : `MUL`, `SOFTMAX`, `SVDF`, `UNIDIRECTIONAL_SEQUENCE_LSTM`. Le détail de l'architecture du NPU est vu au cours 2.
+Sur MCX N947, NXP liste comme supportés en int8 (liste de 2024, qui évolue avec les versions) : `ADD`, `AVERAGE_POOL_2D`, `CONV_2D`, `DEPTHWISE_CONV_2D`, `FULLY_CONNECTED`, `LOGISTIC`, `MAX_POOL_2D` ; non supportés : `MUL`, `SOFTMAX`, `SVDF`, `UNIDIRECTIONAL_SEQUENCE_LSTM`. Le détail de l'architecture du NPU et du repli sur le CPU est vu au [cours 2](../cours2/index.md).
 
 !!! abstract "À retenir"
     Le convertisseur regroupe les couches supportées en `NeutronGraph` (microcode + poids). **Même version de convertisseur et de SDK**, sinon la carte redémarre en boucle. Vérifier le résultat dans Netron.
