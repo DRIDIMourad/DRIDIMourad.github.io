@@ -16,8 +16,8 @@
 (function () {
   "use strict";
 
-  // Pages concernées : /units/<ue>/tp/<tp>/ et /units/<ue>/projet/<projet>/ (pas les listes)
-  var PAGE = /\/units\/[^/]+\/(tp|projet)\/[^/]+\/?(index\.html)?$/;
+  // Pages concernées : /units/<ue>/(cours|tp|td|projet)/<page>/ (pas les listes)
+  var PAGE = /\/units\/[^/]+\/(cours|tp|td|projet)\/[^/]+\/?(index\.html)?$/;
   var DURATION = 350; // ms, garder en phase avec sections.css
 
   var reduceMotion = window.matchMedia &&
