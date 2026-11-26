@@ -4,6 +4,16 @@
 
 Faire tourner un réseau de neurones **sur un microcontrôleur**, sans PC ni cloud : la carte voit une image, la reconnaît en quelques millisecondes grâce à son accélérateur **NPU**, et réagit (LED, message). Dans cette unité, vous entraînez vos propres modèles, vous les adaptez au matériel et vous construisez de vrais petits systèmes intelligents.
 
+<a class="livre3d-teaser" href="livre-3d/">
+  <img src="img/livre3d.svg" alt="Un livre ouvert dont les pages font surgir la carte, le NPU, des fleurs, un feu et des drones">
+  <span class="livre3d-teaser__texte">
+    <span class="livre3d-teaser__kicker">Nouveau · en 3D</span>
+    <strong>Feuilletez l'unité comme un livre pop-up</strong>
+    <span>La carte, le NPU, les cours, les TD, les TP et le projet surgissent des pages : cliquez sur un élément pour ouvrir le chapitre.</span>
+    <span class="livre3d-teaser__bouton">Ouvrir le livre animé →</span>
+  </span>
+</a>
+
 **Ce que vous saurez faire :** entraîner un classifieur d'images, le quantifier en int8, le convertir pour le NPU eIQ Neutron, l'intégrer dans un firmware et le faire réagir au monde réel.
 
 **Matériel :** carte NXP FRDM-MCXN947, MCUXpresso IDE, eIQ Toolkit, Netron.
