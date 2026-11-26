@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 270" font-family="IBM Plex Sans, Arial, sans-serif" font-size="14">
+  <rect width="760" height="270" fill="#ffffff"/>
+  <text x="380" y="26" text-anchor="middle" font-size="17" font-weight="bold" fill="#1f2937">Où vivent les données pendant une inférence (MCX N947)</text>
+  <rect x="30" y="55" width="200" height="150" rx="10" fill="#fee2e2" stroke="#dc2626"/>
+  <text x="130" y="82" text-anchor="middle" font-weight="bold">Flash (2 Mo)</text>
+  <text x="130" y="108" text-anchor="middle">code + TFLite Micro</text>
+  <text x="130" y="130" text-anchor="middle">modèle .tflite :</text>
+  <text x="130" y="150" text-anchor="middle">poids int8, microcode</text>
+  <text x="130" y="185" text-anchor="middle" fill="#7f1d1d">lecture seule, lente</text>
+  <rect x="280" y="55" width="200" height="150" rx="10" fill="#dbeafe" stroke="#3b82f6"/>
+  <text x="380" y="82" text-anchor="middle" font-weight="bold">SRAM (512 Ko)</text>
+  <text x="380" y="108" text-anchor="middle">tensor arena :</text>
+  <text x="380" y="130" text-anchor="middle">activations int8,</text>
+  <text x="380" y="150" text-anchor="middle">tampons intermédiaires</text>
+  <text x="380" y="185" text-anchor="middle" fill="#1e3a8a">lecture / écriture</text>
+  <rect x="530" y="55" width="200" height="150" rx="10" fill="#dcfce7" stroke="#16a34a"/>
+  <text x="630" y="82" text-anchor="middle" font-weight="bold">Mémoire du NPU</text>
+  <text x="630" y="108" text-anchor="middle">tuiles de poids et</text>
+  <text x="630" y="130" text-anchor="middle">d'activations en cours</text>
+  <text x="630" y="150" text-anchor="middle">de calcul</text>
+  <text x="630" y="185" text-anchor="middle" fill="#14532d">petite, très rapide</text>
+  <path d="M230 130 L278 130" stroke="#374151" stroke-width="2" marker-end="url(#m)"/>
+  <path d="M480 120 L528 120" stroke="#374151" stroke-width="2" marker-end="url(#m)"/>
+  <path d="M528 140 L482 140" stroke="#374151" stroke-width="2" marker-end="url(#m)"/>
+  <text x="505" y="105" text-anchor="middle" font-size="12" fill="#374151">DMA</text>
+  <text x="380" y="240" text-anchor="middle" fill="#374151">Déplacer une donnée coûte souvent plus cher (temps, énergie) que la multiplier :</text>
+  <text x="380" y="258" text-anchor="middle" fill="#374151">un bon NPU réutilise chaque octet chargé le plus de fois possible.</text>
+  <defs><marker id="m" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#374151"/></marker></defs>
+</svg>

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 230" font-family="IBM Plex Sans, Arial, sans-serif" font-size="14">
+  <rect width="760" height="230" fill="#ffffff"/>
+  <text x="380" y="26" text-anchor="middle" font-size="17" font-weight="bold" fill="#1f2937">Quantification affine : réel ↔ entier int8</text>
+  <text x="40" y="70" fill="#1e3a8a" font-weight="bold">float32</text>
+  <line x1="120" y1="65" x2="720" y2="65" stroke="#3b82f6" stroke-width="3"/>
+  <text x="120" y="88" text-anchor="middle">−6,0</text><text x="420" y="88" text-anchor="middle">0,0</text><text x="720" y="88" text-anchor="middle">+6,0</text>
+  <line x1="420" y1="58" x2="420" y2="72" stroke="#1f2937"/>
+  <text x="40" y="170" fill="#7c2d12" font-weight="bold">int8</text>
+  <line x1="120" y1="165" x2="720" y2="165" stroke="#d97706" stroke-width="3"/>
+  <g stroke="#d97706"><line x1="120" y1="158" x2="120" y2="172"/><line x1="180" y1="158" x2="180" y2="172"/><line x1="240" y1="158" x2="240" y2="172"/><line x1="300" y1="158" x2="300" y2="172"/><line x1="360" y1="158" x2="360" y2="172"/><line x1="420" y1="158" x2="420" y2="172"/><line x1="480" y1="158" x2="480" y2="172"/><line x1="540" y1="158" x2="540" y2="172"/><line x1="600" y1="158" x2="600" y2="172"/><line x1="660" y1="158" x2="660" y2="172"/><line x1="720" y1="158" x2="720" y2="172"/></g>
+  <text x="120" y="192" text-anchor="middle">−128</text><text x="420" y="192" text-anchor="middle">Z = 0</text><text x="720" y="192" text-anchor="middle">+127</text>
+  <path d="M120 70 L120 158 M420 70 L420 158 M720 70 L720 158" stroke="#9ca3af" stroke-dasharray="4 4"/>
+  <rect x="130" y="104" width="500" height="28" fill="#ffffff"/>
+  <text x="230" y="123" text-anchor="middle" fill="#374151">q = round(x / S) + Z</text>
+  <text x="400" y="123" text-anchor="middle" fill="#374151">x ≈ S · (q − Z)</text>
+  <text x="550" y="123" text-anchor="middle" fill="#374151">ici S = 12 / 255 ≈ 0,047</text>
+  <text x="380" y="218" text-anchor="middle" fill="#6b7280">256 niveaux seulement : chaque valeur réelle est arrondie au niveau le plus proche (erreur ≤ S/2).</text>
+</svg>
