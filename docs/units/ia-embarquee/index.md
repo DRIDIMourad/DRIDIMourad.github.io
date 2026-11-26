@@ -16,6 +16,12 @@ Faire tourner un réseau de neurones **sur un microcontrôleur**, sans PC ni clo
 
     LED RGB, boutons, puis les tâches FreeRTOS d'un drone.
 
+-   ![Tâches FreeRTOS et MobileNet sur le NPU](img/td2.svg)
+
+    **[TD2 : FreeRTOS en profondeur et MobileNet sur le NPU](td/td2/index.md)**
+
+    Tick, files, mutex, charge CPU, puis un drone qui voit. Feu tricolore noté.
+
 -   ![Classification sur NPU](img/tp1.svg)
 
     **[TP1 : Classification d'images sur NPU](tp/tp1/index.md)**

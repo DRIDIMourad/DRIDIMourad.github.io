@@ -84,6 +84,7 @@ nav:
           - TDs:
               - units/ia-embarquee/td/index.md
               - "TD1 : Prise en main de la carte, LED, boutons et FreeRTOS": units/ia-embarquee/td/td1/index.md
+              - "TD2 : FreeRTOS en profondeur, MobileNet sur le NPU": units/ia-embarquee/td/td2/index.md
           - TPs:
               - units/ia-embarquee/tp/index.md
               - "TP1 : Classification d'images sur NPU": units/ia-embarquee/tp/tp1/index.md
