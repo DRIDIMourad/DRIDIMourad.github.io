@@ -1,0 +1,2723 @@
+
+<!doctype html>
+<html lang="fr" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Mourad DRIDI, enseignant-chercheur à ESIEE Paris (DISC) et au LIGM (équipe LRT)">
+      
+      
+      
+        <link rel="canonical" href="https://dridimourad.github.io/units/ia-embarquee/tp/tp3/">
+      
+      
+        <link rel="prev" href="../tp2/">
+      
+      
+        <link rel="next" href="../../projet/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../../assets/avatar.jpg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.2">
+    
+    
+      
+        <title>TP3 : Détecter un feu sur le NPU - Mourad DRIDI</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans:300,300i,400,400i,700,700i%7CIBM+Plex+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"IBM Plex Sans";--md-code-font:"IBM Plex Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="../../../../stylesheets/sections.css">
+    
+    <script>__md_scope=new URL("../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#tp3-detecter-un-feu-avec-un-reseau-de-neurones-sur-le-npu-frdm-mcxn947" class="md-skip">
+          Aller au contenu
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="En-tête">
+    <a href="../../../.." title="Mourad DRIDI" class="md-header__button md-logo" aria-label="Mourad DRIDI" data-md-component="logo">
+      
+  <img src="../../../../assets/avatar.jpg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Mourad DRIDI
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              TP3 : Détecter un feu sur le NPU
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Mode sombre"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Mode sombre" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Mode clair"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Mode clair" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Rechercher" placeholder="Rechercher" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Recherche">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Effacer" aria-label="Effacer" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initialisation de la recherche
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+      <nav class="md-header__social" aria-label="Liens">
+        
+          <a href="https://scholar.google.com/citations?user=CFmoyZIAAAAJ&hl=fr" title="Google Scholar" class="md-header__social-link"
+             target="_blank" rel="noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M390.9 298.5s0 .1.1.1c9.2 19.4 14.4 41.1 14.4 64C405.3 445.1 338.5 512 256 512s-149.3-66.9-149.3-149.3c0-22.9 5.2-44.6 14.4-64 1.7-3.6 3.6-7.2 5.6-10.7q6.6-11.4 15-21.3c27.4-32.6 68.5-53.3 114.4-53.3 33.6 0 64.6 11.1 89.6 29.9 9.1 6.9 17.4 14.7 24.8 23.5 5.6 6.6 10.6 13.8 15 21.3 2 3.4 3.8 7 5.5 10.5zm26.4-18.8c-30.1-58.4-91-98.4-161.3-98.4s-131.2 40-161.3 98.4L0 202.7 256 0l256 202.7-94.7 77.1z"/></svg>
+          </a>
+        
+          <a href="https://www.linkedin.com/in/mourad-dridi-285862a8/" title="LinkedIn" class="md-header__social-link"
+             target="_blank" rel="noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3M135.4 416H69V202.2h66.5V416zM102.2 96a38.5 38.5 0 1 1 0 77 38.5 38.5 0 1 1 0-77m282.1 320h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9z"/></svg>
+          </a>
+        
+          <a href="https://www.researchgate.net/profile/Mourad-Dridi/research" title="ResearchGate" class="md-header__social-link"
+             target="_blank" rel="noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M0 32v448h448V32zm262.2 334.4c-6.6 3-33.2 6-50-14.2-9.2-10.6-25.3-33.3-42.2-63.6-8.9 0-14.7 0-21.4-.6v46.4c0 23.5 6 21.2 25.8 23.9v8.1c-6.9-.3-23.1-.8-35.6-.8-13.1 0-26.1.6-33.6.8v-8.1c15.5-2.9 22-1.3 22-23.9V225c0-22.6-6.4-21-22-23.9V193c25.8 1 53.1-.6 70.9-.6 31.7 0 55.9 14.4 55.9 45.6 0 21.1-16.7 42.2-39.2 47.5 13.6 24.2 30 45.6 42.2 58.9 7.2 7.8 17.2 14.7 27.2 14.7zm22.9-135c-23.3 0-32.2-15.7-32.2-32.2V167c0-12.2 8.8-30.4 34-30.4s30.4 17.9 30.4 17.9l-10.7 7.2s-5.5-12.5-19.7-12.5c-7.9 0-19.7 7.3-19.7 19.7v26.8c0 13.4 6.6 23.3 17.9 23.3 14.1 0 21.5-10.9 21.5-26.8h-17.9v-10.7h30.4c0 20.5 4.7 49.9-34 49.9m-116.5 44.7c-9.4 0-13.6-.3-20-.8v-69.7c6.4-.6 15-.6 22.5-.6 23.3 0 37.2 12.2 37.2 34.5 0 21.9-15 36.6-39.7 36.6"/></svg>
+          </a>
+        
+          <a href="mailto:mourad.dridi@univ-eiffel.fr" title="E-mail" class="md-header__social-link"
+             >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m20 8-8 5-8-5V6l8 5 8-5m0-2H4c-1.11 0-2 .89-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2"/></svg>
+          </a>
+        
+      </nav>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Onglets" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Accueil
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../research/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Recherche
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Enseignements
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../.." title="Mourad DRIDI" class="md-nav__button md-logo" aria-label="Mourad DRIDI" data-md-component="logo">
+      
+  <img src="../../../../assets/avatar.jpg" alt="logo">
+
+    </a>
+    Mourad DRIDI
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Accueil
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../research/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Recherche
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Recherche
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../research/npsim/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NPSIM
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../research/projets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Projets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../research/encadrement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Stages encadrés
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Enseignements
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Enseignements
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IA embarquée
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_2" id="__nav_3_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    IA embarquée
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../td/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TDs
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_2_2" id="__nav_3_2_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    TDs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../td/td1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TD1 : Prise en main de la carte, LED, boutons et FreeRTOS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2_3" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TPs
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_2_3" id="__nav_3_2_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_2_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    TPs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tp1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TP1 : Classification d'images sur NPU
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tp2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TP2 : Entraîner son modèle avec eIQ Portal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TP3 : Détecter un feu sur le NPU
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TP3 : Détecter un feu sur le NPU
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#objectifs-prerequis-et-deroule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Objectifs, prérequis et déroulé
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-0-le-principe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 0 — Le principe
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-1-preparer-le-jeu-de-donnees" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 1 — Préparer le jeu de données
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-2-creer-le-projet-eiq-portal-et-importer-les-images" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 2 — Créer le projet eIQ Portal et importer les images
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-3-choisir-le-modele-de-base-et-entrainer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 3 — Choisir le modèle de base et entraîner
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-4-valider-feux-manques-et-fausses-alarmes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 4 — Valider : feux manqués et fausses alarmes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-5-exporter-en-int8-et-convertir-pour-le-npu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 5 — Exporter en int8 et convertir pour le NPU
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-6-integrer-le-modele-dans-le-projet-label_image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 6 — Intégrer le modèle dans le projet label_image
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-7-ajouter-lalerte-led-rouge-ou-verte" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 7 — Ajouter l'alerte : LED rouge ou verte
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-8-tester-plusieurs-images-avec-le-bouton-sw2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 8 — Tester plusieurs images avec le bouton SW2
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-9-tester-sur-la-carte-et-choisir-le-seuil-dalerte" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 9 — Tester sur la carte et choisir le seuil d'alerte
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bonus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bonus
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#depannage-synthese-et-sources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dépannage, synthèse et sources
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#annexe-telechargement-de-secours-du-jeu-de-donnees" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Annexe — Téléchargement de secours du jeu de données
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../projet/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Projets
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_2_4" id="__nav_3_2_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Projets
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../projet/projet1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Projet 1 : Flotte de drones de détection d'accidents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../livre-3d/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Livre animé 3D
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../3r-tr1/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3R-TR1 · Physique pour la transition énergétique
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_3" id="__nav_3_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    3R-TR1 · Physique pour la transition énergétique
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../3r-tr1/cours/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cours
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_3_2" id="__nav_3_3_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Cours
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../3r-tr1/cours/cm1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CM1 : Systèmes de numération et arithmétique binaire
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#objectifs-prerequis-et-deroule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Objectifs, prérequis et déroulé
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-0-le-principe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 0 — Le principe
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-1-preparer-le-jeu-de-donnees" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 1 — Préparer le jeu de données
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-2-creer-le-projet-eiq-portal-et-importer-les-images" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 2 — Créer le projet eIQ Portal et importer les images
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-3-choisir-le-modele-de-base-et-entrainer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 3 — Choisir le modèle de base et entraîner
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-4-valider-feux-manques-et-fausses-alarmes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 4 — Valider : feux manqués et fausses alarmes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-5-exporter-en-int8-et-convertir-pour-le-npu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 5 — Exporter en int8 et convertir pour le NPU
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-6-integrer-le-modele-dans-le-projet-label_image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 6 — Intégrer le modèle dans le projet label_image
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-7-ajouter-lalerte-led-rouge-ou-verte" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 7 — Ajouter l'alerte : LED rouge ou verte
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-8-tester-plusieurs-images-avec-le-bouton-sw2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 8 — Tester plusieurs images avec le bouton SW2
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-9-tester-sur-la-carte-et-choisir-le-seuil-dalerte" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 9 — Tester sur la carte et choisir le seuil d'alerte
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bonus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bonus
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#depannage-synthese-et-sources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dépannage, synthèse et sources
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#annexe-telechargement-de-secours-du-jeu-de-donnees" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Annexe — Téléchargement de secours du jeu de données
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="tp3-detecter-un-feu-avec-un-reseau-de-neurones-sur-le-npu-frdm-mcxn947">TP3 : Détecter un feu avec un réseau de neurones sur le NPU (FRDM-MCXN947)</h1>
+<h2 id="objectifs-prerequis-et-deroule">Objectifs, prérequis et déroulé</h2>
+<p>Au TP2, vous avez entraîné un classifieur de fleurs. Dans ce TP, on applique <strong>la même méthode</strong> à un problème utile : reconnaître sur une image <strong>la présence d'un feu</strong>. Le modèle a deux classes, <code>feu</code> et <code>pas_de_feu</code>. Vous l'entraînez dans eIQ Portal, vous le convertissez pour le NPU Neutron, puis vous le faites tourner sur la FRDM-MCXN947. Nouveauté par rapport au TP2 : la carte <strong>réagit</strong> au résultat, avec une LED rouge (alerte) ou verte (pas de feu).</p>
+<p><strong>Ce qui change par rapport au TP2</strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>TP2</th>
+<th>TP3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Classes</td>
+<td>5 fleurs</td>
+<td><code>feu</code>, <code>pas_de_feu</code></td>
+</tr>
+<tr>
+<td>Jeu de données</td>
+<td>flower_photos (TensorFlow)</td>
+<td>FIRE-SMOKE-DATASET (photos de feux et de scènes sans feu)</td>
+</tr>
+<tr>
+<td>Ce qu'on regarde à la validation</td>
+<td>La précision</td>
+<td>Les <strong>fausses alarmes</strong> et surtout les <strong>feux manqués</strong></td>
+</tr>
+<tr>
+<td>Sur la carte</td>
+<td>Affichage de la classe</td>
+<td>Affichage + <strong>LED d'alerte</strong> et <strong>seuil d'alerte</strong> réglable</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Un exercice, pas un détecteur incendie.</strong> Le modèle regarde une seule image et peut se tromper : un coucher de soleil ou une lampe orange peuvent déclencher l'alerte, un feu caché par la fumée peut passer inaperçu. Un vrai système de sécurité incendie utilise des capteurs certifiés (fumée, chaleur). On verra pourquoi en fin de TP.</p>
+<p><strong>Matériel</strong></p>
+<ul>
+<li>Carte NXP FRDM-MCXN947, câble USB-C sur le connecteur <strong>MCU-Link (J17)</strong>.</li>
+</ul>
+<p><strong>Logiciel (le même qu'au TP2)</strong></p>
+<ul>
+<li>MCUXpresso IDE et le <strong>SDK FRDM-MCXN947 2.14.0</strong> avec le composant <strong>eIQ</strong>.</li>
+<li>eIQ Toolkit 1.17 (eIQ Portal + Model Tool + convertisseur Neutron réglé sur <strong>MCUXpresso SDK 2.14.0</strong>, voir TP2 partie 7.1).</li>
+<li>Python 3 avec <code>pip install opencv-python numpy</code>.</li>
+<li>Netron (<a href="https://netron.app">netron.app</a>).</li>
+<li>Environ 700 Mo de disque libre pour le jeu de données (archive de 320 Mo + images extraites).</li>
+</ul>
+<p><strong>Déroulé</strong></p>
+<table>
+<thead>
+<tr>
+<th>Partie</th>
+<th>Contenu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>Le principe : faux positifs et faux négatifs</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Préparer le jeu de données (feu / pas de feu)</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Créer le projet eIQ Portal et importer les images</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Choisir le modèle de base et entraîner</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Valider : feux manqués et fausses alarmes</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Exporter en int8 et convertir pour le NPU</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Intégrer le modèle dans le projet label_image</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Ajouter l'alerte : LED rouge ou verte</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Tester plusieurs images avec le bouton SW2</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Tester sur la carte et choisir le seuil d'alerte</td>
+</tr>
+<tr>
+<td>Bonus</td>
+<td>Fumée, CPU contre NPU, vos propres photos</td>
+</tr>
+</tbody>
+</table>
+<h2 id="partie-0-le-principe">Partie 0 — Le principe</h2>
+<p>On enchaîne exactement les mêmes étapes qu'au TP2 :</p>
+<table>
+<thead>
+<tr>
+<th>Étape</th>
+<th>Outil</th>
+<th>Ce qu'on obtient</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Préparer les images</td>
+<td>Script Python</td>
+<td>Dossier <code>dataset_feu/</code> avec <code>train/</code> et <code>test/</code>, un sous-dossier par classe</td>
+</tr>
+<tr>
+<td>Entraîner et valider</td>
+<td>eIQ Portal</td>
+<td>Un modèle float32 et sa matrice de confusion</td>
+</tr>
+<tr>
+<td>Exporter</td>
+<td>eIQ Portal (DEPLOY)</td>
+<td><code>feu_int8.tflite</code> : modèle quantifié int8</td>
+</tr>
+<tr>
+<td>Convertir</td>
+<td>Model Tool</td>
+<td><code>feu_npu.tflite</code> : les couches compatibles regroupées dans un <code>NeutronGraph</code></td>
+</tr>
+<tr>
+<td>Déployer</td>
+<td>MCUXpresso IDE</td>
+<td>Le firmware <code>tflm_label_image</code> avec votre modèle, vos 2 classes, une image de test et la LED d'alerte</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Deux sortes d'erreurs</strong></p>
+<p>Avec deux classes, le modèle peut se tromper de deux façons, et elles n'ont pas du tout le même coût :</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Le modèle dit <code>feu</code></th>
+<th>Le modèle dit <code>pas_de_feu</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Il y a un feu</strong></td>
+<td>Vrai positif (VP) : alerte justifiée</td>
+<td><strong>Faux négatif (FN) : feu manqué</strong></td>
+</tr>
+<tr>
+<td><strong>Il n'y a pas de feu</strong></td>
+<td>Faux positif (FP) : fausse alarme</td>
+<td>Vrai négatif (VN) : rien à signaler</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Une <strong>fausse alarme</strong> dérange, mais on peut vérifier.</li>
+<li>Un <strong>feu manqué</strong> peut être grave.</li>
+</ul>
+<p>Pour un détecteur de feu, on préfère donc quelques fausses alarmes plutôt que des feux manqués. On mesurera les deux à la partie 4, et on réglera le compromis avec le <strong>seuil d'alerte</strong> à la partie 9.</p>
+<p><strong>Deux nombres à connaître</strong></p>
+<ul>
+<li><strong>Rappel</strong> (ou sensibilité) de la classe <code>feu</code> : la part des feux que le modèle trouve. Rappel = VP / (VP + FN). Un rappel de 95 % veut dire que 5 feux sur 100 sont manqués.</li>
+<li><strong>Taux de fausses alarmes</strong> : la part des images sans feu prises pour un feu. Taux = FP / (FP + VN).</li>
+</ul>
+<h2 id="partie-1-preparer-le-jeu-de-donnees">Partie 1 — Préparer le jeu de données</h2>
+<p>On utilise <strong>FIRE-SMOKE-DATASET</strong> (DeepQuestAI, publié sur GitHub). Il contient 3 000 photos réparties en trois classes de 1 000 : <code>Fire</code> (feux de bâtiments, de voitures, de forêt…), <code>Smoke</code> (fumée) et <code>Neutral</code> (scènes sans feu : bureaux, rues, cuisines, magasins…). On garde <code>Fire</code> et <code>Neutral</code> pour nos deux classes. Quelques photos de <code>Smoke</code> serviront de piège sur la carte.</p>
+<p>Le script ci-dessous prend <strong>500 images par classe</strong> (400 pour l'entraînement, 100 pour le test), les recadre en carré et les réduit en 128 × 128, comme au TP2. Il retire aussi les images en double : le jeu d'origine contient 60 photos de feu présentes deux fois, qui pourraient se retrouver à la fois en <em>train</em> et en <em>test</em> et fausser la mesure.</p>
+<p><strong>1.1 Le format attendu par eIQ Portal</strong></p>
+<p>Même format qu'au TP2 : un dossier <code>train</code> et un dossier <code>test</code>, et dans chacun un dossier par classe.</p>
+<div class="highlight"><pre><span></span><code>dataset_feu/             &lt;- le dossier à sélectionner dans eIQ Portal
+├── train/
+│   ├── feu/             (400 images)
+│   └── pas_de_feu/      (400 images)
+└── test/
+    ├── feu/             (100 images)
+    └── pas_de_feu/      (100 images)
+</code></pre></div>
+<p><strong>1.2 Le script de préparation</strong></p>
+<ol>
+<li>Créer un dossier de travail, par exemple <code>C:\TP3-IA\</code>.</li>
+<li>Y enregistrer le script <code>prepare_dataset_feu.py</code> ci-dessous.</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="c1"># prepare_dataset_feu.py : telecharge FIRE-SMOKE-DATASET et cree dataset_feu/ pour eIQ Portal</span>
+<span class="c1"># Usage : python prepare_dataset_feu.py [nombre_images_par_classe]</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span><span class="o">,</span><span class="w"> </span><span class="nn">sys</span><span class="o">,</span><span class="w"> </span><span class="nn">random</span><span class="o">,</span><span class="w"> </span><span class="nn">shutil</span><span class="o">,</span><span class="w"> </span><span class="nn">zipfile</span><span class="o">,</span><span class="w"> </span><span class="nn">hashlib</span><span class="o">,</span><span class="w"> </span><span class="nn">urllib.request</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
+
+<span class="n">URL</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"https://github.com/DeepQuestAI/Fire-Smoke-Dataset/"</span>
+       <span class="s2">"releases/download/v1/FIRE-SMOKE-DATASET.zip"</span><span class="p">)</span>
+<span class="n">ZIP</span> <span class="o">=</span> <span class="s2">"FIRE-SMOKE-DATASET.zip"</span>
+<span class="n">SRC</span> <span class="o">=</span> <span class="s2">"FIRE-SMOKE-DATASET"</span>
+<span class="n">N_PAR_CLASSE</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="mi">500</span>
+<span class="n">PART_TEST</span> <span class="o">=</span> <span class="mf">0.2</span>          <span class="c1"># 20 % des images dans test/</span>
+<span class="n">N_CARTE</span> <span class="o">=</span> <span class="mi">3</span>              <span class="c1"># photos gardees a part pour tester sur la carte</span>
+<span class="n">TAILLE</span> <span class="o">=</span> <span class="mi">128</span>             <span class="c1"># taille d'entree du modele</span>
+<span class="n">NOMS</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"Fire"</span><span class="p">:</span> <span class="s2">"feu"</span><span class="p">,</span> <span class="s2">"Neutral"</span><span class="p">:</span> <span class="s2">"pas_de_feu"</span><span class="p">}</span>   <span class="c1"># Smoke : seulement pour la carte</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">carre_128</span><span class="p">(</span><span class="n">chemin</span><span class="p">):</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">chemin</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">img</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">h</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>                          <span class="c1"># recadrage carre centre</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">img</span><span class="p">[(</span><span class="n">h</span> <span class="o">-</span> <span class="n">c</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">:(</span><span class="n">h</span> <span class="o">-</span> <span class="n">c</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">c</span><span class="p">,</span> <span class="p">(</span><span class="n">w</span> <span class="o">-</span> <span class="n">c</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">:(</span><span class="n">w</span> <span class="o">-</span> <span class="n">c</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">c</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="p">(</span><span class="n">TAILLE</span><span class="p">,</span> <span class="n">TAILLE</span><span class="p">),</span> <span class="n">interpolation</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">INTER_AREA</span><span class="p">)</span>
+
+<span class="c1"># 1. Telechargement (environ 320 Mo, une seule fois)</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">SRC</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">ZIP</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Telechargement de </span><span class="si">%s</span><span class="s2"> (320 Mo) ..."</span> <span class="o">%</span> <span class="n">ZIP</span><span class="p">)</span>
+        <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span><span class="n">URL</span><span class="p">,</span> <span class="n">ZIP</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Decompression ..."</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">ZIP</span><span class="p">)</span> <span class="k">as</span> <span class="n">z</span><span class="p">:</span>
+        <span class="n">z</span><span class="o">.</span><span class="n">extractall</span><span class="p">(</span><span class="s2">"."</span><span class="p">)</span>
+
+<span class="c1"># 2. dataset_feu/train/&lt;classe&gt; et dataset_feu/test/&lt;classe&gt;</span>
+<span class="c1">#    + quelques photos pour la carte</span>
+<span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"dataset_feu"</span><span class="p">,</span> <span class="s2">"photos_carte"</span><span class="p">):</span>      <span class="c1"># repart de zero</span>
+    <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="s2">"photos_carte"</span><span class="p">)</span>
+<span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>           <span class="c1"># meme tirage pour tout le monde</span>
+<span class="k">for</span> <span class="n">en</span><span class="p">,</span> <span class="n">fr</span> <span class="ow">in</span> <span class="n">NOMS</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">fichiers</span><span class="p">,</span> <span class="n">vus</span> <span class="o">=</span> <span class="p">[],</span> <span class="nb">set</span><span class="p">()</span>   <span class="c1"># on regroupe les images Train et Test d'origine</span>
+    <span class="k">for</span> <span class="n">groupe</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"Train"</span><span class="p">,</span> <span class="s2">"Test"</span><span class="p">):</span>
+        <span class="n">dossier</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">SRC</span><span class="p">,</span> <span class="n">groupe</span><span class="p">,</span> <span class="n">en</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">dossier</span><span class="p">)):</span>
+            <span class="n">chemin</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dossier</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+            <span class="n">empreinte</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">chemin</span><span class="p">,</span> <span class="s2">"rb"</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">empreinte</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">vus</span><span class="p">:</span>       <span class="c1"># on ignore les images en double</span>
+                <span class="n">vus</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">empreinte</span><span class="p">)</span>
+                <span class="n">fichiers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">chemin</span><span class="p">)</span>
+    <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">fichiers</span><span class="p">)</span>
+    <span class="n">n_test</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">N_PAR_CLASSE</span> <span class="o">*</span> <span class="n">PART_TEST</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">chemin</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">fichiers</span><span class="p">[:</span><span class="n">N_PAR_CLASSE</span><span class="p">]):</span>
+        <span class="n">groupe</span> <span class="o">=</span> <span class="s2">"test"</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n_test</span> <span class="k">else</span> <span class="s2">"train"</span>
+        <span class="n">dossier</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">"dataset_feu"</span><span class="p">,</span> <span class="n">groupe</span><span class="p">,</span> <span class="n">fr</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">dossier</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">carre_128</span><span class="p">(</span><span class="n">chemin</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">img</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">cv2</span><span class="o">.</span><span class="n">imwrite</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dossier</span><span class="p">,</span> <span class="s2">"</span><span class="si">%s</span><span class="s2">_</span><span class="si">%03d</span><span class="s2">.jpg"</span> <span class="o">%</span> <span class="p">(</span><span class="n">fr</span><span class="p">,</span> <span class="n">i</span><span class="p">)),</span> <span class="n">img</span><span class="p">)</span>
+    <span class="c1"># photos jamais vues par eIQ Portal, pour le test sur la carte</span>
+    <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">chemin</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">fichiers</span><span class="p">[</span><span class="n">N_PAR_CLASSE</span><span class="p">:</span><span class="n">N_PAR_CLASSE</span> <span class="o">+</span> <span class="n">N_CARTE</span><span class="p">]):</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">carre_128</span><span class="p">(</span><span class="n">chemin</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">img</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">cv2</span><span class="o">.</span><span class="n">imwrite</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">"photos_carte"</span><span class="p">,</span> <span class="s2">"</span><span class="si">%s</span><span class="s2">_</span><span class="si">%d</span><span class="s2">.jpg"</span> <span class="o">%</span> <span class="p">(</span><span class="n">fr</span><span class="p">,</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)),</span> <span class="n">img</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="si">%-10s</span><span class="s2"> : </span><span class="si">%d</span><span class="s2"> train, </span><span class="si">%d</span><span class="s2"> test"</span> <span class="o">%</span> <span class="p">(</span><span class="n">fr</span><span class="p">,</span> <span class="n">N_PAR_CLASSE</span> <span class="o">-</span> <span class="n">n_test</span><span class="p">,</span> <span class="n">n_test</span><span class="p">))</span>
+<span class="c1"># 3. trois photos de fumee sans flammes : un piege pour le test sur la carte</span>
+<span class="n">dossier</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">SRC</span><span class="p">,</span> <span class="s2">"Test"</span><span class="p">,</span> <span class="s2">"Smoke"</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">dossier</span><span class="p">))[:</span><span class="n">N_CARTE</span><span class="p">]):</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">carre_128</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dossier</span><span class="p">,</span> <span class="n">f</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">img</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cv2</span><span class="o">.</span><span class="n">imwrite</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">"photos_carte"</span><span class="p">,</span> <span class="s2">"fumee_</span><span class="si">%d</span><span class="s2">.jpg"</span> <span class="o">%</span> <span class="p">(</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)),</span> <span class="n">img</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Termine : importer le dossier dataset_feu dans eIQ Portal"</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>1.3 Lancer le script</strong></p>
+<ol>
+<li>Ouvrir un terminal (Invite de commandes ou Git Bash) dans <code>C:\TP3-IA\</code>.</li>
+<li>Lancer : <code>python prepare_dataset_feu.py</code></li>
+<li>Le téléchargement (320 Mo) prend quelques minutes. S'il échoue (lien GitHub inaccessible, proxy de l'établissement), voir l'<a href="#annexe-telechargement-de-secours-du-jeu-de-donnees">annexe</a>. Le script affiche ensuite :</li>
+</ol>
+<div class="highlight"><pre><span></span><code>feu        : 400 train, 100 test
+pas_de_feu : 400 train, 100 test
+Termine : importer le dossier dataset_feu dans eIQ Portal
+</code></pre></div>
+<p>Le dossier de travail contient alors :</p>
+<div class="highlight"><pre><span></span><code>C:\TP3-IA\
+├── prepare_dataset_feu.py
+├── FIRE-SMOKE-DATASET.zip
+├── FIRE-SMOKE-DATASET\   (photos d'origine, ne PAS importer)
+├── photos_carte\         (9 photos pour tester sur la carte, ne PAS importer)
+│                          feu_1..3, pas_de_feu_1..3, fumee_1..3
+└── dataset_feu\          (LE dossier à importer dans eIQ Portal)
+    ├── train\
+    └── test\
+</code></pre></div>
+<p><strong>1.4 Regarder les images</strong></p>
+<p>Ouvrir quelques images de <code>dataset_feu\train\feu</code> et de <code>dataset_feu\train\pas_de_feu</code>.</p>
+<p><strong>Questions :</strong></p>
+<ol>
+<li>Les images <code>pas_de_feu</code> contiennent-elles des choses orange ou lumineuses (soleil, lampes, phares) ?</li>
+<li>Si le jeu <code>pas_de_feu</code> ne contient presque que des intérieurs et des rues en plein jour, que risque d'apprendre le modèle ? (Indice : « orange et lumineux = feu ».)</li>
+</ol>
+<h2 id="partie-2-creer-le-projet-eiq-portal-et-importer-les-images">Partie 2 — Créer le projet eIQ Portal et importer les images</h2>
+<ol>
+<li>Lancer <strong>eIQ Portal</strong>, cliquer <strong>CREATE PROJECT</strong>, puis <strong>IMPORT DATASET</strong>.</li>
+<li>Choisir <strong>Structured folders</strong> et sélectionner <code>C:\TP3-IA\dataset_feu</code> (le dossier qui contient <strong><code>train</code> et <code>test</code></strong>). Cliquer <strong>IMPORT</strong>.</li>
+<li>Nommer le projet <code>TP3_feu</code>, puis <strong>Save</strong>.</li>
+</ol>
+<p><strong>Checkpoint dans le Data Set Curator :</strong></p>
+<ul>
+<li><strong>2 labels</strong> : <code>feu</code> et <code>pas_de_feu</code>, chacun avec <strong>400</strong> images en <em>Train</em>, <strong>100</strong> en <em>Test</em> et <strong>500</strong> au <em>Total</em> ;</li>
+<li><strong>Unlabeled Images : 0</strong> et <strong>All Images : 1000</strong>.</li>
+</ul>
+<p><img alt="Data Set Curator : bon import" src="img/01_curator.png" /></p>
+<p><em>Figure 1 — Bon import : 2 labels, 400 images en Train et 100 en Test pour chacun, 1 000 images au total, aucune image sans label.</em></p>
+<p>Si vous voyez les labels <code>test</code> et <code>train</code>, ou <em>Unlabeled Images : 1000</em>, vous avez sélectionné le mauvais dossier : voir le TP2, partie 2.</p>
+<h2 id="partie-3-choisir-le-modele-de-base-et-entrainer">Partie 3 — Choisir le modèle de base et entraîner</h2>
+<p><strong>3.1 Modèle de base</strong></p>
+<p>Cliquer <strong>SELECT MODEL</strong> et répondre comme au TP2 : <strong>Classification</strong>, <strong>Performance</strong>, <strong>MCU</strong>. eIQ Portal propose le même petit MobileNet V2 (Alpha 0.35).</p>
+<p><strong>3.2 Réglages du Trainer</strong></p>
+<table>
+<thead>
+<tr>
+<th>Paramètre</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Weight Initialization</strong></td>
+<td><code>imagenet</code> (par défaut)</td>
+</tr>
+<tr>
+<td><strong>Input Size</strong></td>
+<td><code>128,128,3</code></td>
+</tr>
+<tr>
+<td><strong>Learning Rate</strong></td>
+<td><code>0.0001</code> (par défaut)</td>
+</tr>
+<tr>
+<td><strong>Batch Size</strong></td>
+<td><code>10</code> (par défaut)</td>
+</tr>
+<tr>
+<td><strong>Epochs To Train</strong></td>
+<td><code>10</code></td>
+</tr>
+</tbody>
+</table>
+<p>Laisser le reste par défaut et cliquer <strong>START TRAINING</strong>. Avec 800 images d'entraînement (contre 1 200 au TP2), l'entraînement est plus court : environ <strong>1 min 30</strong> (84 s) lors de notre essai.</p>
+<p><strong>3.3 Lire les courbes</strong></p>
+<p>Comme au TP2, regarder <strong>Train Accuracy</strong> et surtout <strong>Evaluation Accuracy</strong> (images de test).</p>
+<p><img alt="Courbe de précision" src="img/02_trainer_precision.png" /></p>
+<p><em>Figure 2 — Précision (Metric) sur 10 époques : la précision d'entraînement (ligne) dépasse 0,95 dès la 2e époque et finit près de 1 ; la précision d'évaluation (points) reste entre 0,8 et 0,9.</em></p>
+<p><img alt="Courbe de perte" src="img/03_trainer_perte.png" /></p>
+<p><em>Figure 3 — Perte (Loss) : la perte d'entraînement (ligne) descend de 0,35 à 0,03 ; la perte d'évaluation (points) reste autour de 0,1 à 0,12.</em></p>
+<p><strong>Comment lire les figures 2 et 3 :</strong> avec 2 classes très différentes, le modèle apprend très vite, dès la 2e époque. Ensuite la courbe d'entraînement continue de s'améliorer, mais l'évaluation ne progresse plus : c'est encore le début du <strong>surapprentissage</strong>, comme au TP2. Ici, 3 ou 4 époques suffiraient.</p>
+<table>
+<thead>
+<tr>
+<th>Époque</th>
+<th>Train Accuracy</th>
+<th>Evaluation Accuracy</th>
+<th>Train Loss</th>
+<th>Evaluation Loss</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>5</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>10</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Question :</strong> avec seulement 2 classes, la précision est-elle plus haute ou plus basse qu'au TP2 ? Un modèle qui répondrait <strong>toujours</strong> <code>feu</code> aurait quelle précision sur ce jeu de test ? Que montre ce chiffre sur l'intérêt de la précision seule ?</p>
+<h2 id="partie-4-valider-feux-manques-et-fausses-alarmes">Partie 4 — Valider : feux manqués et fausses alarmes</h2>
+<ol>
+<li>Cliquer <strong>VALIDATE</strong>, laisser <strong>Input/Output Data Type</strong> sur <code>float32</code> et <strong>Softmax Threshold</strong> à 0, puis cliquer le bouton jaune <strong>VALIDATE</strong>.</li>
+<li>La matrice de confusion n'a plus que 2 lignes et 2 colonnes utiles (ignorer <em>Background</em>). Passer la souris sur une case pour lire le nombre d'images. Recopier les quatre valeurs :</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Prédit <code>feu</code></th>
+<th>Prédit <code>pas_de_feu</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Réel <code>feu</code></strong> (100 images)</td>
+<td>VP =</td>
+<td>FN =</td>
+</tr>
+<tr>
+<td><strong>Réel <code>pas_de_feu</code></strong> (100 images)</td>
+<td>FP =</td>
+<td>VN =</td>
+</tr>
+</tbody>
+</table>
+<p><img alt="Matrice de confusion" src="img/04_confusion.png" /></p>
+<p><em>Figure 4 — Matrice de confusion obtenue lors de notre essai. La ligne <code>feu</code> n'a pas d'erreur visible (case <code>pas_de_feu</code> blanche) : aucun feu manqué. La ligne <code>pas_de_feu</code> a une case rose sous <code>feu</code> : quelques fausses alarmes.</em></p>
+<ol>
+<li>Calculer :<ul>
+<li>le <strong>rappel</strong> de la classe <code>feu</code> : VP / (VP + FN) = ……… % ;</li>
+<li>le <strong>taux de fausses alarmes</strong> : FP / (FP + VN) = ……… % ;</li>
+<li>la <strong>précision globale</strong> : (VP + VN) / 200 = ……… %.</li>
+</ul>
+</li>
+</ol>
+<p><strong>Questions :</strong></p>
+<ol>
+<li>Combien de feux le modèle a-t-il manqués sur 100 ? Combien de fausses alarmes sur 100 images sans feu ?</li>
+<li>Pour un détecteur de feu, laquelle de ces deux erreurs faut-il réduire en priorité ? Pourquoi ?</li>
+<li><strong>Bonus :</strong> activer <strong>Post Training Quantization</strong>, mettre <strong>Input/Output Data Type</strong> sur <code>int8</code> et relancer <strong>VALIDATE</strong>. Le nombre de feux manqués change-t-il avec l'int8 ?</li>
+</ol>
+<h2 id="partie-5-exporter-en-int8-et-convertir-pour-le-npu">Partie 5 — Exporter en int8 et convertir pour le NPU</h2>
+<p><strong>5.1 Exporter</strong> (comme au TP2, partie 6)</p>
+<ol>
+<li><strong>DEPLOY</strong> : <strong>TensorFlow Lite</strong>, <strong>Input Data Type : int8</strong>, <strong>Output Data Type : int8</strong>, <strong>Export Quantized Model</strong> activé, <strong>Per Channel</strong>.</li>
+<li>Vérifier la ligne <strong>Labels</strong> du résumé : <code>feu, pas_de_feu</code>.</li>
+<li><strong>EXPORT MODEL</strong> → <code>C:\TP3-IA\feu_int8.tflite</code>.</li>
+</ol>
+<p><img alt="Export du modèle" src="img/05_export.png" /></p>
+<p><em>Figure 5 — Les réglages d'export : TensorFlow Lite, int8 en entrée et en sortie, modèle quantifié Per Channel. Le résumé indique le modèle de base (mobilenet_v2), les 2 labels <code>feu, pas_de_feu</code>, 10 époques en 84 s.</em></p>
+<ol>
+<li><strong>Checkpoint Netron :</strong> entrée <code>int8</code> <code>[1, 128, 128, 3]</code>, sortie <code>[1, 2]</code>.</li>
+</ol>
+<p><strong>5.2 Vérifier les versions</strong> (comme au TP2, partie 7.1)</p>
+<p>La version du SDK FRDM-MCXN947 dans MCUXpresso IDE (<strong>Installed SDKs</strong>) et celle du <strong>Neutron converter</strong> dans eIQ Portal (<strong>SETTINGS</strong>) doivent être identiques (ici <strong>2.14.0</strong>). Sinon, la carte redémarre en boucle au chargement du modèle.</p>
+<p><strong>5.3 Convertir</strong></p>
+<ol>
+<li><strong>MODEL TOOL</strong> → <strong>File → Open</strong> : <code>feu_int8.tflite</code>.</li>
+<li><strong>File → Convert → TensorFlow Lite for Neutron (.tflite)</strong>. Vérifier que le chemin du convertisseur contient <strong>2.14.0</strong>.</li>
+<li><strong>Neutron target : mcxn94x</strong>, <strong>Custom options</strong> vide, <strong>Convert</strong> → <code>C:\TP3-IA\feu_npu.tflite</code>.</li>
+</ol>
+<p>En ligne de commande :</p>
+<div class="highlight"><pre><span></span><code>neutron-converter --input feu_int8.tflite --output feu_npu.tflite --target mcxn94x
+</code></pre></div>
+<p><strong>5.4 Vérifier dans Netron</strong></p>
+<p>Ouvrir <code>feu_npu.tflite</code>, repérer le <strong><code>NeutronGraph</code></strong> et <strong>noter les opérateurs restés en dehors</strong>. Comparer avec le modèle de fleurs du TP2 : le modèle de base est le même, seule la dernière couche passe de 5 à 2 sorties.</p>
+<table>
+<thead>
+<tr>
+<th>Fichier</th>
+<th>Taille (Ko)</th>
+<th>Opérateurs hors <code>NeutronGraph</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>fleurs_npu.tflite</code> (TP2)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>feu_npu.tflite</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="partie-6-integrer-le-modele-dans-le-projet-label_image">Partie 6 — Intégrer le modèle dans le projet label_image</h2>
+<p>On part d'un projet <code>tflm_label_image</code> <strong>propre</strong>, importé depuis le SDK FRDM-MCXN947 2.14.0 (préfixe <code>TP3-IA</code>), comme au TP2 partie 8.1. Compiler et flasher une première fois pour vérifier qu'il marche (<code>stopwatch</code>). Copier dans un dossier <code>tools/</code> du projet : <code>feu_npu.tflite</code>, <code>swap_model.py</code> et <code>img2c.py</code> (TP1).</p>
+<p><strong>6.1 Remplacer le modèle</strong> (TP2, partie 8.2)</p>
+<ul>
+<li><strong>Cas A, <code>model_data.h</code></strong> :<ol>
+<li>Copier <code>source/model/model_data.h</code> dans <code>tools/model_data_dorigin.h</code>.</li>
+<li><code>python swap_model.py model_data_dorigin.h feu_npu.tflite</code></li>
+<li>Dans le <code>model_data.h</code> créé : <code>#define MODEL_NAME "feu_npu"</code> et <code>kTensorArenaSize</code> à <code>300 * 1024</code> (même modèle de base qu'au TP2, donc même besoin de mémoire).</li>
+<li>Copier ce fichier à la place de <code>source/model/model_data.h</code>.</li>
+</ol>
+</li>
+<li><strong>Cas B, <code>model_data.s</code></strong> : copier <code>feu_npu.tflite</code> dans <code>source/model/</code>, mettre son nom après <code>.incbin</code>, changer <code>MODEL_NAME</code>.</li>
+</ul>
+<p><strong>6.2 Ops resolver.</strong> Dans <code>source/model/model_mobilenet_ops_npu.cpp</code>, une ligne <code>Add...</code> pour chaque opérateur noté en 5.4, plus <code>NEUTRON_GRAPH</code>. Si votre resolver du TP2 marchait, il devrait convenir tel quel : le modèle de base est le même.</p>
+<p><strong>6.3 Les classes.</strong> Dans <code>source/labels.h</code>, remplacer le contenu du tableau par :</p>
+<div class="highlight"><pre><span></span><code><span class="w">    </span><span class="s">"feu"</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"pas_de_feu"</span>
+</code></pre></div>
+<p>L'ordre doit être celui d'eIQ Portal (ordre alphabétique, celui des lignes de la matrice de confusion) : la sortie n° 0 du modèle est <code>feu</code>, la sortie n° 1 est <code>pas_de_feu</code>. <strong>Ce point compte encore plus ici</strong> : si on inverse l'ordre, la carte affiche « pas de feu » quand elle voit un feu.</p>
+<p><strong>6.4 L'image de test.</strong> Copier <code>C:\TP3-IA\photos_carte\feu_1.jpg</code> dans <code>tools/</code>, puis :</p>
+<div class="highlight"><pre><span></span><code>python img2c.py feu_1.jpg feu_1
+</code></pre></div>
+<p>Le script doit afficher <code>(128, 128, 3) = 49152 octets</code>. Remplacer <code>source/image/image_data.h</code> par le fichier créé (en sortant l'ancien de <code>source/</code>).</p>
+<p><strong>6.5 Premier essai.</strong> <strong>Clean</strong>, <strong>Build</strong>, <strong>Debug</strong> → <strong>Resume</strong>, terminal série 115200 8N1. La carte doit afficher <code>Detected: feu (…%)</code>, puis <code>Camera data processing: Camera input is currently not supported on this device</code>. Ce second message est normal : l'exemple traite une seule image, puis s'arrête (on changera ça en partie 8).</p>
+<h2 id="partie-7-ajouter-lalerte-led-rouge-ou-verte">Partie 7 — Ajouter l'alerte : LED rouge ou verte</h2>
+<p>Jusqu'ici la carte affiche seulement un texte. Un système embarqué doit <strong>agir</strong> : on allume la LED RGB de la carte en <strong>rouge</strong> si le score de la classe <code>feu</code> dépasse un <strong>seuil d'alerte</strong>, en <strong>vert</strong> sinon.</p>
+<p><strong>7.1 Où se trouve l'affichage du résultat ?</strong></p>
+<p>Le texte <code>Detected: ...</code> est écrit par la fonction <code>MODEL_ProcessOutput</code>, dans le fichier <code>output_postproc.cpp</code>. Pour le trouver : <strong>Search → File…</strong> (<strong>Ctrl+H</strong>), chercher <code>Detected:</code> dans le projet.</p>
+<p><strong>7.2 Le score de la classe <code>feu</code></strong></p>
+<p>La sortie du modèle est un tableau de 2 nombres int8 (un par classe). La fonction <code>MODEL_GetTopN</code> du SDK les transforme en pourcentage par la formule <code>(valeur + 128) / 255</code>. On fait la même chose, mais seulement pour la case n° 0 (<code>feu</code>). On obtient ainsi le score du feu <strong>même quand ce n'est pas la classe gagnante</strong>, ce qui permet de choisir n'importe quel seuil.</p>
+<p><strong>7.3 Modifier <code>output_postproc.cpp</code></strong></p>
+<ol>
+<li>Ajouter, sous les <code>#include</code> existants :</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">"board.h"</span><span class="w">      </span><span class="c1">// LED de la carte (LED_RED_ON, LED_GREEN_ON...)</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">"fsl_port.h"</span><span class="w">   </span><span class="c1">// choix de la fonction des broches</span>
+
+<span class="cp">#define CLASSE_FEU       0    </span><span class="c1">// indice de "feu" dans labels.h</span>
+<span class="cp">#define SEUIL_ALERTE_FEU 50   </span><span class="c1">// en % : alerte si score feu &gt;= seuil</span>
+
+<span class="cm">/* Les LED rouge (P0_10) et verte (P0_27) sont sur le port 0.</span>
+<span class="cm">   Elles s'allument quand la broche est a 0 (active a l'etat bas). */</span>
+<span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">LED_Init</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">dejaFait</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">dejaFait</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="p">;</span>
+<span class="w">    </span><span class="n">CLOCK_EnableClock</span><span class="p">(</span><span class="n">kCLOCK_Gpio0</span><span class="p">);</span>
+<span class="w">    </span><span class="n">PORT_SetPinMux</span><span class="p">(</span><span class="n">PORT0</span><span class="p">,</span><span class="w"> </span><span class="n">BOARD_LED_RED_GPIO_PIN</span><span class="p">,</span><span class="w"> </span><span class="n">kPORT_MuxAlt0</span><span class="p">);</span><span class="w">   </span><span class="c1">// broche en GPIO</span>
+<span class="w">    </span><span class="n">PORT_SetPinMux</span><span class="p">(</span><span class="n">PORT0</span><span class="p">,</span><span class="w"> </span><span class="n">BOARD_LED_GREEN_GPIO_PIN</span><span class="p">,</span><span class="w"> </span><span class="n">kPORT_MuxAlt0</span><span class="p">);</span>
+<span class="w">    </span><span class="n">LED_RED_INIT</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span><span class="w">     </span><span class="c1">// sortie, LED eteinte</span>
+<span class="w">    </span><span class="n">LED_GREEN_INIT</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="w">    </span><span class="n">dejaFait</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="cm">/* Score de la classe feu en %, a partir de la sortie brute du modele */</span>
+<span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">ScoreFeu</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">uint8_t</span><span class="o">*</span><span class="w"> </span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">tensor_type_t</span><span class="w"> </span><span class="n">type</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">type</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">kTensorType_INT8</span><span class="p">)</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="p">(((</span><span class="k">const</span><span class="w"> </span><span class="kt">int8_t</span><span class="o">*</span><span class="p">)</span><span class="n">data</span><span class="p">)[</span><span class="n">CLASSE_FEU</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">128</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">255</span><span class="p">;</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)(((</span><span class="k">const</span><span class="w"> </span><span class="kt">float</span><span class="o">*</span><span class="p">)</span><span class="n">data</span><span class="p">)[</span><span class="n">CLASSE_FEU</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">);</span><span class="w">   </span><span class="c1">// modele float32 (bonus CPU)</span>
+<span class="p">}</span>
+</code></pre></div>
+<ol>
+<li>Dans <code>MODEL_ProcessOutput</code>, juste <strong>avant</strong> la ligne <code>return kStatus_Success;</code>, ajouter :</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="w">    </span><span class="n">LED_Init</span><span class="p">();</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">scoreFeu</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ScoreFeu</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">scoreFeu</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">SEUIL_ALERTE_FEU</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">LED_GREEN_OFF</span><span class="p">();</span>
+<span class="w">        </span><span class="n">LED_RED_ON</span><span class="p">();</span>
+<span class="w">        </span><span class="n">PRINTF</span><span class="p">(</span><span class="s">"     *** ALERTE FEU *** (score feu %d%%, seuil %d%%)"</span><span class="w"> </span><span class="n">EOL</span><span class="p">,</span>
+<span class="w">               </span><span class="n">scoreFeu</span><span class="p">,</span><span class="w"> </span><span class="n">SEUIL_ALERTE_FEU</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">else</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">LED_RED_OFF</span><span class="p">();</span>
+<span class="w">        </span><span class="n">LED_GREEN_ON</span><span class="p">();</span>
+<span class="w">        </span><span class="n">PRINTF</span><span class="p">(</span><span class="s">"     Pas de feu (score feu %d%%, seuil %d%%)"</span><span class="w"> </span><span class="n">EOL</span><span class="p">,</span>
+<span class="w">               </span><span class="n">scoreFeu</span><span class="p">,</span><span class="w"> </span><span class="n">SEUIL_ALERTE_FEU</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+</code></pre></div>
+<ol>
+<li><strong>Build</strong>. Si la compilation signale <code>LED_RED_ON</code> ou <code>kCLOCK_Gpio0</code> inconnu, vérifier que <code>#include "board.h"</code> est bien présent, puis regarder dans <code>board/board.h</code> du projet le nom exact des macros LED.</li>
+</ol>
+<p><strong>Pourquoi <code>PORT_SetPinMux</code> ?</strong> Chaque broche du MCX N947 peut avoir plusieurs fonctions (GPIO, UART, PWM…). Le projet label_image ne configure que les broches de la liaison série. On indique donc que les broches des LED sont des GPIO (fonction <code>Alt0</code>), puis on active l'horloge du module GPIO0.</p>
+<p><strong>7.4 Essai</strong></p>
+<p><strong>Clean</strong>, <strong>Build</strong>, <strong>Debug</strong> → <strong>Resume</strong>. Avec <code>feu_1.jpg</code>, la LED doit être <strong>rouge</strong> et le terminal doit afficher <code>*** ALERTE FEU ***</code>. Refaire 6.4 avec <code>pas_de_feu_1.jpg</code> : la LED doit être <strong>verte</strong>.</p>
+<p><img alt="Alerte feu dans le terminal" src="img/06_alerte_feu.png" /></p>
+<p><em>Figure 6 — Le modèle reconnaît le feu (100 %) en 16 ms sur le NPU, et la nouvelle ligne <code>*** ALERTE FEU ***</code> s'affiche avec le score et le seuil.</em></p>
+<h2 id="partie-8-tester-plusieurs-images-avec-le-bouton-sw2">Partie 8 — Tester plusieurs images avec le bouton SW2</h2>
+<p>Jusqu'ici, pour changer d'image, il faut reconvertir, recompiler et reflasher. On va mettre <strong>plusieurs images dans le firmware</strong> : la carte analyse la première, affiche le résultat, puis passe à l'image suivante <strong>à chaque appui sur le bouton SW2</strong>. Après la dernière, elle revient à la première.</p>
+<p><strong>8.1 Comment l'exemple choisit l'image</strong></p>
+<p>Ouvrir <code>source/image/image_load.c</code>. La fonction <code>IMAGE_GetImage</code> est appelée par <code>main()</code> avant chaque inférence :</p>
+<ul>
+<li>au <strong>premier</strong> appel, elle copie le tableau <code>image_data</code> (le fichier <code>image_data.h</code>) vers l'entrée du modèle ;</li>
+<li>au <strong>deuxième</strong> appel, elle affiche <code>Camera input is currently not supported on this device</code> et bloque la carte dans une boucle sans fin (<code>for (;;)</code>). C'est le message vu en 6.5.</li>
+</ul>
+<p>On va remplacer ce fichier : à chaque appel après le premier, on <strong>attend un appui sur SW2</strong>, puis on prend l'image suivante.</p>
+<p><strong>8.2 Convertir plusieurs images en un seul fichier</strong></p>
+<p>Le script <code>img2c.py</code> ne convertit qu'une image. Le script <code>img2c_multi.py</code> ci-dessous en convertit plusieurs et les range dans un seul fichier <code>images_data.h</code>, avec un tableau par image (<code>image_0</code>, <code>image_1</code>…), la liste des tableaux (<code>images[]</code>), la liste des noms (<code>noms_images[]</code>) et leur nombre (<code>NB_IMAGES</code>).</p>
+<ol>
+<li>Enregistrer le script dans <code>tools/</code> :</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="c1"># img2c_multi.py : convertit plusieurs images en un seul images_data.h</span>
+<span class="c1"># Usage : python img2c_multi.py feu_1.jpg pas_de_feu_1.jpg fumee_1.jpg</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span><span class="o">,</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
+
+<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s2">"Usage : python img2c_multi.py image1.jpg image2.jpg ..."</span><span class="p">)</span>
+
+<span class="n">noms</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"images_data.h"</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">src</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>                      <span class="c1"># lit en BGR</span>
+        <span class="k">if</span> <span class="n">img</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s2">"Impossible de lire "</span> <span class="o">+</span> <span class="n">src</span><span class="p">)</span>
+        <span class="n">h</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>                              <span class="c1"># recadrage carre centre</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">img</span><span class="p">[(</span><span class="n">h</span> <span class="o">-</span> <span class="n">c</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">:(</span><span class="n">h</span> <span class="o">-</span> <span class="n">c</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">c</span><span class="p">,</span> <span class="p">(</span><span class="n">w</span> <span class="o">-</span> <span class="n">c</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">:(</span><span class="n">w</span> <span class="o">-</span> <span class="n">c</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">c</span><span class="p">]</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="n">interpolation</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">INTER_AREA</span><span class="p">)</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2RGB</span><span class="p">)</span>  <span class="c1"># le modele attend du RGB</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"static const uint8_t image_</span><span class="si">%d</span><span class="s2">[] = {</span><span class="se">\n</span><span class="s2">"</span> <span class="o">%</span> <span class="n">i</span><span class="p">)</span>
+        <span class="n">img</span><span class="o">.</span><span class="n">tofile</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s2">", "</span><span class="p">,</span> <span class="s2">"0x</span><span class="si">%02X</span><span class="s2">"</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">};</span><span class="se">\n\n</span><span class="s2">"</span><span class="p">)</span>
+        <span class="n">noms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">src</span><span class="p">))[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"image_</span><span class="si">%d</span><span class="s2"> : </span><span class="si">%-15s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> = </span><span class="si">%d</span><span class="s2"> octets"</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">noms</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">img</span><span class="o">.</span><span class="n">size</span><span class="p">))</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">noms</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"#define NB_IMAGES </span><span class="si">%d</span><span class="se">\n</span><span class="s2">"</span> <span class="o">%</span> <span class="n">n</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"static const uint8_t* const images[NB_IMAGES] = {</span><span class="si">%s</span><span class="s2">};</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="o">%</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">"image_</span><span class="si">%d</span><span class="s2">"</span> <span class="o">%</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)))</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"static const char* const noms_images[NB_IMAGES] = {</span><span class="si">%s</span><span class="s2">};</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="o">%</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">'"</span><span class="si">%s</span><span class="s1">"'</span> <span class="o">%</span> <span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">noms</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"images_data.h ecrit :"</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="s2">"images"</span><span class="p">)</span>
+</code></pre></div>
+<ol>
+<li>Copier dans <code>tools/</code> trois photos de <code>C:\TP3-IA\photos_carte\</code>, puis :</li>
+</ol>
+<div class="highlight"><pre><span></span><code>python img2c_multi.py feu_1.jpg pas_de_feu_1.jpg fumee_1.jpg
+</code></pre></div>
+<ol>
+<li>Le script affiche une ligne par image, chacune de <code>(128, 128, 3) = 49152 octets</code>, puis <code>images_data.h ecrit : 3 images</code>.</li>
+<li>Copier <code>images_data.h</code> dans <code>source/image/</code>, à côté de <code>image_data.h</code> (on peut laisser l'ancien fichier : il ne sera plus inclus).</li>
+</ol>
+<p>Chaque image occupe 48 Ko de Flash : 3 images font 144 Ko, 9 images environ 430 Ko. La Flash du MCX N947 (2 Mo) a la place.</p>
+<p><strong>8.3 Remplacer <code>image_load.c</code></strong></p>
+<p>Remplacer <strong>tout le contenu</strong> de <code>source/image/image_load.c</code> par :</p>
+<div class="highlight"><pre><span></span><code><span class="cm">/* image_load.c (TP3) : plusieurs images, on passe a la suivante avec SW2 */</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">"demo_config.h"</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">"fsl_debug_console.h"</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">"image.h"</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">"image_utils.h"</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">"images_data.h"</span><span class="w">   </span><span class="cm">/* NB_IMAGES, images[], noms_images[] (img2c_multi.py) */</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">"board.h"</span><span class="w">         </span><span class="cm">/* BOARD_SW2_GPIO, BOARD_SW2_GPIO_PIN, fonctions GPIO */</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">s_index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span><span class="w">   </span><span class="cm">/* image en cours (-1 : pas encore commence) */</span>
+<span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">s_imageName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">""</span><span class="p">;</span>
+
+<span class="cm">/* Bouton SW2 = broche P0_23 en entree. Elle vaut 1 au repos, 0 quand on appuie. */</span>
+<span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">BOUTON_Init</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">gpio_pin_config_t</span><span class="w"> </span><span class="n">entree</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="n">kGPIO_DigitalInput</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">};</span>
+<span class="w">    </span><span class="n">CLOCK_EnableClock</span><span class="p">(</span><span class="n">kCLOCK_Gpio0</span><span class="p">);</span>
+<span class="w">    </span><span class="cm">/* fonction GPIO (MUX 0), entree numerique activee (IBE),</span>
+<span class="cm">       resistance de tirage vers le haut (PE + PS) */</span>
+<span class="w">    </span><span class="n">PORT0</span><span class="o">-&gt;</span><span class="n">PCR</span><span class="p">[</span><span class="n">BOARD_SW2_GPIO_PIN</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PORT_PCR_MUX</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">PORT_PCR_IBE_MASK</span>
+<span class="w">                                   </span><span class="o">|</span><span class="w"> </span><span class="n">PORT_PCR_PE_MASK</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">PORT_PCR_PS_MASK</span><span class="p">;</span>
+<span class="w">    </span><span class="n">GPIO_PinInit</span><span class="p">(</span><span class="n">BOARD_SW2_GPIO</span><span class="p">,</span><span class="w"> </span><span class="n">BOARD_SW2_GPIO_PIN</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">entree</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="cm">/* Attend un appui complet sur SW2 (appui puis relachement) */</span>
+<span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">BOUTON_Attendre</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">PRINTF</span><span class="p">(</span><span class="n">EOL</span><span class="w"> </span><span class="s">"Appuyez sur SW2 pour l'image suivante..."</span><span class="w"> </span><span class="n">EOL</span><span class="p">);</span>
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">GPIO_PinRead</span><span class="p">(</span><span class="n">BOARD_SW2_GPIO</span><span class="p">,</span><span class="w"> </span><span class="n">BOARD_SW2_GPIO_PIN</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span><span class="w">  </span><span class="cm">/* attendre l'appui */</span>
+<span class="w">    </span><span class="n">SDK_DelayAtLeastUs</span><span class="p">(</span><span class="mi">20000</span><span class="p">,</span><span class="w"> </span><span class="n">SystemCoreClock</span><span class="p">);</span><span class="w">                        </span><span class="cm">/* anti-rebond 20 ms */</span>
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">GPIO_PinRead</span><span class="p">(</span><span class="n">BOARD_SW2_GPIO</span><span class="p">,</span><span class="w"> </span><span class="n">BOARD_SW2_GPIO_PIN</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span><span class="w">  </span><span class="cm">/* attendre le relachement */</span>
+<span class="w">    </span><span class="n">SDK_DelayAtLeastUs</span><span class="p">(</span><span class="mi">20000</span><span class="p">,</span><span class="w"> </span><span class="n">SystemCoreClock</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">status_t</span><span class="w"> </span><span class="nf">IMAGE_GetImage</span><span class="p">(</span><span class="kt">uint8_t</span><span class="o">*</span><span class="w"> </span><span class="n">dstData</span><span class="p">,</span><span class="w"> </span><span class="kt">int32_t</span><span class="w"> </span><span class="n">dstWidth</span><span class="p">,</span><span class="w"> </span><span class="kt">int32_t</span><span class="w"> </span><span class="n">dstHeight</span><span class="p">,</span><span class="w"> </span><span class="kt">int32_t</span><span class="w"> </span><span class="n">dstChannels</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">s_index</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">BOUTON_Init</span><span class="p">();</span><span class="w">     </span><span class="cm">/* premier appel : premiere image, sans attendre */</span>
+<span class="w">        </span><span class="n">s_index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">else</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">BOUTON_Attendre</span><span class="p">();</span>
+<span class="w">        </span><span class="n">s_index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">s_index</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">NB_IMAGES</span><span class="p">;</span><span class="w">   </span><span class="cm">/* apres la derniere, retour a la premiere */</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="n">s_imageName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">noms_images</span><span class="p">[</span><span class="n">s_index</span><span class="p">];</span>
+<span class="w">    </span><span class="n">PRINTF</span><span class="p">(</span><span class="n">EOL</span><span class="w"> </span><span class="s">"Image %d/%d : %s"</span><span class="w"> </span><span class="n">EOL</span><span class="p">,</span><span class="w"> </span><span class="n">s_index</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">NB_IMAGES</span><span class="p">,</span><span class="w"> </span><span class="n">s_imageName</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">IMAGE_Decode</span><span class="p">(</span><span class="n">images</span><span class="p">[</span><span class="n">s_index</span><span class="p">],</span><span class="w"> </span><span class="n">dstData</span><span class="p">,</span><span class="w"> </span><span class="n">dstWidth</span><span class="p">,</span><span class="w"> </span><span class="n">dstHeight</span><span class="p">,</span><span class="w"> </span><span class="n">dstChannels</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="nf">IMAGE_GetImageName</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">s_imageName</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><strong>Quelques explications</strong></p>
+<ul>
+<li><strong><code>PORT0-&gt;PCR[...]</code></strong> : comme pour les LED (partie 7), on choisit la fonction de la broche. Pour une <strong>entrée</strong>, il faut en plus activer le tampon d'entrée (<code>IBE</code>), sinon la broche se lit toujours à 0. La résistance de tirage vers le haut (<code>PE</code> + <code>PS</code>) donne un 1 stable quand le bouton est relâché.</li>
+<li><strong>Anti-rebond</strong> : quand on appuie sur un bouton, le contact rebondit pendant quelques millisecondes et produit plusieurs 0 et 1. Sans la pause de 20 ms, un seul appui pourrait faire sauter plusieurs images.</li>
+<li><strong><code>% NB_IMAGES</code></strong> (reste de la division) : après la dernière image, l'indice revient à 0.</li>
+<li>On <strong>attend le relâchement</strong> : si on garde le doigt appuyé, la carte ne fait défiler qu'une seule image.</li>
+</ul>
+<p><strong>8.4 Essai</strong></p>
+<ol>
+<li><strong>Clean</strong>, <strong>Build</strong>. Dans le résumé mémoire, la taille de <strong>PROGRAM_FLASH</strong> augmente d'environ 48 Ko par image.</li>
+<li><strong>Debug</strong> → <strong>Resume</strong>. Le terminal affiche :<ul>
+<li><code>Image 1/3 : feu_1</code>, le résultat, la LED <strong>rouge</strong> ;</li>
+<li><code>Appuyez sur SW2 pour l'image suivante...</code>.</li>
+</ul>
+</li>
+<li>Appuyer sur <strong>SW2</strong> : <code>Image 2/3 : pas_de_feu_1</code>, LED <strong>verte</strong>. Puis encore : <code>Image 3/3 : fumee_1</code>. Encore : retour à <code>Image 1/3</code>.</li>
+</ol>
+<p><strong>Questions :</strong></p>
+<ol>
+<li>Que se passe-t-il si on retire l'anti-rebond (les deux lignes <code>SDK_DelayAtLeastUs</code>) ? Essayez.</li>
+<li>Pendant l'attente de l'appui, le processeur tourne sans rien faire dans la boucle <code>while</code>. Comment pourrait-on économiser de l'énergie ? (Indice : interruption du GPIO et mode basse consommation.)</li>
+<li>Combien d'images pourrait-on mettre au maximum dans la Flash du MCX N947, en gardant le modèle ?</li>
+</ol>
+<h2 id="partie-9-tester-sur-la-carte-et-choisir-le-seuil-dalerte">Partie 9 — Tester sur la carte et choisir le seuil d'alerte</h2>
+<p><strong>9.1 Tester les 9 photos</strong></p>
+<p>Avec le firmware de la partie 8, convertir d'un coup les 9 photos de <code>photos_carte\</code> (<code>python img2c_multi.py feu_1.jpg feu_2.jpg ...</code>), <strong>Build</strong>, <strong>Debug</strong>, puis faire défiler les images avec <strong>SW2</strong> et noter chaque résultat. Les photos <code>fumee_*</code> sont des pièges : de la fumée sans flammes visibles, une classe que le modèle n'a jamais vue.</p>
+<table>
+<thead>
+<tr>
+<th>Image</th>
+<th>Il y a un feu ?</th>
+<th><code>Detected:</code> (classe et %)</th>
+<th>Score feu (%)</th>
+<th>LED</th>
+<th>Temps (ms)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>feu_1</code></td>
+<td>oui</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>feu_2</code></td>
+<td>oui</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>feu_3</code></td>
+<td>oui</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>pas_de_feu_1</code></td>
+<td>non</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>pas_de_feu_2</code></td>
+<td>non</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>pas_de_feu_3</code></td>
+<td>non</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>fumee_1</code></td>
+<td>?</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>fumee_2</code></td>
+<td>?</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>fumee_3</code></td>
+<td>?</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Votre photo : coucher de soleil, bougie, lampe orange…</td>
+<td>non</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>9.2 Choisir le seuil</strong></p>
+<p>Avec 2 classes, le score <code>feu</code> et le score <code>pas_de_feu</code> font environ 100 % à eux deux. Un seuil de 50 % revient donc à prendre la classe gagnante.</p>
+<ol>
+<li>Pas besoin de tout recompiler : à partir du <strong>score feu</strong> noté en 9.1, déduire pour chaque photo si l'alerte se déclencherait avec un seuil de <strong>20 %</strong>, de <strong>50 %</strong> et de <strong>80 %</strong>.</li>
+<li>Vérifier un des cas sur la carte : changer <code>SEUIL_ALERTE_FEU</code>, <strong>Build</strong>, <strong>Debug</strong>, et regarder la LED.</li>
+<li>Remplir :</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>Seuil</th>
+<th>Feux manqués (sur les photos testées)</th>
+<th>Fausses alarmes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>20 %</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>50 %</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>80 %</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Questions :</strong></p>
+<ol>
+<li>Quand on baisse le seuil, que deviennent les feux manqués ? Et les fausses alarmes ?</li>
+<li>Quel seuil choisiriez-vous pour un détecteur de feu dans un entrepôt ? Justifiez avec la partie 0.</li>
+<li>Que répond le modèle pour les photos de fumée ? Pourquoi un modèle à 2 classes ne peut-il pas répondre « je ne sais pas » ?</li>
+<li>Le temps d'inférence est-il différent de celui du TP2 ? Pourquoi (pensez à ce qui change entre les deux modèles) ?</li>
+</ol>
+<h2 id="bonus">Bonus</h2>
+<p><strong>B.1 Détecter aussi la fumée (3 classes).</strong> La fumée apparaît souvent avant les flammes. Dans <code>prepare_dataset_feu.py</code>, remplacer la ligne <code>NOMS</code> par <code>NOMS = {"Fire": "feu", "Neutral": "pas_de_feu", "Smoke": "fumee"}</code>, relancer le script dans un nouveau dossier et refaire tout le TP avec 3 classes. Attention à l'ordre alphabétique dans <code>labels.h</code> (<code>feu</code>, <code>fumee</code>, <code>pas_de_feu</code>) et à l'indice <code>CLASSE_FEU</code>. On peut allumer la LED <strong>bleue</strong> (<code>LED_BLUE_ON()</code>, broche P1_2, port 1, horloge <code>kCLOCK_Gpio1</code>) pour la fumée.</p>
+<p><strong>B.2 Comparer CPU et NPU.</strong> Comme au bonus B.1 du TP2 : intégrer <code>feu_int8.tflite</code> (non converti) avec les opérateurs CPU dans le resolver, et comparer les temps d'inférence.</p>
+<p><strong>B.3 Réduire les fausses alarmes.</strong> Prendre au téléphone une dizaine de photos de la salle avec des objets orange ou lumineux (lampes, écrans, soleil par la fenêtre), les recadrer en 128 × 128 et les ajouter dans <code>dataset_feu/train/pas_de_feu/</code>. Réentraîner : les fausses alarmes de la partie 9 diminuent-elles ?</p>
+<p><strong>B.4 Plus de données.</strong> Relancer <code>python prepare_dataset_feu.py 900</code> (900 images par classe, dans un nouveau dossier) et comparer le rappel de la classe <code>feu</code>.</p>
+<h2 id="depannage-synthese-et-sources">Dépannage, synthèse et sources</h2>
+<table>
+<thead>
+<tr>
+<th>Symptôme</th>
+<th>Cause probable</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>La carte redémarre en boucle</td>
+<td>Convertisseur Neutron et SDK de versions différentes</td>
+<td>Partie 5.2, puis reconvertir</td>
+</tr>
+<tr>
+<td><code>Didn't find op for builtin opcode ...</code></td>
+<td>Opérateur manquant dans l'ops resolver</td>
+<td>Comparer avec la liste notée en 5.4</td>
+</tr>
+<tr>
+<td><code>Failed to resize buffer ... missing</code> puis <code>AllocateTensors() failed</code></td>
+<td><code>kTensorArenaSize</code> trop petit</td>
+<td><code>300 * 1024</code> (partie 6.1), voir TP2 partie 9.2</td>
+</tr>
+<tr>
+<td><code>Detected: pas_de_feu</code> sur une image de feu évidente, avec un score élevé</td>
+<td>Ordre inversé dans <code>labels.h</code></td>
+<td><code>"feu"</code> en premier, <code>"pas_de_feu"</code> en second (partie 6.3)</td>
+</tr>
+<tr>
+<td>LED d'alerte allumée à l'envers (rouge sans feu)</td>
+<td><code>CLASSE_FEU</code> ne correspond pas à l'ordre de <code>labels.h</code></td>
+<td><code>CLASSE_FEU 0</code> si <code>feu</code> est en premier</td>
+</tr>
+<tr>
+<td>Les LED ne s'allument pas, le texte est correct</td>
+<td><code>LED_Init()</code> pas appelée, ou broches pas en GPIO</td>
+<td>Vérifier l'ajout de la partie 7.3 (étape 2) et <code>PORT_SetPinMux</code></td>
+</tr>
+<tr>
+<td><code>LED_RED_ON</code> ou <code>kCLOCK_Gpio0</code> inconnu à la compilation</td>
+<td><code>#include "board.h"</code> manquant</td>
+<td>Ajouter l'include (partie 7.3, étape 1)</td>
+</tr>
+<tr>
+<td><code>images_data.h: No such file or directory</code></td>
+<td>Fichier pas copié dans <code>source/image/</code> ou pas de <strong>Refresh</strong></td>
+<td>Copier <code>images_data.h</code> (partie 8.2), puis <strong>F5</strong> sur le projet</td>
+</tr>
+<tr>
+<td>Appuyer sur SW2 ne fait rien</td>
+<td>Broche pas en entrée (<code>IBE</code> manquant) ou mauvais bouton</td>
+<td>Vérifier <code>BOUTON_Init</code> (partie 8.3) et appuyer sur <strong>SW2</strong>, pas sur RESET</td>
+</tr>
+<tr>
+<td>Un appui fait sauter plusieurs images</td>
+<td>Rebonds du bouton</td>
+<td>Garder les deux <code>SDK_DelayAtLeastUs</code> (partie 8.3)</td>
+</tr>
+<tr>
+<td>Labels <code>test</code> et <code>train</code> dans eIQ Portal</td>
+<td>Dossier sélectionné un niveau trop haut</td>
+<td>Sélectionner <code>dataset_feu</code> (partie 2)</td>
+</tr>
+<tr>
+<td>Le script s'arrête au téléchargement</td>
+<td>Pas d'accès à GitHub depuis le PC (proxy)</td>
+<td>Télécharger l'archive depuis le lien de secours (<a href="#annexe-telechargement-de-secours-du-jeu-de-donnees">annexe</a>) et la poser à côté du script</td>
+</tr>
+<tr>
+<td>Toujours <code>feu</code> (ou toujours <code>pas_de_feu</code>) quelle que soit l'image</td>
+<td>Modèle exporté en float32, ou image mal convertie</td>
+<td>Vérifier l'entrée int8 dans Netron (5.1), refaire <code>img2c.py</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Questions de synthèse</strong></p>
+<ol>
+<li>Pourquoi la précision globale ne suffit-elle pas pour juger un détecteur de feu ?</li>
+<li>Définissez faux positif et faux négatif sur l'exemple du feu. Lequel est le plus grave ?</li>
+<li>Quel est l'effet du seuil d'alerte sur ces deux erreurs ?</li>
+<li>Citez deux situations réelles où ce modèle se tromperait, et une façon d'améliorer le système (données, capteurs, plusieurs images…).</li>
+<li>Qu'avez-vous changé dans le firmware pour passer du TP2 au TP3 ? Qu'est-ce qui n'a pas changé ?</li>
+</ol>
+<p><strong>À vérifier selon votre installation :</strong> ce TP suit le projet <code>tflm_label_image</code> du SDK FRDM-MCXN947 <strong>2.14.0</strong> (fichiers <code>source/model/output_postproc.cpp</code> et <code>source/image/image_load.c</code>, LED rouge P0_10, verte P0_27, bouton SW2 sur P0_23). Avec une autre version du SDK, les noms et l'emplacement des fichiers peuvent changer : vérifier les macros <code>LED_..._ON</code> et <code>BOARD_SW2_...</code> dans <code>board.h</code>. Les tableaux de résultats sont à remplir avec vos propres mesures.</p>
+<p><strong>À propos du jeu de données :</strong> FIRE-SMOKE-DATASET est publié sur GitHub par DeepQuestAI, sans licence précisée. Les images proviennent d'Internet. On l'utilise ici dans un cadre pédagogique : ne redistribuez pas les images.</p>
+<p><strong>Sources :</strong> <a href="https://github.com/DeepQuestAI/Fire-Smoke-Dataset">FIRE-SMOKE-DATASET (DeepQuestAI)</a> · <a href="https://community.nxp.com/t5/MCX-Microcontrollers-Knowledge/MCXN947-How-to-Train-and-Deploy-Customer-ML-model-to-NPU/ta-p/1899497">NXP — MCXN947: How to Train and Deploy Customer ML model to NPU</a> · <a href="https://www.nxp.com/docs/en/release-note/EIQTRN.pdf">Notes de version eIQ Toolkit (EIQTRN)</a> · <a href="https://eiq.nxp.com/learning-hub/tools/neutronSdk/userGuide/mcuxCompatMatrix.html">Compatibilité Neutron SDK / MCUXpresso SDK</a> · <a href="https://docs.mcuxpresso.nxp.com/mcuxsdk/latest/html/examples/eiq_examples/tflm_label_image/readme.html">README tflm_label_image</a> · <a href="https://github.com/nxp-mcuxpresso/mcuxsdk-examples">Exemples MCUXpresso SDK (board.h FRDM-MCXN947)</a> · <a href="https://netron.app">Netron</a></p>
+<h2 id="annexe-telechargement-de-secours-du-jeu-de-donnees">Annexe — Téléchargement de secours du jeu de données</h2>
+<p>Si le script <code>prepare_dataset_feu.py</code> n'arrive pas à télécharger l'archive depuis GitHub (message d'erreur <code>urlopen error</code>, <code>HTTP Error 404</code>, ou téléchargement bloqué par le proxy de l'établissement) :</p>
+<ol>
+<li>Télécharger l'archive depuis ce lien de secours : <a href="https://drive.google.com/file/d/1F9gAzX5ZceMVGw7Q0In7PXp8Tigu5HgI/view?usp=drive_link">FIRE-SMOKE-DATASET.zip (Google Drive)</a>.</li>
+<li>L'enregistrer dans le dossier de travail <code>C:\TP3-IA\</code>, à côté du script, <strong>sous le nom exact <code>FIRE-SMOKE-DATASET.zip</code></strong> (renommer le fichier si le navigateur a changé son nom, par exemple <code>FIRE-SMOKE-DATASET (1).zip</code>).</li>
+<li>Relancer <code>python prepare_dataset_feu.py</code>. Le script trouve l'archive, ne la télécharge pas une seconde fois et passe directement à la décompression.</li>
+</ol>
+<p>Si un téléchargement interrompu a laissé un fichier <code>FIRE-SMOKE-DATASET.zip</code> incomplet, le supprimer avant de déposer celui du lien de secours, sinon la décompression échoue (<code>BadZipFile</code>).</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Retour en haut de la page
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      © Mourad DRIDI
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://scholar.google.com/citations?user=CFmoyZIAAAAJ&hl=fr" target="_blank" rel="noopener" title="Google Scholar" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M390.9 298.5s0 .1.1.1c9.2 19.4 14.4 41.1 14.4 64C405.3 445.1 338.5 512 256 512s-149.3-66.9-149.3-149.3c0-22.9 5.2-44.6 14.4-64 1.7-3.6 3.6-7.2 5.6-10.7q6.6-11.4 15-21.3c27.4-32.6 68.5-53.3 114.4-53.3 33.6 0 64.6 11.1 89.6 29.9 9.1 6.9 17.4 14.7 24.8 23.5 5.6 6.6 10.6 13.8 15 21.3 2 3.4 3.8 7 5.5 10.5zm26.4-18.8c-30.1-58.4-91-98.4-161.3-98.4s-131.2 40-161.3 98.4L0 202.7 256 0l256 202.7-94.7 77.1z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://www.linkedin.com/in/mourad-dridi-285862a8/" target="_blank" rel="noopener" title="LinkedIn" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3M135.4 416H69V202.2h66.5V416zM102.2 96a38.5 38.5 0 1 1 0 77 38.5 38.5 0 1 1 0-77m282.1 320h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://www.researchgate.net/profile/Mourad-Dridi/research" target="_blank" rel="noopener" title="ResearchGate" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M0 32v448h448V32zm262.2 334.4c-6.6 3-33.2 6-50-14.2-9.2-10.6-25.3-33.3-42.2-63.6-8.9 0-14.7 0-21.4-.6v46.4c0 23.5 6 21.2 25.8 23.9v8.1c-6.9-.3-23.1-.8-35.6-.8-13.1 0-26.1.6-33.6.8v-8.1c15.5-2.9 22-1.3 22-23.9V225c0-22.6-6.4-21-22-23.9V193c25.8 1 53.1-.6 70.9-.6 31.7 0 55.9 14.4 55.9 45.6 0 21.1-16.7 42.2-39.2 47.5 13.6 24.2 30 45.6 42.2 58.9 7.2 7.8 17.2 14.7 27.2 14.7zm22.9-135c-23.3 0-32.2-15.7-32.2-32.2V167c0-12.2 8.8-30.4 34-30.4s30.4 17.9 30.4 17.9l-10.7 7.2s-5.5-12.5-19.7-12.5c-7.9 0-19.7 7.3-19.7 19.7v26.8c0 13.4 6.6 23.3 17.9 23.3 14.1 0 21.5-10.9 21.5-26.8h-17.9v-10.7h30.4c0 20.5 4.7 49.9-34 49.9m-116.5 44.7c-9.4 0-13.6-.3-20-.8v-69.7c6.4-.6 15-.6 22.5-.6 23.3 0 37.2 12.2 37.2 34.5 0 21.9-15 36.6-39.7 36.6"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="mailto:mourad.dridi@univ-eiffel.fr" target="_blank" rel="noopener" title="E-mail" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m20 8-8 5-8-5V6l8 5 8-5m0-2H4c-1.11 0-2 .89-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../../..", "features": ["navigation.tabs", "navigation.sections", "navigation.indexes", "navigation.top", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copi\u00e9 dans le presse-papier", "clipboard.copy": "Copier dans le presse-papier", "search.result.more.one": "1 de plus sur cette page", "search.result.more.other": "# de plus sur cette page", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.term.missing": "Non trouv\u00e9", "select.version": "S\u00e9lectionner la version"}, "version": null}</script>
+    
+    
+      <script src="../../../../assets/javascripts/bundle.a5f9d56c.min.js"></script>
+      
+        <script src="../../../../javascripts/sections.js"></script>
+      
+    
+  </body>
+</html>

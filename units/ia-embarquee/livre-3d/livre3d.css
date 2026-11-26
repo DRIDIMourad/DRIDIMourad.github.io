@@ -1,0 +1,120 @@
+/* Livre animé 3D (voir livre3d.js) */
+.livre3d {
+  --l3-fond1: #eef0ff;
+  --l3-fond2: #fdf6e9;
+  --l3-texte: #1f2433;
+  --l3-carte: rgba(255, 255, 255, .94);
+  margin: 1rem 0 2rem;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(46, 42, 140, .18);
+  background: radial-gradient(ellipse at 50% 35%, var(--l3-fond2) 0%, var(--l3-fond1) 75%);
+  color: var(--l3-texte);
+}
+[data-md-color-scheme="slate"] .livre3d {
+  --l3-fond1: #15162a;
+  --l3-fond2: #2a2850;
+  --l3-texte: #e8e9f3;
+  --l3-carte: rgba(30, 31, 52, .95);
+}
+.livre3d__stage {
+  position: relative;
+  height: min(78vh, 760px);
+  min-height: 460px;
+  outline: none;
+  touch-action: none;
+}
+.livre3d__stage canvas { display: block; width: 100%; height: 100%; cursor: grab; }
+.livre3d__stage canvas:active { cursor: grabbing; }
+.livre3d:fullscreen { border-radius: 0; display: flex; flex-direction: column; }
+.livre3d:fullscreen .livre3d__stage { height: auto; flex: 1; }
+
+.livre3d__chargement {
+  position: absolute; inset: 0; display: grid; place-items: center;
+  font-weight: 600; opacity: .7; pointer-events: none;
+}
+.livre3d.is-pret .livre3d__chargement { display: none; }
+.livre3d__erreur { padding: 2rem; text-align: center; }
+
+.livre3d__aide {
+  position: absolute; left: 50%; bottom: .6rem; transform: translateX(-50%);
+  margin: 0; padding: .25rem .8rem; border-radius: 99px;
+  font-size: .62rem; background: var(--l3-carte); opacity: .8; white-space: nowrap;
+  pointer-events: none;
+}
+
+.livre3d__tip {
+  position: absolute; left: 0; top: 0; z-index: 3; pointer-events: none;
+  padding: .3rem .6rem; border-radius: 8px;
+  background: #2e2a8c; color: #fff; font-size: .7rem; font-weight: 600;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .2); white-space: nowrap;
+}
+
+.livre3d__panneau {
+  --accent: #2e2a8c;
+  position: absolute; z-index: 4; top: 1rem; right: 1rem;
+  width: min(330px, calc(100% - 2rem));
+  padding: 1rem 1.1rem 1.1rem;
+  border-radius: 14px; border-top: 6px solid var(--accent);
+  background: var(--l3-carte); color: var(--l3-texte);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, .22);
+  transform: translateY(-8px) scale(.97); opacity: 0;
+  transition: transform .25s ease, opacity .25s ease;
+}
+.livre3d__panneau.is-visible { transform: none; opacity: 1; }
+.livre3d__panneau p { margin: 0 0 .5rem; }
+.livre3d__kicker {
+  color: var(--accent); font-size: .65rem; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase;
+}
+.livre3d__titre { font-size: .95rem; font-weight: 700; line-height: 1.3; }
+.livre3d__texte { font-size: .72rem; line-height: 1.55; }
+.livre3d .livre3d__ouvrir {
+  display: inline-block; margin-top: .3rem; padding: .45rem .9rem; border-radius: 99px;
+  background: var(--accent); color: #fff; font-size: .72rem; font-weight: 700;
+  transition: filter .2s ease, transform .2s ease;
+}
+.livre3d .livre3d__ouvrir:hover { color: #fff; filter: brightness(1.12); transform: translateX(2px); }
+.livre3d__fermer {
+  position: absolute; top: .35rem; right: .5rem;
+  border: 0; background: none; color: inherit; font-size: 1.2rem; line-height: 1;
+  cursor: pointer; opacity: .6;
+}
+.livre3d__fermer:hover { opacity: 1; }
+
+.livre3d__barre {
+  display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; justify-content: center;
+  padding: .6rem .8rem; background: var(--l3-carte);
+  border-top: 1px solid rgba(46, 42, 140, .12);
+}
+.livre3d__chapitres { display: flex; gap: .3rem; flex-wrap: wrap; justify-content: center; }
+.livre3d__chip, .livre3d__btn {
+  border: 1px solid rgba(46, 42, 140, .25); background: transparent; color: inherit;
+  border-radius: 99px; cursor: pointer; font: inherit; font-size: .7rem;
+  transition: background-color .2s ease, color .2s ease, border-color .2s ease;
+}
+.livre3d__chip { --chip: #2e2a8c; padding: .3rem .75rem; font-weight: 600; }
+.livre3d__chip:hover { border-color: var(--chip); }
+.livre3d__chip.is-active { background: var(--chip); border-color: var(--chip); color: #fff; }
+.livre3d__btn { width: 2rem; height: 2rem; font-size: .9rem; display: inline-grid; place-items: center; }
+.livre3d__btn:hover:not(:disabled) { background: rgba(46, 42, 140, .1); }
+.livre3d__btn:disabled { opacity: .35; cursor: default; }
+.livre3d__sep { width: 1px; height: 1.4rem; background: rgba(46, 42, 140, .2); margin: 0 .2rem; }
+
+/* Le livre fermé : faire briller le bouton « suivant » */
+.livre3d.is-ferme [data-action=suiv] {
+  background: #2e2a8c; color: #fff; border-color: #2e2a8c;
+  animation: livre3d-pulse 1.6s ease-in-out infinite;
+}
+@keyframes livre3d-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(46, 42, 140, .45); }
+  50% { box-shadow: 0 0 0 8px rgba(46, 42, 140, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .livre3d.is-ferme [data-action=suiv] { animation: none; }
+}
+@media (max-width: 600px) {
+  .livre3d__stage { height: 68vh; min-height: 380px; }
+  .livre3d__panneau { top: auto; bottom: 2.4rem; right: 1rem; }
+  .livre3d__aide { display: none; }
+}

@@ -1,0 +1,2490 @@
+
+<!doctype html>
+<html lang="fr" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Mourad DRIDI, enseignant-chercheur à ESIEE Paris (DISC) et au LIGM (équipe LRT)">
+      
+      
+      
+        <link rel="canonical" href="https://dridimourad.github.io/units/ia-embarquee/tp/tp2/">
+      
+      
+        <link rel="prev" href="../tp1/">
+      
+      
+        <link rel="next" href="../tp3/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../../assets/avatar.jpg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.2">
+    
+    
+      
+        <title>TP2 : Entraîner son modèle avec eIQ Portal - Mourad DRIDI</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans:300,300i,400,400i,700,700i%7CIBM+Plex+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"IBM Plex Sans";--md-code-font:"IBM Plex Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="../../../../stylesheets/sections.css">
+    
+    <script>__md_scope=new URL("../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#tp2-entrainer-son-propre-modele-avec-eiq-portal-et-le-deployer-sur-le-npu-frdm-mcxn947" class="md-skip">
+          Aller au contenu
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="En-tête">
+    <a href="../../../.." title="Mourad DRIDI" class="md-header__button md-logo" aria-label="Mourad DRIDI" data-md-component="logo">
+      
+  <img src="../../../../assets/avatar.jpg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Mourad DRIDI
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              TP2 : Entraîner son modèle avec eIQ Portal
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Mode sombre"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Mode sombre" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Mode clair"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Mode clair" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Rechercher" placeholder="Rechercher" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Recherche">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Effacer" aria-label="Effacer" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initialisation de la recherche
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+      <nav class="md-header__social" aria-label="Liens">
+        
+          <a href="https://scholar.google.com/citations?user=CFmoyZIAAAAJ&hl=fr" title="Google Scholar" class="md-header__social-link"
+             target="_blank" rel="noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M390.9 298.5s0 .1.1.1c9.2 19.4 14.4 41.1 14.4 64C405.3 445.1 338.5 512 256 512s-149.3-66.9-149.3-149.3c0-22.9 5.2-44.6 14.4-64 1.7-3.6 3.6-7.2 5.6-10.7q6.6-11.4 15-21.3c27.4-32.6 68.5-53.3 114.4-53.3 33.6 0 64.6 11.1 89.6 29.9 9.1 6.9 17.4 14.7 24.8 23.5 5.6 6.6 10.6 13.8 15 21.3 2 3.4 3.8 7 5.5 10.5zm26.4-18.8c-30.1-58.4-91-98.4-161.3-98.4s-131.2 40-161.3 98.4L0 202.7 256 0l256 202.7-94.7 77.1z"/></svg>
+          </a>
+        
+          <a href="https://www.linkedin.com/in/mourad-dridi-285862a8/" title="LinkedIn" class="md-header__social-link"
+             target="_blank" rel="noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3M135.4 416H69V202.2h66.5V416zM102.2 96a38.5 38.5 0 1 1 0 77 38.5 38.5 0 1 1 0-77m282.1 320h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9z"/></svg>
+          </a>
+        
+          <a href="https://www.researchgate.net/profile/Mourad-Dridi/research" title="ResearchGate" class="md-header__social-link"
+             target="_blank" rel="noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M0 32v448h448V32zm262.2 334.4c-6.6 3-33.2 6-50-14.2-9.2-10.6-25.3-33.3-42.2-63.6-8.9 0-14.7 0-21.4-.6v46.4c0 23.5 6 21.2 25.8 23.9v8.1c-6.9-.3-23.1-.8-35.6-.8-13.1 0-26.1.6-33.6.8v-8.1c15.5-2.9 22-1.3 22-23.9V225c0-22.6-6.4-21-22-23.9V193c25.8 1 53.1-.6 70.9-.6 31.7 0 55.9 14.4 55.9 45.6 0 21.1-16.7 42.2-39.2 47.5 13.6 24.2 30 45.6 42.2 58.9 7.2 7.8 17.2 14.7 27.2 14.7zm22.9-135c-23.3 0-32.2-15.7-32.2-32.2V167c0-12.2 8.8-30.4 34-30.4s30.4 17.9 30.4 17.9l-10.7 7.2s-5.5-12.5-19.7-12.5c-7.9 0-19.7 7.3-19.7 19.7v26.8c0 13.4 6.6 23.3 17.9 23.3 14.1 0 21.5-10.9 21.5-26.8h-17.9v-10.7h30.4c0 20.5 4.7 49.9-34 49.9m-116.5 44.7c-9.4 0-13.6-.3-20-.8v-69.7c6.4-.6 15-.6 22.5-.6 23.3 0 37.2 12.2 37.2 34.5 0 21.9-15 36.6-39.7 36.6"/></svg>
+          </a>
+        
+          <a href="mailto:mourad.dridi@univ-eiffel.fr" title="E-mail" class="md-header__social-link"
+             >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m20 8-8 5-8-5V6l8 5 8-5m0-2H4c-1.11 0-2 .89-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2"/></svg>
+          </a>
+        
+      </nav>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Onglets" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Accueil
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../research/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Recherche
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Enseignements
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../.." title="Mourad DRIDI" class="md-nav__button md-logo" aria-label="Mourad DRIDI" data-md-component="logo">
+      
+  <img src="../../../../assets/avatar.jpg" alt="logo">
+
+    </a>
+    Mourad DRIDI
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Accueil
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../research/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Recherche
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Recherche
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../research/npsim/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NPSIM
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../research/projets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Projets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../research/encadrement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Stages encadrés
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Enseignements
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Enseignements
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IA embarquée
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_2" id="__nav_3_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    IA embarquée
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../td/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TDs
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_2_2" id="__nav_3_2_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    TDs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../td/td1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TD1 : Prise en main de la carte, LED, boutons et FreeRTOS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2_3" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TPs
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_2_3" id="__nav_3_2_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_2_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    TPs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tp1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TP1 : Classification d'images sur NPU
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TP2 : Entraîner son modèle avec eIQ Portal
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TP2 : Entraîner son modèle avec eIQ Portal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#objectifs-prerequis-et-deroule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Objectifs, prérequis et déroulé
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-0-le-principe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 0 — Le principe
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-1-preparer-le-jeu-de-donnees" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 1 — Préparer le jeu de données
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-2-creer-le-projet-eiq-portal-et-importer-les-images" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 2 — Créer le projet eIQ Portal et importer les images
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-3-choisir-le-modele-de-base" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 3 — Choisir le modèle de base
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-4-entrainer-le-modele" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 4 — Entraîner le modèle
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-5-valider-le-modele" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 5 — Valider le modèle
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-6-exporter-le-modele-en-tensorflow-lite-quantifie-int8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 6 — Exporter le modèle en TensorFlow Lite quantifié int8
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-7-convertir-le-modele-pour-le-npu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 7 — Convertir le modèle pour le NPU
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-8-integrer-le-modele-dans-le-projet-label_image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 8 — Intégrer le modèle dans le projet label_image
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-9-tester-sur-la-carte" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 9 — Tester sur la carte
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bonus-ameliorer-le-modele-comparer-cpu-et-npu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bonus — Améliorer le modèle, comparer CPU et NPU
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#depannage-synthese-et-sources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dépannage, synthèse et sources
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#annexe-telecharger-le-jeu-de-donnees-directement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Annexe — Télécharger le jeu de données directement
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tp3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TP3 : Détecter un feu sur le NPU
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../projet/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Projets
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_2_4" id="__nav_3_2_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Projets
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../projet/projet1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Projet 1 : Flotte de drones de détection d'accidents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../livre-3d/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Livre animé 3D
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../3r-tr1/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3R-TR1 · Physique pour la transition énergétique
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_3" id="__nav_3_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    3R-TR1 · Physique pour la transition énergétique
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../3r-tr1/cours/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cours
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_3_2" id="__nav_3_3_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Cours
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../3r-tr1/cours/cm1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CM1 : Systèmes de numération et arithmétique binaire
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#objectifs-prerequis-et-deroule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Objectifs, prérequis et déroulé
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-0-le-principe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 0 — Le principe
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-1-preparer-le-jeu-de-donnees" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 1 — Préparer le jeu de données
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-2-creer-le-projet-eiq-portal-et-importer-les-images" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 2 — Créer le projet eIQ Portal et importer les images
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-3-choisir-le-modele-de-base" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 3 — Choisir le modèle de base
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-4-entrainer-le-modele" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 4 — Entraîner le modèle
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-5-valider-le-modele" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 5 — Valider le modèle
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-6-exporter-le-modele-en-tensorflow-lite-quantifie-int8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 6 — Exporter le modèle en TensorFlow Lite quantifié int8
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-7-convertir-le-modele-pour-le-npu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 7 — Convertir le modèle pour le NPU
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-8-integrer-le-modele-dans-le-projet-label_image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 8 — Intégrer le modèle dans le projet label_image
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partie-9-tester-sur-la-carte" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partie 9 — Tester sur la carte
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bonus-ameliorer-le-modele-comparer-cpu-et-npu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bonus — Améliorer le modèle, comparer CPU et NPU
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#depannage-synthese-et-sources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dépannage, synthèse et sources
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#annexe-telecharger-le-jeu-de-donnees-directement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Annexe — Télécharger le jeu de données directement
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="tp2-entrainer-son-propre-modele-avec-eiq-portal-et-le-deployer-sur-le-npu-frdm-mcxn947">TP2 : Entraîner son propre modèle avec eIQ Portal et le déployer sur le NPU (FRDM-MCXN947)</h1>
+<h2 id="objectifs-prerequis-et-deroule">Objectifs, prérequis et déroulé</h2>
+<p>Dans le TP1, on a fait tourner un modèle fourni par NXP. Dans ce TP, vous fabriquez <strong>votre propre modèle</strong> : un classifieur de fleurs à 5 classes (marguerite, pissenlit, rose, tournesol, tulipe). Vous l'entraînez dans eIQ Portal, vous l'exportez en TensorFlow Lite quantifié int8, vous le convertissez pour le NPU Neutron, puis vous le faites tourner sur la FRDM-MCXN947 dans le projet <code>tflm_label_image</code> du TP1.</p>
+<p><strong>eIQ Toolkit sait-il faire tout ça ?</strong> Oui, avec deux points à connaître :</p>
+<ol>
+<li>eIQ Portal crée le projet, importe les images, entraîne, valide et <strong>exporte un <code>.tflite</code> quantifié int8</strong>. Il n'exporte pas directement pour le NPU : la conversion Neutron se fait ensuite dans le <strong>Model Tool</strong> d'eIQ Portal (note de version NXP : <em>« Direct export for the eIQ Neutron NPU [...] is not supported. The model must be exported to quantized TF Lite and then converted using the Model Tool »</em>).</li>
+<li>Comme au TP1, la version du convertisseur Neutron doit être <strong>la même</strong> que celle du SDK du projet MCUXpresso. Ce TP utilise le <strong>SDK FRDM-MCXN947 2.14.0</strong> dans MCUXpresso IDE et le convertisseur <strong>MCUXpresso SDK 2.14.0</strong> dans eIQ Portal. La partie 7.1 vérifie que les deux correspondent. Si elles diffèrent, la carte redémarre en boucle au chargement du modèle.</li>
+</ol>
+<p><strong>Matériel</strong></p>
+<ul>
+<li>Carte NXP FRDM-MCXN947, câble USB-C sur le connecteur <strong>MCU-Link (J17)</strong>.</li>
+</ul>
+<p><strong>Logiciel (à installer AVANT la séance)</strong></p>
+<ul>
+<li>MCUXpresso IDE et le <strong>SDK FRDM-MCXN947</strong> avec le composant <strong>eIQ</strong> coché (ici la version <strong>2.14.0</strong>, la même qu'au TP1).</li>
+<li>eIQ Toolkit 1.17 (eIQ Portal + Model Tool + convertisseur Neutron).</li>
+<li>Python 3 avec <code>pip install opencv-python numpy</code> (comme au TP1).</li>
+<li>Netron (<a href="https://netron.app">netron.app</a>).</li>
+<li>Environ 300 Mo de disque libre pour le jeu de données.</li>
+</ul>
+<p><strong>Déroulé</strong></p>
+<table>
+<thead>
+<tr>
+<th>Partie</th>
+<th>Contenu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>Le principe : de l'image au modèle sur la carte</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Préparer le jeu de données (fleurs)</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Créer le projet eIQ Portal et importer les images</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Choisir le modèle de base</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Entraîner le modèle</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Valider le modèle</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Exporter le modèle en TensorFlow Lite quantifié int8</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Convertir le modèle pour le NPU et le vérifier dans Netron</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Intégrer le modèle dans le projet label_image</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Tester sur la carte</td>
+</tr>
+<tr>
+<td>Bonus</td>
+<td>Améliorer le modèle, comparer CPU et NPU</td>
+</tr>
+</tbody>
+</table>
+<h2 id="partie-0-le-principe">Partie 0 — Le principe</h2>
+<p>On va enchaîner six étapes. Chacune produit un fichier qui sert à la suivante.</p>
+<table>
+<thead>
+<tr>
+<th>Étape</th>
+<th>Outil</th>
+<th>Ce qu'on obtient</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Préparer les images</td>
+<td>Script Python</td>
+<td>Dossier <code>dataset_fleurs/</code> avec un sous-dossier par classe</td>
+</tr>
+<tr>
+<td>Entraîner</td>
+<td>eIQ Portal</td>
+<td>Un modèle en virgule flottante (float32) dans le projet <code>.eiqp</code></td>
+</tr>
+<tr>
+<td>Valider</td>
+<td>eIQ Portal</td>
+<td>Une matrice de confusion et une précision (%)</td>
+</tr>
+<tr>
+<td>Exporter</td>
+<td>eIQ Portal (DEPLOY)</td>
+<td><code>fleurs_int8.tflite</code> : modèle quantifié int8, pour CPU</td>
+</tr>
+<tr>
+<td>Convertir</td>
+<td>Model Tool</td>
+<td><code>fleurs_npu.tflite</code> : les couches compatibles regroupées dans un <code>NeutronGraph</code></td>
+</tr>
+<tr>
+<td>Déployer</td>
+<td>MCUXpresso IDE</td>
+<td>Le firmware <code>tflm_label_image</code> avec votre modèle, vos classes et une image de test</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Quelques mots à connaître</strong></p>
+<ul>
+<li><strong>Classification</strong> : le modèle reçoit une image et rend un score pour chaque classe. La classe au score le plus haut est la réponse.</li>
+<li><strong>Jeu d'entraînement (train)</strong> : les images que le modèle voit pendant l'apprentissage. <strong>Jeu de test</strong> : des images qu'il ne voit jamais pendant l'apprentissage, pour mesurer s'il sait généraliser.</li>
+<li><strong>Transfer learning</strong> : on part d'un réseau déjà entraîné sur ImageNet (comme le MobileNet du TP1). Il sait déjà reconnaître des bords, des textures et des formes. On réentraîne seulement pour nos 5 classes. Il faut donc beaucoup moins d'images et de temps.</li>
+<li><strong>Époque</strong> (en anglais <em>epoch</em>) : un passage complet sur toutes les images d'entraînement (détails en partie 4).</li>
+<li><strong>Quantification int8</strong> : on remplace les nombres float32 (4 octets) par des entiers int8 (1 octet). Le modèle est 4 fois plus petit et le NPU Neutron ne calcule qu'en int8.</li>
+</ul>
+<h2 id="partie-1-preparer-le-jeu-de-donnees">Partie 1 — Préparer le jeu de données</h2>
+<p>On utilise <strong>flower_photos</strong>, un jeu de données classique fourni par TensorFlow : 3 670 photos de fleurs en 5 classes. Pour que l'entraînement soit rapide sur un PC sans carte graphique, on garde 300 images par classe, recadrées et réduites à 128 × 128.</p>
+<p><strong>1.1 Le format attendu par eIQ Portal</strong></p>
+<p>L'importeur <strong>Structured folders</strong> d'eIQ Portal attend <strong>deux niveaux de dossiers</strong> sous le dossier sélectionné :</p>
+<ol>
+<li>un dossier <code>train</code> (images d'entraînement) et un dossier <code>test</code> (images de test) ;</li>
+<li>dans chacun, un dossier par classe. Le nom de ce dossier devient le <strong>label</strong> (la classe) des images qu'il contient.</li>
+</ol>
+<div class="highlight"><pre><span></span><code>dataset_fleurs/          &lt;- le dossier à sélectionner dans eIQ Portal
+├── train/
+│   ├── marguerite/      (240 images)
+│   ├── pissenlit/
+│   ├── rose/
+│   ├── tournesol/
+│   └── tulipe/
+└── test/
+    ├── marguerite/      (60 images)
+    ├── pissenlit/
+    ├── rose/
+    ├── tournesol/
+    └── tulipe/
+</code></pre></div>
+<p>Ce format est strict : des dossiers de classes placés directement sous <code>dataset_fleurs</code> donnent 1 500 images <strong>sans label</strong> (<em>Unlabeled Images</em>), et sélectionner le dossier du dessus donne les labels <code>train</code> et <code>test</code> (voir partie 2).</p>
+<p><strong>1.2 Le script de préparation</strong></p>
+<ol>
+<li>Créer un dossier de travail, par exemple <code>C:\TP2-IA\</code>. Ne l'appelez pas <code>dataset_fleurs</code> : le script crée lui-même un sous-dossier de ce nom.</li>
+<li>Y enregistrer le script <code>prepare_dataset.py</code> ci-dessous.</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="c1"># prepare_dataset.py : telecharge flower_photos et cree dataset_fleurs/ pour eIQ Portal</span>
+<span class="c1"># Usage : python prepare_dataset.py [nombre_images_par_classe]</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span><span class="o">,</span><span class="w"> </span><span class="nn">sys</span><span class="o">,</span><span class="w"> </span><span class="nn">random</span><span class="o">,</span><span class="w"> </span><span class="nn">shutil</span><span class="o">,</span><span class="w"> </span><span class="nn">tarfile</span><span class="o">,</span><span class="w"> </span><span class="nn">urllib.request</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
+
+<span class="n">URL</span> <span class="o">=</span> <span class="s2">"https://storage.googleapis.com/download.tensorflow.org/example_images/flower_photos.tgz"</span>
+<span class="n">N_PAR_CLASSE</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="mi">300</span>
+<span class="n">PART_TEST</span> <span class="o">=</span> <span class="mf">0.2</span>          <span class="c1"># 20 % des images dans test/</span>
+<span class="n">N_CARTE</span> <span class="o">=</span> <span class="mi">3</span>              <span class="c1"># photos gardees a part pour tester sur la carte</span>
+<span class="n">TAILLE</span> <span class="o">=</span> <span class="mi">128</span>             <span class="c1"># taille d'entree du modele</span>
+<span class="n">NOMS</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"daisy"</span><span class="p">:</span> <span class="s2">"marguerite"</span><span class="p">,</span> <span class="s2">"dandelion"</span><span class="p">:</span> <span class="s2">"pissenlit"</span><span class="p">,</span> <span class="s2">"roses"</span><span class="p">:</span> <span class="s2">"rose"</span><span class="p">,</span>
+        <span class="s2">"sunflowers"</span><span class="p">:</span> <span class="s2">"tournesol"</span><span class="p">,</span> <span class="s2">"tulips"</span><span class="p">:</span> <span class="s2">"tulipe"</span><span class="p">}</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">carre_128</span><span class="p">(</span><span class="n">chemin</span><span class="p">):</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">chemin</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">img</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">h</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>                          <span class="c1"># recadrage carre centre</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">img</span><span class="p">[(</span><span class="n">h</span> <span class="o">-</span> <span class="n">c</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">:(</span><span class="n">h</span> <span class="o">-</span> <span class="n">c</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">c</span><span class="p">,</span> <span class="p">(</span><span class="n">w</span> <span class="o">-</span> <span class="n">c</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">:(</span><span class="n">w</span> <span class="o">-</span> <span class="n">c</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">c</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="p">(</span><span class="n">TAILLE</span><span class="p">,</span> <span class="n">TAILLE</span><span class="p">),</span> <span class="n">interpolation</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">INTER_AREA</span><span class="p">)</span>
+
+<span class="c1"># 1. Telechargement (environ 220 Mo, une seule fois)</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="s2">"flower_photos"</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s2">"flower_photos.tgz"</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Telechargement de flower_photos.tgz ..."</span><span class="p">)</span>
+        <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span><span class="n">URL</span><span class="p">,</span> <span class="s2">"flower_photos.tgz"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Decompression ..."</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">tarfile</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">"flower_photos.tgz"</span><span class="p">)</span> <span class="k">as</span> <span class="n">t</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">tarfile</span><span class="p">,</span> <span class="s2">"data_filter"</span><span class="p">):</span>   <span class="c1"># Python recent : extraction securisee</span>
+            <span class="n">t</span><span class="o">.</span><span class="n">extractall</span><span class="p">(</span><span class="s2">"."</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="s2">"data"</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">t</span><span class="o">.</span><span class="n">extractall</span><span class="p">(</span><span class="s2">"."</span><span class="p">)</span>
+
+<span class="c1"># 2. dataset_fleurs/train/&lt;classe&gt; et dataset_fleurs/test/&lt;classe&gt;</span>
+<span class="c1">#    + quelques photos pour la carte</span>
+<span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"dataset_fleurs"</span><span class="p">,</span> <span class="s2">"photos_carte"</span><span class="p">):</span>   <span class="c1"># repart de zero</span>
+    <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="s2">"photos_carte"</span><span class="p">)</span>
+<span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>           <span class="c1"># meme tirage pour tout le monde</span>
+<span class="k">for</span> <span class="n">en</span><span class="p">,</span> <span class="n">fr</span> <span class="ow">in</span> <span class="n">NOMS</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">fichiers</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">"flower_photos"</span><span class="p">,</span> <span class="n">en</span><span class="p">)))</span>
+    <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">fichiers</span><span class="p">)</span>
+    <span class="n">n_test</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">N_PAR_CLASSE</span> <span class="o">*</span> <span class="n">PART_TEST</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">nom</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">fichiers</span><span class="p">[:</span><span class="n">N_PAR_CLASSE</span><span class="p">]):</span>
+        <span class="n">groupe</span> <span class="o">=</span> <span class="s2">"test"</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n_test</span> <span class="k">else</span> <span class="s2">"train"</span>
+        <span class="n">dossier</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">"dataset_fleurs"</span><span class="p">,</span> <span class="n">groupe</span><span class="p">,</span> <span class="n">fr</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">dossier</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">carre_128</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">"flower_photos"</span><span class="p">,</span> <span class="n">en</span><span class="p">,</span> <span class="n">nom</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">img</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">cv2</span><span class="o">.</span><span class="n">imwrite</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dossier</span><span class="p">,</span> <span class="s2">"</span><span class="si">%s</span><span class="s2">_</span><span class="si">%03d</span><span class="s2">.jpg"</span> <span class="o">%</span> <span class="p">(</span><span class="n">fr</span><span class="p">,</span> <span class="n">i</span><span class="p">)),</span> <span class="n">img</span><span class="p">)</span>
+    <span class="c1"># photos jamais vues par eIQ Portal, pour le test sur la carte</span>
+    <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">nom</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">fichiers</span><span class="p">[</span><span class="n">N_PAR_CLASSE</span><span class="p">:</span><span class="n">N_PAR_CLASSE</span> <span class="o">+</span> <span class="n">N_CARTE</span><span class="p">]):</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">carre_128</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">"flower_photos"</span><span class="p">,</span> <span class="n">en</span><span class="p">,</span> <span class="n">nom</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">img</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">cv2</span><span class="o">.</span><span class="n">imwrite</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">"photos_carte"</span><span class="p">,</span> <span class="s2">"</span><span class="si">%s</span><span class="s2">_</span><span class="si">%d</span><span class="s2">.jpg"</span> <span class="o">%</span> <span class="p">(</span><span class="n">fr</span><span class="p">,</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)),</span> <span class="n">img</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="si">%-11s</span><span class="s2"> : </span><span class="si">%d</span><span class="s2"> train, </span><span class="si">%d</span><span class="s2"> test"</span> <span class="o">%</span> <span class="p">(</span><span class="n">fr</span><span class="p">,</span> <span class="n">N_PAR_CLASSE</span> <span class="o">-</span> <span class="n">n_test</span><span class="p">,</span> <span class="n">n_test</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Termine : importer le dossier dataset_fleurs dans eIQ Portal"</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>1.3 Lancer le script</strong></p>
+<ol>
+<li>Ouvrir un terminal (Invite de commandes ou Git Bash) dans <code>C:\TP2-IA\</code>.</li>
+<li>Lancer : <code>python prepare_dataset.py</code></li>
+<li>Le script affiche une ligne par classe : <code>marguerite : 240 train, 60 test</code>, etc.</li>
+</ol>
+<p>Le dossier de travail contient alors :</p>
+<div class="highlight"><pre><span></span><code>C:\TP2-IA\
+├── prepare_dataset.py
+├── flower_photos.tgz
+├── flower_photos\      (photos d'origine, ne PAS importer)
+├── photos_carte\       (15 photos pour tester sur la carte, ne PAS importer)
+└── dataset_fleurs\     (LE dossier à importer dans eIQ Portal)
+    ├── train\          (5 dossiers de fleurs)
+    └── test\           (5 dossiers de fleurs)
+</code></pre></div>
+<p><strong>Pourquoi recadrer en carré ?</strong> Le modèle attend une image 128 × 128. Si on écrase une photo rectangulaire en carré, les fleurs sont déformées. Le recadrage centré garde les proportions. C'est le même traitement que le script <code>img2c.py</code> du TP1 : la carte verra des images préparées comme à l'entraînement.</p>
+<h2 id="partie-2-creer-le-projet-eiq-portal-et-importer-les-images">Partie 2 — Créer le projet eIQ Portal et importer les images</h2>
+<p><strong>2.1 Créer le projet</strong></p>
+<ol>
+<li>Lancer <strong>eIQ Portal</strong>.</li>
+<li>Sur la page d'accueil, cliquer <strong>CREATE PROJECT</strong>, puis <strong>IMPORT DATASET</strong>.</li>
+<li>Choisir le type <strong>Structured folders</strong>.</li>
+<li>Sélectionner le dossier <code>C:\TP2-IA\dataset_fleurs</code>, celui qui contient <strong><code>train</code> et <code>test</code></strong>. Ni le dossier du dessus, ni <code>train</code> lui-même. Cliquer <strong>IMPORT</strong>.</li>
+<li>Donner un nom au projet, par exemple <code>TP2_fleurs</code>, puis <strong>Save</strong>.</li>
+</ol>
+<p><strong>2.2 Vérifier l'import : 5 labels</strong></p>
+<p>L'import ouvre le <strong>Data Set Curator</strong>. La colonne de gauche liste les <strong>Labels</strong>. Vérifier :</p>
+<ul>
+<li><strong>5 labels</strong> : <code>marguerite</code>, <code>pissenlit</code>, <code>rose</code>, <code>tournesol</code>, <code>tulipe</code>, avec <strong>240</strong> images en <em>Train</em>, <strong>60</strong> en <em>Test</em> et <strong>300</strong> au <em>Total</em> ;</li>
+<li><strong>Unlabeled Images : 0</strong> et <strong>All Images : 1500</strong>.</li>
+</ul>
+<p><img alt="Data Set Curator : bon import" src="img/03b_curator_bon_import.png" /></p>
+<p><em>Figure 1 — Bon import : 5 labels, 240 images en Train et 60 en Test pour chacun, aucune image sans label.</em></p>
+<p><strong>Deux erreurs à éviter.</strong> Dans les deux cas, recréer le projet en sélectionnant le bon dossier.</p>
+<table>
+<thead>
+<tr>
+<th>Ce que montre le Data Set Curator</th>
+<th>Cause</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Labels <code>test</code> et <code>train</code> au lieu des fleurs</td>
+<td>On a sélectionné le dossier <strong>au-dessus</strong> de <code>dataset_fleurs</code>. eIQ Portal a pris <code>train</code> et <code>test</code> pour deux classes : le modèle apprendrait à distinguer « train » de « test », ce qui n'a aucun sens</td>
+</tr>
+<tr>
+<td>Aucun label, <em>Unlabeled Images : 1500</em></td>
+<td>Le dossier sélectionné contient directement les dossiers de fleurs, sans <code>train</code> et <code>test</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Si eIQ Portal affiche <code>Importer error: TypeError: Cannot read property 'parentElement' of undefined</code></strong> : le dossier sélectionné n'est pas le bon (par exemple le dossier de travail <code>C:\TP2-IA\</code>, qui contient aussi <code>flower_photos</code>, le <code>.tgz</code> et le script). Sélectionner <code>dataset_fleurs</code>, qui contient seulement <code>train</code> et <code>test</code>.</p>
+<p><strong>Checkpoint :</strong> 5 labels, 1 500 images, puis cliquer <strong>SELECT MODEL</strong> (en bas à gauche).</p>
+<h2 id="partie-3-choisir-le-modele-de-base">Partie 3 — Choisir le modèle de base</h2>
+<ol>
+<li>L'assistant <strong>SELECT MODEL</strong> pose quelques questions. Répondre :<ul>
+<li>type de problème : <strong>Classification</strong> ;</li>
+<li>priorité : <strong>Performance</strong> (modèle petit et rapide) ;</li>
+<li>cible : <strong>MCU</strong>.</li>
+</ul>
+</li>
+<li>eIQ Portal choisit le modèle de base. Lors de notre essai, il s'agit d'une <strong>MobileNet V2</strong> avec <strong>Alpha = 0.35</strong> (le modèle s'appelle <code>classification-performance-mcu</code>). C'est la même famille que le MobileNet du TP1.</li>
+</ol>
+<p><strong>Pourquoi un petit modèle ?</strong> Le modèle doit tenir dans la Flash du MCX N947, et sa mémoire de travail (<em>tensor arena</em>) dans la SRAM. Le paramètre <strong>Alpha</strong> règle la largeur du réseau : 0.35 veut dire 35 % des filtres du MobileNet V2 complet, donc un modèle environ 8 fois plus léger.</p>
+<h2 id="partie-4-entrainer-le-modele">Partie 4 — Entraîner le modèle</h2>
+<p><strong>4.1 Les mots à connaître</strong></p>
+<ul>
+<li><strong>Époque</strong> (en anglais <em>epoch</em>) : un passage complet du modèle sur <strong>toutes</strong> les images d'entraînement. Avec 10 époques, chaque image est vue 10 fois. À chaque passage, le modèle corrige un peu ses poids et se trompe un peu moins.</li>
+<li><strong>Précision</strong> (<em>accuracy</em>) : le pourcentage d'images bien classées. 0,9 = 90 %.</li>
+<li><strong>Perte</strong> (<em>loss</em>) : une mesure de l'erreur du modèle. Elle doit <strong>descendre</strong> pendant l'entraînement.</li>
+</ul>
+<p><strong>4.2 Régler et lancer l'entraînement</strong></p>
+<p>La page <strong>Trainer</strong> s'ouvre après le choix du modèle. Dans le panneau de gauche, régler seulement :</p>
+<table>
+<thead>
+<tr>
+<th>Paramètre</th>
+<th>Valeur</th>
+<th>Pourquoi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Weight Initialization</strong></td>
+<td><code>imagenet</code> (par défaut)</td>
+<td>On part d'un réseau déjà entraîné sur ImageNet (transfer learning)</td>
+</tr>
+<tr>
+<td><strong>Input Size</strong></td>
+<td><code>128,128,3</code></td>
+<td>Taille de l'image d'entrée : 128 × 128 pixels, 3 couleurs (RGB). C'est la taille des images du jeu de données et celle que la carte enverra</td>
+</tr>
+<tr>
+<td><strong>Learning Rate</strong></td>
+<td><code>0.0001</code> (par défaut)</td>
+<td>Taille des corrections à chaque étape</td>
+</tr>
+<tr>
+<td><strong>Batch Size</strong></td>
+<td><code>10</code> (par défaut)</td>
+<td>Nombre d'images traitées avant chaque correction (ne jamais descendre sous 4)</td>
+</tr>
+<tr>
+<td><strong>Epochs To Train</strong></td>
+<td><code>10</code></td>
+<td>Nombre de passages sur toutes les images</td>
+</tr>
+</tbody>
+</table>
+<p><img alt="Réglages du Trainer" src="img/03c_trainer_reglages.png" /></p>
+<p><em>Figure 2 — Les réglages du Trainer avant le lancement.</em></p>
+<p>Laisser tout le reste par défaut (<strong>Enable QAT</strong>, <strong>Enable Pruning</strong>, <strong>Enable Clustering</strong> désactivés, <strong>Augmentation Settings : No Augments</strong>, <strong>Alpha 0.35</strong>, <strong>Optimizer Adam</strong>). Cliquer <strong>START TRAINING</strong>.</p>
+<p>Lors de notre essai, 10 époques ont pris environ <strong>2 minutes</strong> (125 s) sur un PC portable sans carte graphique.</p>
+<p><strong>4.3 Lire les courbes</strong></p>
+<p>Pendant l'entraînement, le <strong>Trainer</strong> trace deux courbes. Le bouton <strong>Metric</strong> affiche la précision, le bouton <strong>Loss</strong> affiche la perte. Choisir <strong>Epochs</strong> pour avoir une valeur par époque.</p>
+<ul>
+<li><strong>Train Accuracy</strong> (ligne bleue) : précision sur les images d'entraînement.</li>
+<li><strong>Evaluation Accuracy</strong> (points jaunes) : précision sur les images de test, que le modèle ne voit jamais pendant l'apprentissage. <strong>C'est elle qui compte.</strong></li>
+</ul>
+<p><img alt="Courbe de précision" src="img/04_trainer_precision_v2.png" /></p>
+<p><em>Figure 3 — Précision (Metric) sur 10 époques : la précision d'entraînement (ligne) monte de 0,62 à 0,97 ; la précision d'évaluation (points) passe de 0,8 à 0,9.</em></p>
+<p><img alt="Courbe de perte" src="img/05_trainer_perte_v2.png" /></p>
+<p><em>Figure 4 — Perte (Loss) : la perte d'entraînement (ligne) descend jusqu'à 0,11 ; la perte d'évaluation (points) descend moins et se stabilise vers 0,45.</em></p>
+<p><strong>Comment lire les figures 3 et 4 :</strong> le modèle apprend, puisque les deux précisions montent et les deux pertes baissent. Mais après la 6e époque, la courbe d'entraînement continue de s'améliorer alors que l'évaluation ne bouge presque plus (précision 0,9, perte 0,45). L'écart montre que le modèle commence à apprendre les images d'entraînement <strong>par cœur</strong> : c'est le début du <strong>surapprentissage</strong>. Plus d'époques n'amélioreraient pas le résultat sur des images nouvelles.</p>
+<p><strong>À noter dans le compte rendu :</strong> nombre d'époques, précision d'entraînement et précision d'évaluation finales.</p>
+<h2 id="partie-5-valider-le-modele">Partie 5 — Valider le modèle</h2>
+<p>La validation passe toutes les images de test dans le modèle et construit une <strong>matrice de confusion</strong>.</p>
+<ol>
+<li>Cliquer <strong>VALIDATE</strong> (en bas à droite du Trainer).</li>
+<li>Laisser <strong>Input Data Type</strong> et <strong>Output Data Type</strong> sur <code>float32</code>, <strong>Softmax Threshold</strong> à 0.</li>
+<li>Cliquer le bouton jaune <strong>VALIDATE</strong>.</li>
+</ol>
+<p><strong>Lire la matrice de confusion</strong></p>
+<ul>
+<li>Une ligne par classe <strong>réelle</strong> (<em>Actual</em>), une colonne par classe <strong>prédite</strong> (<em>Predicted</em>).</li>
+<li>La diagonale (en vert) compte les bonnes réponses. Les cases hors diagonale (en rouge) sont les erreurs.</li>
+<li>Exemple : la case ligne <code>rose</code>, colonne <code>tulipe</code> compte les roses prises pour des tulipes.</li>
+<li>La ligne et la colonne <em>Background</em> restent vides : on peut les ignorer.</li>
+</ul>
+<p><img alt="Matrice de confusion" src="img/06_confusion.png" /></p>
+<p><em>Figure 5 — Matrice de confusion : la diagonale est bien verte, les erreurs (cases roses) sont peu nombreuses.</em></p>
+<p>L'onglet <strong>Per Class Metric</strong> (menu <strong>Accuracy</strong>) donne la précision de chaque classe :</p>
+<p><img alt="Précision par classe" src="img/07_precision_par_classe.png" /></p>
+<p><em>Figure 6 — Précision par classe : de 80 % (rose) à 91,67 % (marguerite et tulipe), soit environ 87 % en moyenne.</em></p>
+<p><strong>Questions :</strong></p>
+<ol>
+<li>Quelles classes sont le plus confondues ? Est-ce logique en regardant les images ?</li>
+<li><strong>Bonus :</strong> activer <strong>Post Training Quantization</strong>, mettre <strong>Input Data Type</strong> et <strong>Output Data Type</strong> sur <code>int8</code>, puis relancer <strong>VALIDATE</strong>. Combien de points de précision perd-on avec l'int8 ?</li>
+</ol>
+<h2 id="partie-6-exporter-le-modele-en-tensorflow-lite-quantifie-int8">Partie 6 — Exporter le modèle en TensorFlow Lite quantifié int8</h2>
+<ol>
+<li>Cliquer <strong>DEPLOY</strong> (en bas à droite de la page Validate).</li>
+<li>Régler :<ul>
+<li><strong>Export File Type</strong> : <strong>TensorFlow Lite</strong> ;</li>
+<li><strong>Input Data Type</strong> : <strong>int8</strong> ;</li>
+<li><strong>Output Data Type</strong> : <strong>int8</strong> ;</li>
+<li><strong>Export Quantized Model</strong> : <strong>activé</strong>, puis <strong>Per Channel</strong> ;</li>
+<li><strong>Number of Samples</strong> : laisser la valeur par défaut (images utilisées pour calibrer la quantification).</li>
+</ul>
+</li>
+<li><strong>Avant d'exporter, vérifier la ligne Labels</strong> du résumé : elle doit lister les 5 fleurs. Si elle affiche <code>test, train</code>, revoir la partie 2.</li>
+<li>Cliquer <strong>EXPORT MODEL</strong>, enregistrer sous <code>C:\TP2-IA\fleurs_int8.tflite</code>.</li>
+</ol>
+<p><img alt="Export du modèle" src="img/08_export_v2.png" /></p>
+<p><em>Figure 7 — Les réglages d'export : TensorFlow Lite, int8 en entrée et en sortie, modèle quantifié Per Channel. Le résumé indique le modèle de base (mobilenet_v2), les 5 labels, 10 époques en 120 s.</em></p>
+<p><strong>Pourquoi int8 ?</strong> Le NPU Neutron ne calcule qu'en int8. Côté entrée, le firmware <code>tflm_label_image</code> reçoit des pixels de 0 à 255 et leur soustrait 128 quand l'entrée du modèle est en int8 (fonction <code>MODEL_ConvertInput</code> du SDK). Aucun code de prétraitement n'est donc à écrire.</p>
+<p><strong>Checkpoint :</strong> ouvrir <code>fleurs_int8.tflite</code> dans <a href="https://netron.app">netron.app</a> et cliquer sur l'entrée du graphe. Elle doit être de type <code>int8</code> et de forme <code>[1, 128, 128, 3]</code>. La sortie doit avoir 5 valeurs : <code>[1, 5]</code>.</p>
+<h2 id="partie-7-convertir-le-modele-pour-le-npu">Partie 7 — Convertir le modèle pour le NPU</h2>
+<p>Même procédure que le Bonus du TP1, appliquée à votre modèle.</p>
+<p><strong>7.1 Vérifier que le SDK et le convertisseur ont la même version</strong></p>
+<p>C'est l'étape la plus importante du TP. Le <code>.tflite</code> converti contient le programme du NPU, et le pilote Neutron compilé dans le firmware doit le comprendre. Les deux doivent donc venir de la même version.</p>
+<p><strong>a) Lire la version du SDK dans MCUXpresso IDE.</strong></p>
+<ol>
+<li>Ouvrir l'onglet <strong>Installed SDKs</strong> (en bas de l'IDE).</li>
+<li>Lire la colonne <strong>SDK Version</strong> de la ligne <strong>SDK_2.x_FRDM-MCXN947</strong>. Ici : <strong>2.14.0</strong>.</li>
+<li>Attention à ne pas confondre avec la ligne <strong>SDK_2.x_MCXN947</strong> (2.16.100 sur la capture). C'est le SDK de la puce seule, sans les exemples de la carte. Le projet <code>tflm_label_image</code> de ce TP est importé depuis le SDK de la <strong>carte</strong> FRDM-MCXN947.</li>
+</ol>
+<p><img alt="Installed SDKs dans MCUXpresso IDE" src="img/01_installed_sdks.png" /></p>
+<p><em>Figure 8 — Le SDK de la carte FRDM-MCXN947 est en version 2.14.0. La ligne MCXN947 (2.16.100) est le SDK de la puce seule.</em></p>
+<p><strong>b) Choisir la même version dans eIQ Portal.</strong></p>
+<ol>
+<li>Sur la page d'accueil d'eIQ Portal, cliquer <strong>SETTINGS</strong> (en haut à droite).</li>
+<li>Dans la liste <strong>Neutron converter</strong>, choisir <strong>MCUXpresso SDK 2.14.0</strong>, la version lue en a).</li>
+<li>Cliquer <strong>APPLY</strong> si le bouton est actif, puis <strong>OK</strong>. Rouvrir le Model Tool s'il était déjà ouvert.</li>
+</ol>
+<p><img alt="Settings d'eIQ Portal, Neutron converter" src="img/02_eiq_settings_neutron.png" /></p>
+<p><em>Figure 9 — Le convertisseur Neutron réglé sur MCUXpresso SDK 2.14.0, la même version que le SDK du projet.</em></p>
+<p><strong>c) Contrôle.</strong> Remplir ce tableau avant de convertir. Les deux cases doivent être identiques.</p>
+<table>
+<thead>
+<tr>
+<th>Version du SDK FRDM-MCXN947 (MCUXpresso IDE)</th>
+<th>Version du Neutron converter (eIQ Portal)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Si votre version de SDK n'apparaît pas dans la liste <strong>Neutron converter</strong>, installez un SDK FRDM-MCXN947 dont la version y figure (depuis le <a href="https://mcuxpresso.nxp.com">SDK Builder</a>), puis importez le projet de la partie 8 depuis ce SDK.</p>
+<p><strong>7.2 Convertir</strong></p>
+<ol>
+<li>Page d'accueil → <strong>MODEL TOOL</strong>.</li>
+<li><strong>File → Open</strong> : choisir <code>fleurs_int8.tflite</code>. Le graphe montre des <code>Conv2D</code> et <code>DepthwiseConv2D</code> : modèle non converti.</li>
+<li><strong>File → Convert → TensorFlow Lite for Neutron (.tflite)</strong>.</li>
+<li>Contrôler la ligne du haut de la fenêtre <em>Conversion Options</em> : le chemin du convertisseur doit contenir la version choisie en 7.1 (ici <strong>2.14.0</strong>). S'il affiche une autre version (par exemple <code>MCU_SDK_25.09</code>), fermer la fenêtre et refaire 7.1 b).</li>
+<li><strong>Neutron target</strong> : <strong>mcxn94x</strong>. <strong>Custom options</strong> : vide.</li>
+<li><strong>Convert</strong>, enregistrer sous <code>C:\TP2-IA\fleurs_npu.tflite</code>.</li>
+</ol>
+<p><strong>Alternative en ligne de commande :</strong></p>
+<div class="highlight"><pre><span></span><code>neutron-converter --input fleurs_int8.tflite --output fleurs_npu.tflite --target mcxn94x
+</code></pre></div>
+<p>Utiliser l'exécutable du dossier <code>bin\neutron-converter\MCU_SDK_&lt;version&gt;\</code> d'eIQ Toolkit qui correspond à la version de votre SDK (ici 2.14.0).</p>
+<p><strong>7.3 Vérifier dans Netron</strong></p>
+<ol>
+<li>Ouvrir <code>fleurs_npu.tflite</code> dans Netron.</li>
+<li>On doit voir un (ou plusieurs) nœud <strong><code>NeutronGraph</code></strong> à la place des convolutions.</li>
+<li><strong>Noter la liste exacte des opérateurs restés en dehors</strong> du <code>NeutronGraph</code> (par exemple <code>Softmax</code>, <code>Reshape</code>, <code>Quantize</code>, <code>Dequantize</code>…). Elle servira à l'ops resolver (partie 8.3).</li>
+<li>Noter la taille des deux fichiers <code>.tflite</code>.</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>Fichier</th>
+<th>Taille (Ko)</th>
+<th>Opérateurs visibles dans Netron</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>fleurs_int8.tflite</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>fleurs_npu.tflite</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="partie-8-integrer-le-modele-dans-le-projet-label_image">Partie 8 — Intégrer le modèle dans le projet label_image</h2>
+<p>On réutilise l'exemple du TP1, importé depuis le <strong>même SDK que celui choisi pour le convertisseur</strong> (ici FRDM-MCXN947 2.14.0). On remplace quatre choses : le modèle, l'ops resolver, la liste des classes et l'image de test.</p>
+<p><strong>8.1 Importer un projet propre</strong></p>
+<ol>
+<li><strong>File → New → Import SDK example(s)…</strong>, carte <strong>frdmmcxn947</strong>, depuis le SDK <strong>SDK_2.x_FRDM-MCXN947 2.14.0</strong> (voir 7.1).</li>
+<li>Préfixe <code>TP2-IA</code>, <strong>C++ Project</strong>, <strong>SDK Debug Console : UART</strong>, exemple <strong>eiq_examples → tflm_label_image</strong>, <strong>Finish</strong>.</li>
+<li><strong>Build</strong>, flasher et vérifier la sortie habituelle (<code>stopwatch</code>). On part ainsi d'un projet qui marche.</li>
+<li>Créer un dossier <code>tools/</code> dans le projet et y copier <code>fleurs_npu.tflite</code>, ainsi que <code>swap_model.py</code> et <code>img2c.py</code> du TP1.</li>
+</ol>
+<p><strong>8.2 Remplacer le modèle</strong></p>
+<p>Regarder le contenu de <code>source/model/</code>. Selon la version du SDK, le modèle y est stocké de deux façons :</p>
+<ul>
+<li><strong>Cas A : un fichier <code>model_data.h</code></strong> qui contient le tableau <code>model_data[]</code> (comme au TP1).<ol>
+<li>Copier <code>source/model/model_data.h</code> dans <code>tools/</code> sous le nom <code>model_data_dorigin.h</code>.</li>
+<li>Dans le terminal Git Bash ouvert sur <code>tools/</code> : <code>python swap_model.py model_data_dorigin.h fleurs_npu.tflite</code></li>
+<li>Ouvrir le <code>model_data.h</code> créé et <strong>changer le nom affiché</strong> : <code>#define MODEL_NAME "fleurs_npu"</code>. Le script garde l'en-tête du fichier d'origine : sans cette modification, la carte affiche encore <code>mobilenet_v1_0.25_128_quant_int8_npu</code> alors que c'est bien votre modèle qui tourne.</li>
+<li>Dans ce même fichier, <strong>agrandir la tensor arena</strong> : remplacer la valeur de <code>kTensorArenaSize</code> par <code>300 * 1024</code>. Votre modèle (MobileNet V2) a besoin d'environ 295 Ko de mémoire de travail, contre environ 256 Ko pour le modèle du TP1 (voir 9.2).</li>
+<li>Copier ce fichier à la place de <code>source/model/model_data.h</code>.</li>
+</ol>
+</li>
+<li><strong>Cas B : un fichier <code>model_data.s</code></strong> qui inclut un fichier <code>.tflite</code> avec la directive <code>.incbin "nom_du_modele.tflite"</code>.<ol>
+<li>Copier <code>fleurs_npu.tflite</code> dans <code>source/model/</code>.</li>
+<li>Dans <code>model_data.s</code>, remplacer le nom du fichier après <code>.incbin</code> par <code>fleurs_npu.tflite</code>.</li>
+<li>Changer <code>MODEL_NAME</code> là où il est défini (chercher <code>MODEL_NAME</code> avec <strong>Ctrl+H</strong>).</li>
+</ol>
+</li>
+</ul>
+<p>Dans les deux cas, ne laisser dans <code>source/model/</code> qu'un seul modèle, puis faire <strong>Refresh</strong> (F5) sur le projet.</p>
+<p><strong>8.3 Mettre à jour l'ops resolver</strong></p>
+<p>Dans <code>source/model/model_mobilenet_ops_npu.cpp</code>, il faut une ligne <code>Add...</code> pour <strong>chaque opérateur noté en 7.3</strong>, plus la ligne <code>NEUTRON_GRAPH</code>. Exemple, à adapter à votre liste :</p>
+<div class="highlight"><pre><span></span><code><span class="n">tflite</span><span class="o">::</span><span class="n">MicroOpResolver</span><span class="w"> </span><span class="o">&amp;</span><span class="nf">MODEL_GetOpsResolver</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="n">tflite</span><span class="o">::</span><span class="n">MicroMutableOpResolver</span><span class="o">&lt;</span><span class="mi">8</span><span class="o">&gt;</span><span class="w"> </span><span class="n">s_microOpResolver</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">s_microOpResolver</span><span class="p">.</span><span class="n">AddDequantize</span><span class="p">();</span>
+<span class="w">    </span><span class="n">s_microOpResolver</span><span class="p">.</span><span class="n">AddQuantize</span><span class="p">();</span>
+<span class="w">    </span><span class="n">s_microOpResolver</span><span class="p">.</span><span class="n">AddReshape</span><span class="p">();</span>
+<span class="w">    </span><span class="n">s_microOpResolver</span><span class="p">.</span><span class="n">AddSlice</span><span class="p">();</span>
+<span class="w">    </span><span class="n">s_microOpResolver</span><span class="p">.</span><span class="n">AddSoftmax</span><span class="p">();</span>
+<span class="w">    </span><span class="n">s_microOpResolver</span><span class="p">.</span><span class="n">AddMean</span><span class="p">();</span>
+<span class="w">    </span><span class="n">s_microOpResolver</span><span class="p">.</span><span class="n">AddFullyConnected</span><span class="p">();</span>
+<span class="w">    </span><span class="n">s_microOpResolver</span><span class="p">.</span><span class="n">AddCustom</span><span class="p">(</span><span class="n">tflite</span><span class="o">::</span><span class="n">GetString_NEUTRON_GRAPH</span><span class="p">(),</span>
+<span class="w">                                </span><span class="n">tflite</span><span class="o">::</span><span class="n">Register_NEUTRON_GRAPH</span><span class="p">());</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">s_microOpResolver</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Un opérateur en trop ne gêne pas (il prend juste un peu de Flash). Un opérateur manquant empêche le modèle de démarrer. Le nombre entre <code>&lt; &gt;</code> doit être au moins égal au nombre de lignes <code>Add...</code>.</p>
+<p><strong>8.4 Remplacer la liste des classes</strong></p>
+<p>Ouvrir <code>source/labels.h</code>. Il contient un tableau de 1001 noms (les classes ImageNet). Remplacer <strong>le contenu du tableau</strong> par les 5 classes, en gardant la ligne de déclaration telle qu'elle est :</p>
+<div class="highlight"><pre><span></span><code><span class="w">    </span><span class="s">"marguerite"</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"pissenlit"</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"rose"</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"tournesol"</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"tulipe"</span>
+</code></pre></div>
+<p><strong>L'ordre est essentiel.</strong> La sortie n° 0 du modèle correspond au premier nom, la n° 1 au deuxième, etc. Il doit être le même que l'ordre des labels dans eIQ Portal (celui des lignes de la matrice de confusion). eIQ Portal range en général les labels par ordre alphabétique, ce qui donne l'ordre ci-dessus. Vérifiez-le sur votre matrice de confusion.</p>
+<p><strong>8.5 Préparer une image de test</strong></p>
+<ol>
+<li>Prendre une photo du dossier <code>C:\TP2-IA\photos_carte\</code> (créé par le script, partie 1). Ces photos n'ont jamais été vues par eIQ Portal. On peut aussi utiliser une photo de fleur prise avec votre téléphone.</li>
+<li>La copier dans <code>tools/</code>, puis : <code>python img2c.py tournesol.jpg tournesol</code></li>
+<li>Le script doit afficher <code>(128, 128, 3) = 49152 octets</code>.</li>
+<li>Renommer <code>source/image/image_data.h</code> en <code>image_data_stopwatch.h</code> et le sortir de <code>source/</code> (ou l'exclure du build), puis copier le nouveau <code>image_data.h</code> dans <code>source/image/</code>.</li>
+</ol>
+<p><strong>8.6 Le seuil d'affichage</strong></p>
+<p>Dans <code>source/demo_config.h</code>, <code>DETECTION_TRESHOLD</code> vaut 23. Avec 5 classes, un modèle hésitant donne facilement 40 % à la meilleure classe : on peut garder 23. Pour voir la réponse même quand le modèle doute, mettre 5.</p>
+<h2 id="partie-9-tester-sur-la-carte">Partie 9 — Tester sur la carte</h2>
+<p><strong>9.1 Compiler et lancer</strong></p>
+<ol>
+<li><strong>Clean</strong>, <strong>Build</strong>. Noter dans le résumé mémoire la taille de <strong>PROGRAM_FLASH1</strong> (le modèle) et de <strong>SRAM</strong>, et les comparer au TP1.</li>
+<li><strong>Debug</strong> → <strong>Resume</strong>, terminal série 115200 8N1 (comme au TP1).</li>
+<li>Le terminal affiche le nom de votre modèle, la classe détectée et le temps d'inférence. Résultat obtenu avec une photo de tournesol : <strong>tournesol (80 %) en 16 ms</strong> sur le NPU.</li>
+</ol>
+<p><img alt="Résultat sur la carte" src="img/09_resultat_carte.png" /></p>
+<p><em>Figure 10 — Le modèle entraîné dans eIQ Portal tourne sur la carte : tournesol (80 %) en 16 ms.</em></p>
+<p><strong>9.2 Si le terminal affiche <code>AllocateTensors() failed</code></strong></p>
+<p>Le terminal affiche alors <code>Failed to resize buffer. Requested: 294960, available 261608, missing: 33352</code>, puis <code>AllocateTensors() failed</code>. Le message se lit ainsi :</p>
+<ul>
+<li><strong>Requested</strong> : la mémoire de travail dont le modèle a besoin pour ses calculs intermédiaires (ici 294 960 octets, environ 288 Ko) ;</li>
+<li><strong>available</strong> : la place réservée dans le firmware par <code>kTensorArenaSize</code> (environ 255 Ko, la valeur prévue pour le modèle du TP1) ;</li>
+<li><strong>missing</strong> : ce qui manque (environ 33 Ko).</li>
+</ul>
+<p><strong>Solution :</strong> dans <code>source/model/model_data.h</code>, mettre <code>kTensorArenaSize</code> à une valeur un peu plus grande que <em>Requested</em>, par exemple <code>300 * 1024</code> (307 200 octets). Puis <strong>Clean</strong>, <strong>Build</strong> et <strong>Debug</strong>. La SRAM du MCX N947 a la place : au TP1, le build n'en utilisait que 72 %.</p>
+<p>Si la ligne <code>Model:</code> affiche encore <code>mobilenet_v1_0.25_128_quant_int8_npu</code>, c'est seulement que <code>MODEL_NAME</code> n'a pas été changé (8.2, étape 3). Le nombre <em>Requested</em> différent de celui du TP1 montre que le modèle a bien été remplacé.</p>
+<p><strong>9.3 Tester toutes les classes</strong></p>
+<ol>
+<li>Tester <strong>une image de chaque classe</strong>, en refaisant 8.5 puis Build et Debug à chaque fois.</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>Image</th>
+<th>Classe réelle</th>
+<th>Classe détectée</th>
+<th>Score (%)</th>
+<th>Temps (ms)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>marguerite</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>2</td>
+<td>pissenlit</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>3</td>
+<td>rose</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>4</td>
+<td>tournesol</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>5</td>
+<td>tulipe</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>6</td>
+<td>objet qui n'est pas une fleur</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Questions :</strong></p>
+<ol>
+<li>Le temps d'inférence change-t-il d'une image à l'autre ? Comparez-le aux 12 ms du TP1.</li>
+<li>Que répond le modèle pour l'image 6 ? Pourquoi un classifieur répond-il toujours une des 5 classes ?</li>
+<li>Les résultats sur la carte sont-ils cohérents avec la matrice de confusion de la partie 5 ?</li>
+</ol>
+<h2 id="bonus-ameliorer-le-modele-comparer-cpu-et-npu">Bonus — Améliorer le modèle, comparer CPU et NPU</h2>
+<p><strong>B.1 Comparer CPU et NPU.</strong> Refaire la partie 8.2 avec <code>fleurs_int8.tflite</code> (modèle non converti) et <code>MODEL_NAME "fleurs_cpu"</code>. Ajouter dans l'ops resolver les opérateurs CPU vus dans Netron (<code>AddConv2D()</code>, <code>AddDepthwiseConv2D()</code>, <code>AddAveragePool2D()</code>…). Si le terminal affiche <code>Arena size is too small</code>, doubler <code>kTensorArenaSize</code>. Comparer les temps d'inférence.</p>
+<p><strong>B.2 Augmentation et Quantization Aware Training.</strong> Dans le Trainer, choisir une augmentation dans <strong>Augmentation Settings</strong> (au lieu de <em>No Augments</em>), ou activer <strong>Enable QAT</strong>. Réentraîner, puis refaire la validation int8 (bonus de la partie 5). La précision d'évaluation s'améliore-t-elle ? L'écart entre entraînement et évaluation (figures 3 et 4) diminue-t-il ?</p>
+<p><strong>B.3 Plus de données.</strong> Relancer <code>python prepare_dataset.py 600</code> (600 images par classe) dans un nouveau dossier, créer un nouveau projet eIQ Portal et comparer la précision de test.</p>
+<p><strong>B.4 Votre propre jeu de données.</strong> Remplacer les fleurs par vos propres photos (par exemple 3 objets de la salle, 50 photos chacun, prises au téléphone). Ranger les photos dans <code>mes_objets/train/&lt;classe&gt;/</code> et <code>mes_objets/test/&lt;classe&gt;/</code> (environ 80 % / 20 %), puis refaire tout le TP.</p>
+<h2 id="depannage-synthese-et-sources">Dépannage, synthèse et sources</h2>
+<table>
+<thead>
+<tr>
+<th>Symptôme</th>
+<th>Cause probable</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>La carte redémarre en boucle, sans <code>Static data processing:</code></td>
+<td>Modèle converti avec une autre version que le SDK du projet</td>
+<td>Refaire 7.1 : même version dans Installed SDKs et dans SETTINGS → Neutron converter, puis reconvertir</td>
+</tr>
+<tr>
+<td><code>Failed initializing model</code> ou <code>Didn't find op for builtin opcode ...</code></td>
+<td>Opérateur manquant dans l'ops resolver</td>
+<td>Comparer le resolver à la liste notée en 7.3</td>
+</tr>
+<tr>
+<td><code>Failed to resize buffer ... missing</code> puis <code>AllocateTensors() failed</code></td>
+<td><code>kTensorArenaSize</code> trop petit pour le nouveau modèle</td>
+<td>Mettre <code>kTensorArenaSize</code> au-dessus de <em>Requested</em>, par exemple <code>300 * 1024</code> (partie 9.2)</td>
+</tr>
+<tr>
+<td><code>Model:</code> affiche encore <code>mobilenet_v1_..._npu</code></td>
+<td><code>MODEL_NAME</code> pas modifié dans <code>model_data.h</code></td>
+<td>Changer <code>MODEL_NAME</code> (partie 8.2)</td>
+</tr>
+<tr>
+<td>Labels <code>test</code> et <code>train</code> dans eIQ Portal</td>
+<td>Dossier sélectionné un niveau trop haut</td>
+<td>Sélectionner <code>dataset_fleurs</code>, qui contient <code>train</code> et <code>test</code> (partie 2.1)</td>
+</tr>
+<tr>
+<td><em>Unlabeled Images : 1500</em>, aucun label</td>
+<td>Dossiers de fleurs sans <code>train</code> / <code>test</code> au-dessus</td>
+<td>Relancer <code>prepare_dataset.py</code> (version avec <code>train</code> et <code>test</code>) et réimporter</td>
+</tr>
+<tr>
+<td><code>Importer error: TypeError: Cannot read property 'parentElement' of undefined</code> à l'import</td>
+<td>Mauvais dossier sélectionné (dossier de travail, dossiers en trop)</td>
+<td>Sélectionner <code>dataset_fleurs</code>, qui contient seulement <code>train</code> et <code>test</code> (partie 2.1)</td>
+</tr>
+<tr>
+<td>Toujours la même classe, quelle que soit l'image</td>
+<td>Export en float32, ou image en BGR / mauvaise taille</td>
+<td>Vérifier l'entrée int8 dans Netron (partie 6), refaire <code>img2c.py</code></td>
+</tr>
+<tr>
+<td>Classe fausse mais toujours « décalée » (rose affichée pour une tulipe…)</td>
+<td>Ordre des noms dans <code>labels.h</code> différent de celui d'eIQ Portal</td>
+<td>Réordonner <code>labels.h</code> selon la matrice de confusion</td>
+</tr>
+<tr>
+<td>Précision de test faible (&lt; 60 %)</td>
+<td>Trop peu d'images, surapprentissage</td>
+<td>Plus d'images (B.3), augmentation (B.2)</td>
+</tr>
+<tr>
+<td>Entraînement très lent</td>
+<td>Images trop grandes, pas de GPU</td>
+<td>Garder des images 128 × 128 (script de la partie 1), réduire le nombre d'images</td>
+</tr>
+<tr>
+<td><code>Detected: No label detected (0%)</code></td>
+<td>Score sous le seuil</td>
+<td>Baisser <code>DETECTION_TRESHOLD</code> à 5</td>
+</tr>
+<tr>
+<td>Erreurs de compilation sur des symboles en double</td>
+<td>Deux modèles ou deux images dans <code>source/</code></td>
+<td>Ne garder qu'un <code>model_data</code> et qu'un <code>image_data.h</code> dans <code>source/</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Questions de synthèse</strong></p>
+<ol>
+<li>Citez dans l'ordre les fichiers produits entre les photos et le firmware, et l'outil qui produit chacun.</li>
+<li>Pourquoi sépare-t-on images d'entraînement et images de test ?</li>
+<li>Pourquoi le modèle doit-il être quantifié en int8 avant la conversion Neutron ?</li>
+<li>Que se passe-t-il si l'ordre des classes dans <code>labels.h</code> ne correspond pas à celui de l'entraînement ?</li>
+<li>Le NPU accélère les convolutions. Quelles opérations de votre modèle restent sur le CPU ?</li>
+</ol>
+<p><strong>À vérifier selon votre installation :</strong> les intitulés exacts de l'assistant <strong>SELECT MODEL</strong> (ils varient selon la version d'eIQ Portal), la forme du fichier modèle dans votre projet (cas A ou B de la partie 8.2) et la liste des opérateurs hors <code>NeutronGraph</code>. Les précisions et les temps donnés ont été mesurés lors de notre essai (SDK 2.14.0, MCUXpresso IDE 11.9.0) : les vôtres varieront un peu.</p>
+<h2 id="annexe-telecharger-le-jeu-de-donnees-directement">Annexe — Télécharger le jeu de données directement</h2>
+<p>Si le script <code>prepare_dataset.py</code> ne parvient pas à télécharger les photos (lien modifié, réseau bloqué…), téléchargez l'archive du jeu de données déjà préparé : <a href="https://drive.google.com/file/d/1D92jzyF_6p-9NueVvDiXOH_YP4VX9E0h/view?usp=sharing">jeu de données du TP2 (Google Drive)</a>. Décompressez-la avec 7-Zip ou WinRAR, puis importez le dossier <code>dataset_fleurs</code> dans eIQ Portal (partie 2). Le dossier <code>photos_carte</code> sert au test sur la carte (partie 8.5).</p>
+<p><strong>Sources :</strong> <a href="https://community.nxp.com/t5/MCX-Microcontrollers-Knowledge/MCXN947-How-to-Train-and-Deploy-Customer-ML-model-to-NPU/ta-p/1899497">NXP — MCXN947: How to Train and Deploy Customer ML model to NPU</a> · <a href="https://www.nxp.com/docs/en/release-note/EIQTRN.pdf">Notes de version eIQ Toolkit (EIQTRN)</a> · <a href="https://www.nxp.com/docs/en/user-guide/EIQTKUG-1.6.9.pdf">Guide utilisateur eIQ Toolkit</a> · <a href="https://eiq.nxp.com/learning-hub/tools/neutronSdk/userGuide/mcuxCompatMatrix.html">Compatibilité Neutron SDK / MCUXpresso SDK</a> · <a href="https://eiq.nxp.com/learning-hub/tools/neutronSdk/softwareTools/NeutronConverter.html">Neutron Converter</a> · <a href="https://docs.mcuxpresso.nxp.com/mcuxsdk/latest/html/examples/eiq_examples/tflm_label_image/readme.html">README tflm_label_image</a> · <a href="https://www.tensorflow.org/datasets/catalog/tf_flowers">jeu de données tf_flowers</a> · <a href="https://netron.app">Netron</a></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Retour en haut de la page
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      © Mourad DRIDI
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://scholar.google.com/citations?user=CFmoyZIAAAAJ&hl=fr" target="_blank" rel="noopener" title="Google Scholar" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M390.9 298.5s0 .1.1.1c9.2 19.4 14.4 41.1 14.4 64C405.3 445.1 338.5 512 256 512s-149.3-66.9-149.3-149.3c0-22.9 5.2-44.6 14.4-64 1.7-3.6 3.6-7.2 5.6-10.7q6.6-11.4 15-21.3c27.4-32.6 68.5-53.3 114.4-53.3 33.6 0 64.6 11.1 89.6 29.9 9.1 6.9 17.4 14.7 24.8 23.5 5.6 6.6 10.6 13.8 15 21.3 2 3.4 3.8 7 5.5 10.5zm26.4-18.8c-30.1-58.4-91-98.4-161.3-98.4s-131.2 40-161.3 98.4L0 202.7 256 0l256 202.7-94.7 77.1z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://www.linkedin.com/in/mourad-dridi-285862a8/" target="_blank" rel="noopener" title="LinkedIn" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3M135.4 416H69V202.2h66.5V416zM102.2 96a38.5 38.5 0 1 1 0 77 38.5 38.5 0 1 1 0-77m282.1 320h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://www.researchgate.net/profile/Mourad-Dridi/research" target="_blank" rel="noopener" title="ResearchGate" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M0 32v448h448V32zm262.2 334.4c-6.6 3-33.2 6-50-14.2-9.2-10.6-25.3-33.3-42.2-63.6-8.9 0-14.7 0-21.4-.6v46.4c0 23.5 6 21.2 25.8 23.9v8.1c-6.9-.3-23.1-.8-35.6-.8-13.1 0-26.1.6-33.6.8v-8.1c15.5-2.9 22-1.3 22-23.9V225c0-22.6-6.4-21-22-23.9V193c25.8 1 53.1-.6 70.9-.6 31.7 0 55.9 14.4 55.9 45.6 0 21.1-16.7 42.2-39.2 47.5 13.6 24.2 30 45.6 42.2 58.9 7.2 7.8 17.2 14.7 27.2 14.7zm22.9-135c-23.3 0-32.2-15.7-32.2-32.2V167c0-12.2 8.8-30.4 34-30.4s30.4 17.9 30.4 17.9l-10.7 7.2s-5.5-12.5-19.7-12.5c-7.9 0-19.7 7.3-19.7 19.7v26.8c0 13.4 6.6 23.3 17.9 23.3 14.1 0 21.5-10.9 21.5-26.8h-17.9v-10.7h30.4c0 20.5 4.7 49.9-34 49.9m-116.5 44.7c-9.4 0-13.6-.3-20-.8v-69.7c6.4-.6 15-.6 22.5-.6 23.3 0 37.2 12.2 37.2 34.5 0 21.9-15 36.6-39.7 36.6"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="mailto:mourad.dridi@univ-eiffel.fr" target="_blank" rel="noopener" title="E-mail" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m20 8-8 5-8-5V6l8 5 8-5m0-2H4c-1.11 0-2 .89-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../../..", "features": ["navigation.tabs", "navigation.sections", "navigation.indexes", "navigation.top", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copi\u00e9 dans le presse-papier", "clipboard.copy": "Copier dans le presse-papier", "search.result.more.one": "1 de plus sur cette page", "search.result.more.other": "# de plus sur cette page", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.term.missing": "Non trouv\u00e9", "select.version": "S\u00e9lectionner la version"}, "version": null}</script>
+    
+    
+      <script src="../../../../assets/javascripts/bundle.a5f9d56c.min.js"></script>
+      
+        <script src="../../../../javascripts/sections.js"></script>
+      
+    
+  </body>
+</html>
