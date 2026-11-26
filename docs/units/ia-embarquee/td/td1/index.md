@@ -13,7 +13,7 @@ Dans ce TD, on découvre la carte NXP **FRDM-MCXN947** en programmant ses entré
 | 1 | `gpio_led_output` | Lire le code, changer la vitesse de clignotement |
 | 2 | (le même) | Les trois couleurs de la LED RGB et leurs mélanges |
 | 3 | `gpio_input_interrupt` | Les boutons SW2 et SW3 par interruption, l'anti-rebond |
-| 4 | `freertos_hello` | Des tâches FreeRTOS, `vTaskDelay`, un sémaphore donné par le bouton |
+| 4 | `freertos_hello` | Les 3 tâches d'un drone : périodes, priorités, ordonnancement |
 | 5 — **noté** | (le projet de l'étape 4) | Un feu tricolore : machine à états, bouton piéton. **À rendre** |
 
 **Matériel**
@@ -598,9 +598,9 @@ Couleur 2 : vert
 !!! abstract "À retenir"
     Interruption = **fonction appelée par le matériel**. Elle doit : savoir **qui** l'a déclenchée (`GPIO_GpioGetInterruptFlags`), **acquitter** (`GPIO_GpioClearInterruptFlags`), être **courte** (lever un drapeau `volatile`). Un bouton **rebondit** : il faut un anti-rebond. Une entrée a besoin de `IBE` et d'une résistance de tirage.
 
-## Partie 4 — Passer sous FreeRTOS (exemple freertos\_hello)
+## Partie 4 — FreeRTOS : les tâches d'un drone (exemple freertos\_hello)
 
-Jusqu'ici, tout se passe dans une seule boucle `while (1)`. Dès qu'on veut faire **plusieurs choses en même temps** (clignoter, surveiller un bouton, afficher…), cette boucle devient difficile à écrire. Un **système d'exploitation temps réel** (RTOS) comme **FreeRTOS** permet de découper le programme en **tâches** indépendantes, chacune avec sa propre boucle. L'**ordonnanceur** de FreeRTOS partage le processeur entre elles.
+Jusqu'ici, tout se passe dans une seule boucle `while (1)`. Dès qu'on veut faire **plusieurs choses en même temps** (clignoter, surveiller un bouton, afficher…), cette boucle devient difficile à écrire. Un **système d'exploitation temps réel** (RTOS) comme **FreeRTOS** permet de découper le programme en **tâches** indépendantes, chacune avec sa propre boucle. L'**ordonnanceur** de FreeRTOS partage le processeur entre elles. Dans cette partie, on n'utilise **ni LED ni bouton** : seulement des tâches qui affichent du texte, pour bien voir **qui s'exécute, et quand**.
 
 **4.1 Importer et essayer l'exemple**
 
@@ -645,67 +645,91 @@ Ouvrir `source/FreeRTOSConfig.h` et relever : `configTICK_RATE_HZ` (fréquence d
     1. `Hello world.` s'affiche **toutes les secondes** : la tâche dort 1 s, se réveille, affiche, se rendort.
     2. 200 ticks par seconde : `pdMS_TO_TICKS(1000)` = **200 ticks**. Un tick dure 1/200 s = **5 ms** : c'est la plus petite attente, et toutes les durées sont arrondies à 5 ms près.
 
-**4.3 Enrichir : trois tâches**
+**4.3 Un drone en trois tâches**
 
-On écrit trois tâches : la première fait clignoter le **rouge** toutes les 500 ms, la deuxième le **bleu** toutes les 300 ms, la troisième **attend le bouton SW2** et bascule le **vert**.
+Le logiciel d'un drone fait plusieurs choses **en même temps**, chacune à son rythme et avec son niveau d'urgence. On en simule trois, qui se contentent d'**afficher un texte** dans le terminal :
 
-Pour la troisième, on n'utilise plus une variable `volatile` comme en partie 3, mais un **sémaphore** : l'interruption le *donne* (`xSemaphoreGiveFromISR`), la tâche le *prend* (`xSemaphoreTake`). Tant qu'il n'y a pas d'appui, la tâche est **bloquée** et ne consomme pas de temps processeur.
+| Tâche | Rôle dans un vrai drone | Période | Priorité |
+| --- | --- | --- | --- |
+| `tache_stabilisation` (STAB) | Lit les capteurs (gyroscope, accéléromètre) et corrige la vitesse des moteurs. Si elle est en retard, le drone tombe. | 500 ms | 3 (haute) |
+| `tache_navigation` (NAV) | Lit le GPS et calcule la direction à suivre. | 1000 ms | 2 |
+| `tache_telemetrie` (TELEM) | Envoie l'état du drone à la station au sol. Un retard n'est pas grave. | 2000 ms | 1 (basse) |
 
-1. En haut du fichier, ajouter `#include "semphr.h"`, `#include "fsl_port.h"` et `#include "fsl_gpio.h"`, puis copier les `#define` des couleurs, `LED_Init()` et `BOUTON_Init()` de la partie 3.
-2. Ajouter le sémaphore, l'interruption et les tâches :
+Dans un vrai drone, la stabilisation tourne bien plus vite (toutes les quelques millisecondes) ; on ralentit tout pour pouvoir **lire** le terminal.
 
-```c
-static SemaphoreHandle_t s_semSW2; /* "donne" par l'interruption, "pris" par la tache bouton */
-
-void GPIO00_IRQHandler(void)
-{
-    BaseType_t reveil = pdFALSE;
-    uint32_t flags    = GPIO_GpioGetInterruptFlags(GPIO0);
-
-    GPIO_GpioClearInterruptFlags(GPIO0, flags);
-    if (flags & (1U << BOARD_SW2_GPIO_PIN))
-        xSemaphoreGiveFromISR(s_semSW2, &reveil);
-    portYIELD_FROM_ISR(reveil); /* si la tache bouton est plus prioritaire, elle passe tout de suite */
-}
-
-/* Tache 1 : fait clignoter le rouge toutes les 500 ms */
-static void tache_rouge(void *pvParameters)
-{
-    for (;;)
-    {
-        LED_RED_TOGGLE();
-        vTaskDelay(pdMS_TO_TICKS(500)); /* la tache dort : le processeur est libre pour les autres */
-    }
-}
-
-/* Tache 2 : fait clignoter le bleu toutes les 300 ms */
-static void tache_bleue(void *pvParameters)
-{
-    for (;;)
-    {
-        LED_BLUE_TOGGLE();
-        vTaskDelay(pdMS_TO_TICKS(300));
-    }
-}
-
-/* Tache 3 : attend SW2 (sans consommer de temps processeur) et bascule le vert */
-static void tache_bouton(void *pvParameters)
-{
-    int nbAppuis = 0;
-    for (;;)
-    {
-        xSemaphoreTake(s_semSW2, portMAX_DELAY); /* bloquee jusqu'au prochain appui */
-        LED_GREEN_TOGGLE();
-        PRINTF("SW2 appuye (%d fois)\r\n", ++nbAppuis);
-        vTaskDelay(pdMS_TO_TICKS(50));           /* anti-rebond */
-        xSemaphoreTake(s_semSW2, 0);             /* oublie un rebond eventuel */
-    }
-}
-```
-
-3. Remplacer `main()` (et supprimer `hello_task`) :
+Remplacer **tout le contenu** de `source/freertos_hello.c` par :
 
 ```c
+/* freertos_hello.c (TD1, partie 4) : les 3 taches d'un drone */
+#include "FreeRTOS.h"
+#include "task.h"
+#include "fsl_debug_console.h"
+#include "pin_mux.h"
+#include "clock_config.h"
+#include "board.h"
+
+/* ===== Reglages a modifier pendant les experiences ===== */
+#define PERIODE_STAB_MS   500  /* stabilisation : lit les capteurs, corrige les moteurs */
+#define PERIODE_NAV_MS    1000 /* navigation : lit le GPS, calcule la direction */
+#define PERIODE_TELEM_MS  2000 /* telemetrie : envoie l'etat du drone a la station au sol */
+
+#define PRIO_STAB  3 /* de 0 (la plus basse) a 4 (la plus haute) */
+#define PRIO_NAV   2
+#define PRIO_TELEM 1
+
+#define CALCUL_TELEM_MS 0 /* duree du calcul de la telemetrie (experience 4) */
+/* ======================================================== */
+
+/* Temps ecoule depuis le demarrage de FreeRTOS, en ms (1 tick = 5 ms) */
+static unsigned int Temps_ms(void)
+{
+    return (unsigned int)(xTaskGetTickCount() * portTICK_PERIOD_MS);
+}
+
+/* Simule un calcul : le processeur travaille pendant duree_ms sans rendre la main */
+static void Calcul(unsigned int duree_ms)
+{
+    SDK_DelayAtLeastUs(duree_ms * 1000U, SystemCoreClock);
+}
+
+/* Tache 1 : stabilisation (la plus urgente : sans elle, le drone tombe) */
+static void tache_stabilisation(void *pvParameters)
+{
+    int n = 0;
+    TickType_t reveil = xTaskGetTickCount(); /* instant du prochain reveil */
+    for (;;)
+    {
+        PRINTF("[%6u ms] STAB  : correction des moteurs n%d\r\n", Temps_ms(), ++n);
+        vTaskDelayUntil(&reveil, pdMS_TO_TICKS(PERIODE_STAB_MS)); /* dort jusqu'a la periode suivante */
+    }
+}
+
+/* Tache 2 : navigation */
+static void tache_navigation(void *pvParameters)
+{
+    int n = 0;
+    TickType_t reveil = xTaskGetTickCount(); /* instant du prochain reveil */
+    for (;;)
+    {
+        PRINTF("[%6u ms] NAV   : position GPS n%d\r\n", Temps_ms(), ++n);
+        vTaskDelayUntil(&reveil, pdMS_TO_TICKS(PERIODE_NAV_MS));
+    }
+}
+
+/* Tache 3 : telemetrie (la moins urgente) */
+static void tache_telemetrie(void *pvParameters)
+{
+    int n = 0;
+    TickType_t reveil = xTaskGetTickCount(); /* instant du prochain reveil */
+    for (;;)
+    {
+        PRINTF("[%6u ms] TELEM : debut envoi n%d\r\n", Temps_ms(), ++n);
+        Calcul(CALCUL_TELEM_MS);
+        PRINTF("[%6u ms] TELEM : fin envoi n%d\r\n", Temps_ms(), n);
+        vTaskDelayUntil(&reveil, pdMS_TO_TICKS(PERIODE_TELEM_MS));
+    }
+}
+
 int main(void)
 {
     /* attach FRO 12M to FLEXCOMM4 (debug console) */
@@ -715,169 +739,114 @@ int main(void)
     BOARD_InitBootClocks();
     BOARD_InitDebugConsole();
 
-    LED_Init();
-    BOUTON_Init(BOARD_SW2_GPIO_PIN);
-    s_semSW2 = xSemaphoreCreateBinary();
+    PRINTF("\r\nTD1 - partie 4 : les 3 taches d'un drone\r\n");
 
-    /* Une interruption qui appelle FreeRTOS (...FromISR) doit avoir une priorite
-       >= configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY (0 = la plus haute, interdite ici) */
-    NVIC_SetPriority(BOARD_SW2_IRQ, configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY);
-    EnableIRQ(BOARD_SW2_IRQ);
+    xTaskCreate(tache_stabilisation, "Stab", configMINIMAL_STACK_SIZE + 200, NULL, PRIO_STAB, NULL);
+    xTaskCreate(tache_navigation, "Nav", configMINIMAL_STACK_SIZE + 200, NULL, PRIO_NAV, NULL);
+    xTaskCreate(tache_telemetrie, "Telem", configMINIMAL_STACK_SIZE + 200, NULL, PRIO_TELEM, NULL);
 
-    PRINTF("\r\nTD1 - etape 4 : 3 taches FreeRTOS\r\n");
-    xTaskCreate(tache_rouge, "Rouge", configMINIMAL_STACK_SIZE + 100, NULL, 1, NULL);
-    xTaskCreate(tache_bleue, "Bleue", configMINIMAL_STACK_SIZE + 100, NULL, 1, NULL);
-    xTaskCreate(tache_bouton, "Bouton", configMINIMAL_STACK_SIZE + 200, NULL, 2, NULL);
-    vTaskStartScheduler(); /* ne revient jamais : FreeRTOS prend la main */
+    vTaskStartScheduler(); /* l'ordonnanceur prend la main : ne revient jamais */
     for (;;)
         ;
 }
 ```
 
-**Checkpoint :** le rouge et le bleu clignotent chacun à leur rythme (la LED change de couleur : rouge, bleu, magenta, éteinte…). Chaque appui sur **SW2** ajoute ou retire le vert et affiche `SW2 appuye (n fois)`.
+**Ce qu'il faut comprendre dans ce code**
 
-??? note "Fichier `freertos_hello.c` complet de l'étape 4"
+- Les trois tâches ont **la même forme** : une boucle infinie qui fait son travail (ici un `PRINTF`), puis **s'endort** jusqu'à sa période suivante.
+- `vTaskDelayUntil(&reveil, periode)` endort la tâche jusqu'à l'instant `reveil + periode`, puis met `reveil` à jour : la tâche se réveille **exactement** toutes les 500 ms, 1000 ms… même si son travail a pris un peu de temps. (`vTaskDelay`, vu en 4.2, attend une durée **à partir de maintenant** : les petits retards s'additionneraient.)
+- Pendant qu'une tâche dort, elle ne consomme **rien** : le processeur est libre pour les autres.
+- `Calcul()` simule un travail long (un calcul, l'envoi d'un message) : le processeur travaille **sans rendre la main**. Il vaut 0 ms au départ ; on s'en servira à l'expérience 4.
+- Tous les réglages sont regroupés en haut du fichier : pour chaque expérience, on ne change **que ces lignes**.
 
-    ```c
-    /* freertos_hello.c (TD1, etape 4) : trois taches FreeRTOS */
-    #include "FreeRTOS.h"
-    #include "task.h"
-    #include "semphr.h"
-    #include "fsl_debug_console.h"
-    #include "fsl_port.h"
-    #include "fsl_gpio.h"
-    #include "pin_mux.h"
-    #include "clock_config.h"
-    #include "board.h"
+**Checkpoint :** **Build**, **Debug**, **Resume**. Le terminal affiche (à quelques millisecondes près) :
 
-    #define NOIR    0
-    #define ROUGE   1
-    #define VERT    2
-    #define JAUNE   3
-    #define BLEU    4
-    #define MAGENTA 5
-    #define CYAN    6
-    #define BLANC   7
+```
+TD1 - partie 4 : les 3 taches d'un drone
+[     0 ms] STAB  : correction des moteurs n1
+[     0 ms] NAV   : position GPS n1
+[     0 ms] TELEM : debut envoi n1
+[     5 ms] TELEM : fin envoi n1
+[   500 ms] STAB  : correction des moteurs n2
+[  1000 ms] STAB  : correction des moteurs n3
+[  1000 ms] NAV   : position GPS n2
+[  1500 ms] STAB  : correction des moteurs n4
+[  2000 ms] STAB  : correction des moteurs n5
+[  2000 ms] NAV   : position GPS n3
+[  2000 ms] TELEM : debut envoi n2
+...
+```
 
-    static void LED_Init(void)
-    {
-        gpio_pin_config_t sortie = {kGPIO_DigitalOutput, 1};
-        CLOCK_EnableClock(kCLOCK_Port0);
-        CLOCK_EnableClock(kCLOCK_Port1);
-        CLOCK_EnableClock(kCLOCK_Gpio0);
-        CLOCK_EnableClock(kCLOCK_Gpio1);
-        PORT_SetPinMux(PORT0, BOARD_LED_RED_GPIO_PIN, kPORT_MuxAlt0);
-        PORT_SetPinMux(PORT0, BOARD_LED_GREEN_GPIO_PIN, kPORT_MuxAlt0);
-        PORT_SetPinMux(PORT1, BOARD_LED_BLUE_GPIO_PIN, kPORT_MuxAlt0);
-        GPIO_PinInit(BOARD_LED_RED_GPIO, BOARD_LED_RED_GPIO_PIN, &sortie);
-        GPIO_PinInit(BOARD_LED_GREEN_GPIO, BOARD_LED_GREEN_GPIO_PIN, &sortie);
-        GPIO_PinInit(BOARD_LED_BLUE_GPIO, BOARD_LED_BLUE_GPIO_PIN, &sortie);
-    }
-    static void BOUTON_Init(uint32_t pin)
-    {
-        gpio_pin_config_t entree = {kGPIO_DigitalInput, 0};
-        PORT0->PCR[pin] = PORT_PCR_MUX(0) | PORT_PCR_IBE_MASK | PORT_PCR_PE_MASK | PORT_PCR_PS_MASK;
-        GPIO_SetPinInterruptConfig(GPIO0, pin, kGPIO_InterruptFallingEdge);
-        GPIO_PinInit(GPIO0, pin, &entree);
-    }
+**4.4 Expériences : périodes, priorités, ordonnancement**
 
-    static SemaphoreHandle_t s_semSW2; /* "donne" par l'interruption, "pris" par la tache bouton */
+Faire les expériences **dans l'ordre**. Pour chacune : modifier les `#define` indiqués, **Build**, **Debug**, **Resume**, observer les 5 premières secondes du terminal, puis **remettre les valeurs d'origine** (sauf indication contraire).
 
-    void GPIO00_IRQHandler(void)
-    {
-        BaseType_t reveil = pdFALSE;
-        uint32_t flags    = GPIO_GpioGetInterruptFlags(GPIO0);
+| N° | Modifier | Observer |
+| --- | --- | --- |
+| E1 | Rien | Combien de lignes STAB, NAV et TELEM en 4 s ? À 0 ms et à 2000 ms, les trois tâches doivent s'exécuter au même instant : dans quel ordre s'affichent-elles ? |
+| E2 | `PERIODE_STAB_MS 250`, `PERIODE_TELEM_MS 3000` | Combien de lignes STAB et TELEM en 6 s ? |
+| E3 | `PRIO_STAB 1`, `PRIO_TELEM 3` (priorités inversées) | Dans quel ordre s'affichent les tâches à 0 ms et à 2000 ms ? Comparer avec E1. |
+| E4 | Priorités d'origine, `CALCUL_TELEM_MS 700` | Que s'affiche-t-il **entre** `TELEM : debut envoi` et `TELEM : fin envoi` ? À quels instants s'affiche STAB ? |
+| E5 | `CALCUL_TELEM_MS 700` et `PRIO_TELEM 4` (télémétrie la plus prioritaire) | À quels instants s'affiche STAB maintenant ? Pour un drone, est-ce grave ? |
+| E6 | `CALCUL_TELEM_MS 2500` et `PRIO_TELEM 4` | Que reste-t-il dans le terminal ? Pourquoi ? |
 
-        GPIO_GpioClearInterruptFlags(GPIO0, flags);
-        if (flags & (1U << BOARD_SW2_GPIO_PIN))
-            xSemaphoreGiveFromISR(s_semSW2, &reveil);
-        portYIELD_FROM_ISR(reveil); /* si la tache bouton est plus prioritaire, elle passe tout de suite */
-    }
+??? success "Réponses des expériences"
+    - **E1.** En 4 s : 8 STAB (toutes les 500 ms), 4 NAV, 2 TELEM. À 0 ms et 2000 ms, l'ordre est toujours **STAB, NAV, TELEM** : quand plusieurs tâches sont prêtes en même temps, l'ordonnanceur lance d'abord **la plus prioritaire**.
+    - **E2.** En 6 s : 24 STAB, 2 TELEM. La période fixe le **rythme** de chaque tâche, indépendamment des autres.
+    - **E3.** L'ordre devient **TELEM, NAV, STAB** : ce n'est pas l'ordre de création des tâches qui compte, c'est leur **priorité**.
+    - **E4.** À 500 ms, la ligne `STAB` s'affiche **entre** `debut envoi` et `fin envoi` : la stabilisation **interrompt** la télémétrie en plein calcul, s'exécute, puis la télémétrie reprend là où elle en était. C'est la **préemption**. STAB reste à l'heure (500, 1000, 1500 ms…).
+    - **E5.** La télémétrie, plus prioritaire, garde le processeur pendant ses 700 ms de calcul : STAB ne s'affiche qu'à **700 ms environ** au lieu de 0 et 500 ms (deux lignes d'un coup, en retard). Pour un drone, la stabilisation corrigée avec 700 ms de retard, c'est la chute : il faut donner la plus haute priorité à la tâche **la plus urgente**, pas à la plus longue.
+    - **E6.** Il ne reste que des lignes `TELEM` : son calcul (2500 ms) dure plus que sa période (2000 ms), elle n'a jamais le temps de dormir. Étant la plus prioritaire, elle ne laisse **jamais** le processeur aux autres : c'est la **famine**.
 
-    /* Tache 1 : fait clignoter le rouge toutes les 500 ms */
-    static void tache_rouge(void *pvParameters)
-    {
-        for (;;)
-        {
-            LED_RED_TOGGLE();
-            vTaskDelay(pdMS_TO_TICKS(500)); /* la tache dort : le processeur est libre pour les autres */
-        }
-    }
+**4.5 Comment FreeRTOS choisit la tâche à exécuter**
 
-    /* Tache 2 : fait clignoter le bleu toutes les 300 ms */
-    static void tache_bleue(void *pvParameters)
-    {
-        for (;;)
-        {
-            LED_BLUE_TOGGLE();
-            vTaskDelay(pdMS_TO_TICKS(300));
-        }
-    }
+Chaque tâche est dans l'un de ces états :
 
-    /* Tache 3 : attend SW2 (sans consommer de temps processeur) et bascule le vert */
-    static void tache_bouton(void *pvParameters)
-    {
-        int nbAppuis = 0;
-        for (;;)
-        {
-            xSemaphoreTake(s_semSW2, portMAX_DELAY); /* bloquee jusqu'au prochain appui */
-            LED_GREEN_TOGGLE();
-            PRINTF("SW2 appuye (%d fois)\r\n", ++nbAppuis);
-            vTaskDelay(pdMS_TO_TICKS(50));           /* anti-rebond */
-            xSemaphoreTake(s_semSW2, 0);             /* oublie un rebond eventuel */
-        }
-    }
+| État | Signification | Exemple |
+| --- | --- | --- |
+| **En cours** | Elle utilise le processeur (une seule à la fois) | STAB pendant son `PRINTF` |
+| **Prête** | Elle voudrait s'exécuter, mais une tâche plus prioritaire a le processeur | TELEM à 0 ms, pendant que STAB et NAV s'affichent |
+| **Bloquée** | Elle dort (`vTaskDelayUntil`, `vTaskDelay`) et ne demande rien | NAV entre deux positions GPS |
 
-    int main(void)
-    {
-        /* attach FRO 12M to FLEXCOMM4 (debug console) */
-        CLOCK_SetClkDiv(kCLOCK_DivFlexcom4Clk, 1u);
-        CLOCK_AttachClk(BOARD_DEBUG_UART_CLK_ATTACH);
-        BOARD_InitPins();
-        BOARD_InitBootClocks();
-        BOARD_InitDebugConsole();
+L'**ordonnanceur** de FreeRTOS applique une règle simple, à chaque *tick* (toutes les 5 ms) et chaque fois qu'une tâche s'endort ou se réveille :
 
-        LED_Init();
-        BOUTON_Init(BOARD_SW2_GPIO_PIN);
-        s_semSW2 = xSemaphoreCreateBinary();
+> **Parmi les tâches prêtes, c'est toujours la plus prioritaire qui s'exécute.** Si une tâche plus prioritaire se réveille, elle prend le processeur **tout de suite**, même au milieu du travail d'une autre (préemption).
 
-        /* Une interruption qui appelle FreeRTOS (...FromISR) doit avoir une priorite
-           >= configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY (0 = la plus haute, interdite ici) */
-        NVIC_SetPriority(BOARD_SW2_IRQ, configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY);
-        EnableIRQ(BOARD_SW2_IRQ);
+C'est un ordonnancement **préemptif à priorités fixes**. Quand aucune tâche n'est prête, FreeRTOS exécute sa propre tâche **Idle** (priorité 0), qui ne fait rien.
 
-        PRINTF("\r\nTD1 - etape 4 : 3 taches FreeRTOS\r\n");
-        xTaskCreate(tache_rouge, "Rouge", configMINIMAL_STACK_SIZE + 100, NULL, 1, NULL);
-        xTaskCreate(tache_bleue, "Bleue", configMINIMAL_STACK_SIZE + 100, NULL, 1, NULL);
-        xTaskCreate(tache_bouton, "Bouton", configMINIMAL_STACK_SIZE + 200, NULL, 2, NULL);
-        vTaskStartScheduler(); /* ne revient jamais : FreeRTOS prend la main */
-        for (;;)
-            ;
-    }
-    ```
+Exemple de l'expérience E4, de 0 à 900 ms :
 
-**`NVIC_SetPriority` est indispensable.** Par défaut, une interruption a la priorité 0 (la plus haute). FreeRTOS interdit d'appeler ses fonctions `...FromISR` depuis une interruption plus prioritaire que `configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY` (2 ici) : sans cette ligne, le programme peut se bloquer dans un `configASSERT` au premier appui.
+```
+temps (ms)  0    100  200  300  400  500  600  700  800
+            |    |    |    |    |    |    |    |    |
+STAB  (p3)  #                        #
+NAV   (p2)  #
+TELEM (p1)  #########################.##########
+Idle  (p0)                                      #########
+
+# = s'execute   . = prete mais preemptee par STAB   (1 caractere = 20 ms)
+```
 
 **Questions**
 
-1. Comparer `tache_rouge` avec la boucle de la partie 1 : qui s'occupe de compter le temps ?
-2. Dans `tache_rouge`, remplacer `vTaskDelay(...)` par `SDK_DelayAtLeastUs(500000U, SystemCoreClock)`. Le bleu clignote-t-il toujours ? Le bouton SW2 marche-t-il encore ? Expliquez (on parle de **famine**). Remettre `vTaskDelay` ensuite.
-3. Pourquoi la tâche bouton a-t-elle une priorité plus haute (2) que les tâches de clignotement (1) ?
-4. Que se passe-t-il si on appuie 5 fois très vite sur SW2 ? Un sémaphore **binaire** peut-il compter les appuis ? (Pour aller plus loin : sémaphore à compteur, ou **file de messages** `xQueueSendFromISR`.)
+1. Pourquoi donne-t-on à la stabilisation la priorité la plus haute ? Proposez une règle simple pour choisir les priorités à partir des périodes.
+2. Dans l'expérience E4, la télémétrie calcule 700 ms toutes les 2000 ms. Quelle part du temps processeur occupe-t-elle ? Combien reste-t-il pour la tâche Idle (en négligeant les `PRINTF`) ?
+3. Dans le code, quelle ligne fait passer une tâche de l'état **En cours** à l'état **Bloquée** ? Qui la fait repasser à l'état **Prête** ?
+4. Pourquoi ne faut-il jamais attendre avec `SDK_DelayAtLeastUs` (attente active) dans une tâche, mais toujours avec `vTaskDelay` ou `vTaskDelayUntil` ?
 
-??? success "Réponses (4.3)"
-    1. Dans la partie 1, c'est **notre boucle** `delay()` qui compte le temps, en occupant le processeur. Ici, c'est **FreeRTOS** : `vTaskDelay` endort la tâche, et l'ordonnanceur la réveille au bon tick. Pendant ce temps, les autres tâches s'exécutent.
-    2. Le bleu **s'arrête** : `SDK_DelayAtLeastUs` est une **attente active**, la tâche rouge ne rend jamais la main. La tâche bleue a la même priorité, et dans ce projet `configUSE_TIME_SLICING` vaut 0 (pas de partage du temps entre tâches de même priorité) : elle n'est plus jamais choisie, c'est la **famine**. SW2 marche encore, car la tâche bouton (priorité 2) est **plus prioritaire** : FreeRTOS interrompt la tâche rouge pour elle.
-    3. Pour que l'appui soit traité **tout de suite**, même si une tâche de clignotement est en train de s'exécuter : la tâche la plus prioritaire prête passe toujours en premier.
-    4. Un sémaphore binaire vaut 0 ou 1 : plusieurs « give » avant un « take » ne comptent qu'une fois, des appuis sont **perdus**. Un sémaphore **à compteur** (`xSemaphoreCreateCounting`) les compterait ; une **file de messages** peut en plus transporter une information (quel bouton, à quel moment…).
+??? success "Réponses (4.5)"
+    1. C'est la tâche la plus **urgente** : un retard fait tomber le drone (expérience E5). Règle simple : **plus la période est courte, plus la priorité est haute** (ordonnancement *Rate Monotonic*). C'est exactement le choix fait ici : 500 ms → 3, 1000 ms → 2, 2000 ms → 1.
+    2. 700 / 2000 = **35 %** du temps processeur. Il reste environ 65 % pour la tâche Idle (STAB et NAV ne font qu'un `PRINTF` de quelques millisecondes).
+    3. `vTaskDelayUntil(...)` bloque la tâche. C'est l'**ordonnanceur** de FreeRTOS, à chaque tick, qui voit que l'instant de réveil est atteint et la remet dans l'état **Prête** ; elle s'exécute dès qu'aucune tâche plus prioritaire n'est prête.
+    4. Une attente active garde le processeur : les tâches moins prioritaires ne s'exécutent plus (famine, E6), et on gaspille de l'énergie. `vTaskDelay` / `vTaskDelayUntil` **bloquent** la tâche : le processeur est rendu aux autres.
 
 !!! abstract "À retenir"
-    Une **tâche** = une fonction avec sa boucle infinie, sa pile et sa priorité. Une tâche doit toujours **se bloquer** (`vTaskDelay`, `xSemaphoreTake`…) pour laisser le processeur aux autres : jamais d'attente active. L'interruption **donne** un sémaphore, la tâche le **prend** : c'est la façon propre de réveiller une tâche sur un événement. Une interruption qui appelle FreeRTOS doit avoir une priorité réglée avec `NVIC_SetPriority`.
+    Une **tâche** = une fonction avec sa boucle infinie, sa pile, sa **période** et sa **priorité**. Une tâche périodique fait son travail puis s'endort avec `vTaskDelayUntil`. L'ordonnanceur exécute **toujours la tâche prête la plus prioritaire** et peut interrompre une tâche moins prioritaire (**préemption**). Une tâche qui ne s'endort jamais affame les tâches moins prioritaires. On donne la priorité la plus haute à la tâche la plus urgente.
 
 ## Partie 5 — Travail noté : feu tricolore avec bouton piéton
 
 !!! warning "Travail à rendre, noté"
-    Cette partie est **évaluée**. Elle vérifie que vous avez compris les parties 1 à 4 : les broches et la LED RGB, les interruptions et l'anti-rebond, les tâches et le sémaphore FreeRTOS. Il n'y a **pas de corrigé** ici : à vous de concevoir et d'écrire le programme. Vous pouvez réutiliser tout le code des parties 1 à 4.
+    Cette partie est **évaluée**. Elle vérifie que vous avez compris les parties 1 à 4 : les broches et la LED RGB, la lecture des boutons et l'anti-rebond, les tâches FreeRTOS, leurs périodes et leurs priorités. Il n'y a **pas de corrigé** ici : à vous de concevoir et d'écrire le programme. Vous pouvez réutiliser tout le code des parties 1 à 4.
 
 On part du projet de la partie 4. La LED RGB devient un **feu tricolore** pour les voitures : **vert**, **orange** (rouge + vert, `JAUNE`), **rouge**. Le bouton **SW2** est le **bouton piéton**.
 
@@ -889,9 +858,9 @@ On part du projet de la partie 4. La LED RGB devient un **feu tricolore** pour l
 | F2 | À chaque changement d'état, le terminal affiche le temps en ms depuis le démarrage et l'état, par exemple `[ 13000 ms] VERT`. |
 | F3 | Un appui sur **SW2** pendant le vert affiche `Demande pieton enregistree` et **raccourcit le vert** : on passe à l'orange sans attendre la fin des 6 s… |
 | F4 | … mais le vert dure **au moins 2 s** au total (les voitures doivent pouvoir passer). |
-| F5 | Après une demande piéton, le rouge dure **8 s** au lieu de 5 s. Un appui pendant l'orange ou le rouge **ne compte pas**. Un appui ne compte qu'une fois, même s'il rebondit. |
-| F6 | **Une seule tâche** gère le feu. Le bouton est lu **par interruption** et réveille la tâche par un **sémaphore** (pas de variable lue en boucle). Aucune attente active. |
-| Bonus | **Mode nuit** : un appui sur **SW3** met le feu en **orange clignotant** (1 Hz) ; un nouvel appui revient au cycle normal, **en commençant par le rouge**. |
+| F5 | Après une demande piéton, le rouge dure **8 s** au lieu de 5 s. Un appui pendant l'orange ou le rouge **ne compte pas**. Garder le doigt appuyé ne compte qu'**une** fois. |
+| F6 | **Deux tâches** au moins : une tâche **Feu** (les couleurs et les durées) et une tâche **Bouton**, périodique (toutes les 20 ms), qui lit SW2 avec `GPIO_PinRead` et le signale à la tâche Feu par une variable partagée (`volatile bool demandePieton`). Priorités choisies et justifiées. Aucune attente active : uniquement `vTaskDelay` / `vTaskDelayUntil`. |
+| Bonus | **Télémétrie** : une troisième tâche affiche toutes les secondes l'état du feu (`[ 4000 ms] TELEM : etat VERT, demande 0`). **Mode nuit** : un appui sur **SW3** met le feu en **orange clignotant** (1 Hz) ; un nouvel appui revient au cycle normal, **en commençant par le rouge**. |
 
 **5.2 Une machine à états**
 
@@ -905,7 +874,7 @@ Un feu tricolore est une **machine à états** : à chaque instant, il est dans 
   └────────────────────────────────────── ROUGE
 ```
 
-Point de départ imposé : une tâche avec un `switch` sur l'état courant. Le cas `FEU_VERT` est donné **dans sa version la plus simple** (il ne gère pas encore le bouton) ; tout le reste est à écrire.
+Point de départ imposé pour la tâche Feu : un `switch` sur l'état courant. Le cas `FEU_VERT` est donné **dans sa version la plus simple** (il ne gère pas encore le bouton) ; tout le reste est à écrire.
 
 ```c
 #define DUREE_VERT_MS          6000
@@ -951,9 +920,10 @@ static void tache_feu(void *pvParameters)
 **5.3 Indications**
 
 - Avancez **exigence par exigence** et testez sur la carte après chacune : F1 et F2, puis F3, puis F4, puis F5.
-- Pendant le vert, la tâche doit attendre **soit** la fin de la durée, **soit** un appui. Relisez la documentation de `xSemaphoreTake` : que se passe-t-il si on lui donne un délai maximal autre que `portMAX_DELAY` ? Que renvoie-t-elle dans chaque cas ?
-- Un appui fait pendant le rouge « reste » dans le sémaphore. Comment l'oublier au bon moment ?
-- Pour le bonus : un sémaphore dit « il s'est passé quelque chose », mais pas **quoi**. Quel outil FreeRTOS transporte une information ?
+- **Tâche Bouton** : configurer SW2 en entrée comme en partie 3 (`BOUTON_Init`, sans `EnableIRQ`). Toutes les 20 ms, lire la broche. Pour qu'un appui maintenu ne compte qu'une fois, mémoriser l'état lu la fois précédente et ne réagir qu'au **passage de 1 à 0**. Lire toutes les 20 ms suffit aussi comme anti-rebond : pourquoi ?
+- **Tâche Feu, pendant le vert** : au lieu d'un seul `vTaskDelay` de 6 s, attendre par **petites tranches** (par exemple 100 ms) et regarder `demandePieton` entre deux tranches.
+- Qui remet `demandePieton` à `false`, et à quel moment, pour qu'un appui pendant le rouge soit oublié ?
+- Quelle tâche doit être la plus prioritaire ? Pensez à la règle de la partie 4.5.
 
 **5.4 Tests à faire et à noter (à rendre)**
 
@@ -971,7 +941,7 @@ static void tache_feu(void *pvParameters)
 1. Dessinez la machine à états de **votre** programme (avec le mode nuit si vous l'avez fait) : états, transitions, et ce qui déclenche chaque transition.
 2. Pourquoi faut-il démarrer (et revenir du mode nuit) par le **rouge**, plutôt que par le vert ?
 3. Quelle est la précision des durées affichées dans le terminal ? D'où vient-elle ?
-4. Pourquoi l'appel à `NVIC_SetPriority` est-il indispensable dans votre programme ?
+4. Quelles priorités et quelles périodes avez-vous données à vos tâches ? Que se passerait-il si la tâche Bouton faisait une attente active en étant la plus prioritaire ?
 5. Comment ajouteriez-vous un **feu piéton** (bonhomme rouge / vert) sur deux autres broches ? Faudrait-il une deuxième tâche ? Justifiez.
 
 **5.6 Ce qu'il faut rendre**
@@ -989,10 +959,10 @@ Date limite et modalités de dépôt : celles indiquées par l'enseignant.
 | F1, F2 : cycle normal, durées justes, affichage | 4 |
 | F3, F4 : bouton piéton, vert raccourci, vert minimal de 2 s | 5 |
 | F5 : rouge allongé, appuis pendant orange / rouge ignorés, anti-rebond | 3 |
-| F6 : architecture (une tâche, interruption, sémaphore, priorité de l'interruption, aucune attente active) | 3 |
+| F6 : architecture (tâches Feu et Bouton, variable partagée, priorités justifiées, aucune attente active) | 3 |
 | Qualité du code : lisibilité, constantes nommées, commentaires | 2 |
 | Compte rendu : tests et réponses aux questions | 3 |
-| **Bonus** : mode nuit avec une file de messages | +2 |
+| **Bonus** : tâche télémétrie, mode nuit | +2 |
 
 ## Dépannage, synthèse et sources
 
@@ -1003,9 +973,8 @@ Date limite et modalités de dépôt : celles indiquées par l'enseignant.
 | `PORT_SetPinMux` inconnu à la compilation | `#include "fsl_port.h"` manquant | Ajouter l'include |
 | Un appui sur SW2 ne fait rien | `IBE` manquant, `EnableIRQ` oublié, ou appui sur RESET | Vérifier `BOUTON_Init` et `EnableIRQ(BOARD_SW2_IRQ)` |
 | Un appui fait avancer de 2 couleurs | Rebonds du bouton | Garder l'anti-rebond de 50 ms |
-| FreeRTOS se bloque au premier appui | Priorité de l'interruption trop haute | `NVIC_SetPriority(BOARD_SW2_IRQ, configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY)` |
 | `Task creation failed!` ou rien ne démarre | Plus de mémoire pour les tâches | Réduire les piles ou augmenter `configTOTAL_HEAP_SIZE` dans `FreeRTOSConfig.h` |
-| Une tâche ne s'exécute plus | Une tâche plus prioritaire ne fait jamais `vTaskDelay` ni d'attente | Toujours bloquer les tâches (`vTaskDelay`, `xSemaphoreTake`…) |
+| Une tâche ne s'exécute plus | Une tâche plus prioritaire ne fait jamais `vTaskDelay` ni d'attente | Toujours endormir les tâches (`vTaskDelay`, `vTaskDelayUntil`), jamais d'attente active |
 | L'exemple `freertos_hello` n'apparaît pas dans l'assistant | SDK téléchargé sans FreeRTOS | Refaire le SDK dans le SDK Builder en cochant **FreeRTOS** |
 
 **Questions de synthèse**
@@ -1013,8 +982,8 @@ Date limite et modalités de dépôt : celles indiquées par l'enseignant.
 1. Quelles sont les trois choses à régler pour utiliser une broche du MCX N947 ? À quoi sert chacune ?
 2. Scrutation ou interruption : donnez un avantage de chaque méthode.
 3. Quelle différence entre `SDK_DelayAtLeastUs` et `vTaskDelay` ? Laquelle utiliser dans une tâche FreeRTOS, et pourquoi ?
-4. À quoi sert un sémaphore ? Et une file de messages ?
+4. Comment l'ordonnanceur de FreeRTOS choisit-il la tâche à exécuter ? Qu'est-ce que la préemption ?
 
 **À vérifier selon votre installation :** ce TD suit les exemples `gpio_led_output`, `gpio_input_interrupt` et `freertos_hello` du **SDK FRDM-MCXN947 2.14.0** (broches et macros de `board.h` : LED rouge P0\_10, verte P0\_27, bleue P1\_2, SW2 P0\_23, SW3 P0\_6, interruption `GPIO00_IRQn`). Avec une autre version du SDK, les noms des fichiers ou la catégorie des exemples dans l'assistant peuvent changer : vérifier `board.h`.
 
-**Sources :** [Exemples MCUXpresso SDK 2.14.0 pour la FRDM-MCXN947](https://github.com/nxp-mcuxpresso/mcux-sdk-examples/tree/MCUX_2.14.0_MCXNx4x/frdmmcxn947) (`board.h`, `driver_examples/gpio`, `freertos_examples/freertos_hello`) · [Pilote GPIO du SDK (fsl\_gpio.h)](https://github.com/nxp-mcuxpresso/mcux-sdk/blob/main/drivers/gpio/fsl_gpio.h) · [Carte FRDM-MCXN947 (NXP)](https://www.nxp.com/design/design-center/development-boards-and-designs/FRDM-MCXN947) · [Documentation FreeRTOS : tâches, sémaphores, files](https://www.freertos.org/Documentation/02-Kernel/02-Kernel-features/00-Developer-docs)
+**Sources :** [Exemples MCUXpresso SDK 2.14.0 pour la FRDM-MCXN947](https://github.com/nxp-mcuxpresso/mcux-sdk-examples/tree/MCUX_2.14.0_MCXNx4x/frdmmcxn947) (`board.h`, `driver_examples/gpio`, `freertos_examples/freertos_hello`) · [Pilote GPIO du SDK (fsl\_gpio.h)](https://github.com/nxp-mcuxpresso/mcux-sdk/blob/main/drivers/gpio/fsl_gpio.h) · [Carte FRDM-MCXN947 (NXP)](https://www.nxp.com/design/design-center/development-boards-and-designs/FRDM-MCXN947) · [Documentation FreeRTOS : tâches et ordonnancement](https://www.freertos.org/Documentation/02-Kernel/02-Kernel-features/00-Developer-docs)
