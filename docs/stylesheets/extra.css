@@ -63,3 +63,33 @@
 @media screen and (max-width: 59.984em) {
   .md-header__social { display: none; } /* sur mobile : liens dans le pied de page */
 }
+
+/* Carte d'accès au livre animé 3D (page d'introduction de l'unité IA embarquée) */
+.md-typeset .livre3d-teaser {
+  display: flex; align-items: center; gap: 1.2rem;
+  margin: 1.2rem 0 1.4rem; padding: .9rem 1.1rem;
+  border-radius: 16px; color: inherit;
+  background: linear-gradient(120deg, rgba(46, 42, 140, .08), rgba(224, 138, 0, .08));
+  border: 1px solid rgba(46, 42, 140, .18);
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+.md-typeset .livre3d-teaser:hover {
+  color: inherit; transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(46, 42, 140, .18);
+}
+.livre3d-teaser img { width: 230px; flex: none; transition: transform .35s ease; }
+.livre3d-teaser:hover img { transform: scale(1.05) rotate(-1.5deg); }
+.livre3d-teaser__texte { display: flex; flex-direction: column; gap: .3rem; }
+.livre3d-teaser__kicker {
+  font-size: .62rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #e08a00;
+}
+.livre3d-teaser strong { font-size: .95rem; }
+.livre3d-teaser__bouton {
+  align-self: flex-start; margin-top: .3rem; padding: .35rem .9rem; border-radius: 99px;
+  background: #2e2a8c; color: #fff; font-size: .72rem; font-weight: 700;
+}
+[data-md-color-scheme="slate"] .livre3d-teaser__bouton { background: #6c63ff; }
+@media (max-width: 600px) {
+  .md-typeset .livre3d-teaser { flex-direction: column; align-items: stretch; }
+  .livre3d-teaser img { width: 100%; }
+}

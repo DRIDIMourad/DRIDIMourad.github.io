@@ -92,6 +92,7 @@ nav:
           - Projets:
               - units/ia-embarquee/projet/index.md
               - "Projet 1 : Flotte de drones de détection d'accidents": units/ia-embarquee/projet/projet1/index.md
+          - "Livre animé 3D": units/ia-embarquee/livre-3d/index.md
       - "3R-TR1 · Physique pour la transition énergétique":
           - units/3r-tr1/index.md
           - Cours:
