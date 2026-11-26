@@ -31,6 +31,8 @@ Comme au TD1, on ne part jamais d'une page blanche : chaque partie **enrichit le
 
 **Logiciel :** MCUXpresso IDE, **SDK FRDM-MCXN947 2.14.0** avec **FreeRTOS** et **eIQ** (cochés dans le SDK Builder), terminal série **115200 bauds, 8N1**. Pour la partie 9 (facultatif) : Python avec `opencv-python`, comme au TP3.
 
+**Fichiers à télécharger** (les mêmes que dans le sujet) : parties 1 à 8 : [`outils_rtos.h`](fichiers/freertos_hello/outils_rtos.h), [`outils_rtos.c`](fichiers/freertos_hello/outils_rtos.c), [`freertos_hello.c`](fichiers/freertos_hello/freertos_hello.c) (version finale), [`FreeRTOSConfig.h`](fichiers/freertos_hello/FreeRTOSConfig.h) ; partie 9 : [`main.cpp`](fichiers/vigie/main.cpp), [`timer.c`](fichiers/vigie/timer.c), [`FreeRTOSConfig.h`](fichiers/vigie/FreeRTOSConfig.h).
+
 **Prérequis :** le TD1 (LED RGB, boutons, interruptions, tâches FreeRTOS) et le TP1 (exemple `tflm_label_image`, NPU).
 
 **Durée :** environ 2 séances de 3 h : parties 0 à 5 dans la première, parties 6 à 9 dans la seconde. La partie 10 est terminée en autonomie et rendue à la date fixée par l'enseignant.
