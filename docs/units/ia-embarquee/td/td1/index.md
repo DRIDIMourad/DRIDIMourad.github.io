@@ -1,12 +1,12 @@
-# TD1 : Prise en main de la FRDM-MCXN947 — LED, bouton, FreeRTOS et feu tricolore
+# TD1 : Prise en main de la FRDM-MCXN947 — LED, boutons et FreeRTOS
 
 
 ## Objectifs, prérequis et déroulé
 
-Dans ce TD, on découvre la carte NXP **FRDM-MCXN947** en programmant ses entrées et sorties. On ne part jamais d'une page blanche : chaque étape commence par un **exemple du SDK** qui fonctionne déjà, qu'on compile, qu'on lit, puis qu'on **enrichit pas à pas**. Les parties 1 à 4 sont **guidées** : le code est donné et expliqué, chaque question a sa réponse (à déplier **après** avoir cherché). La partie 5, un **feu tricolore avec bouton piéton** sous FreeRTOS, est un **travail à rendre et noté** : vous y réutilisez seuls tout ce que vous avez compris avant.
+Dans ce TD, on découvre la carte NXP **FRDM-MCXN947** en programmant ses entrées et sorties. On ne part jamais d'une page blanche : chaque étape commence par un **exemple du SDK** qui fonctionne déjà, qu'on compile, qu'on lit, puis qu'on **enrichit pas à pas**. Les parties 1 à 4 sont **guidées** : le code est donné et expliqué, chaque question a sa réponse (à déplier **après** avoir cherché).
 
 !!! tip "Comment travailler"
-    Pour chaque partie : lire, taper (ou copier) le code, **compiler et essayer sur la carte**, puis répondre aux questions **avant** d'ouvrir les réponses. Le projet noté vérifiera que vous avez compris, pas seulement recopié.
+    Pour chaque partie : lire, taper (ou copier) le code, **compiler et essayer sur la carte**, puis répondre aux questions **avant** d'ouvrir les réponses.
 
 | Étape | Exemple du SDK de départ | Ce qu'on ajoute |
 | --- | --- | --- |
@@ -14,7 +14,6 @@ Dans ce TD, on découvre la carte NXP **FRDM-MCXN947** en programmant ses entré
 | 2 | (le même) | Les trois couleurs de la LED RGB et leurs mélanges |
 | 3 | `gpio_input_interrupt` | Les boutons SW2 et SW3 par interruption, l'anti-rebond |
 | 4 | `freertos_hello` | Les 3 tâches d'un drone : périodes, priorités, ordonnancement |
-| 5 — **noté** | (le projet de l'étape 4) | Un feu tricolore : machine à états, bouton piéton. **À rendre** |
 
 **Matériel**
 
@@ -25,7 +24,7 @@ Dans ce TD, on découvre la carte NXP **FRDM-MCXN947** en programmant ses entré
 - MCUXpresso IDE et le **SDK FRDM-MCXN947 2.14.0** (avec le composant **FreeRTOS**, coché par défaut dans le SDK Builder).
 - Un terminal série : celui de MCUXpresso IDE suffit (**115200 bauds, 8 bits, pas de parité, 1 bit de stop**).
 
-**Durée :** environ 3 h en séance (parties 1 à 4 : 1 h 30 à 2 h, projet : le reste de la séance), puis le projet est terminé et rendu à la date fixée par l'enseignant.
+**Durée :** environ 2 h.
 
 ## Partie 0 — La carte et ses broches
 
@@ -331,7 +330,7 @@ LED rouge
         ```
 
 !!! abstract "À retenir"
-    `LED_Init()` (horloges + PORT + GPIO des trois LED) et `LED_Couleur()` resserviront dans toute la suite du TD **et dans le projet noté**. Une couleur est un nombre de 3 bits : on teste un bit avec `&`.
+    `LED_Init()` (horloges + PORT + GPIO des trois LED) et `LED_Couleur()` resserviront dans toute la suite. Une couleur est un nombre de 3 bits : on teste un bit avec `&`.
 
 ## Partie 3 — Réagir aux boutons (exemple gpio\_input\_interrupt)
 
@@ -842,127 +841,6 @@ Idle  (p0)                                      #########
 
 !!! abstract "À retenir"
     Une **tâche** = une fonction avec sa boucle infinie, sa pile, sa **période** et sa **priorité**. Une tâche périodique fait son travail puis s'endort avec `vTaskDelayUntil`. L'ordonnanceur exécute **toujours la tâche prête la plus prioritaire** et peut interrompre une tâche moins prioritaire (**préemption**). Une tâche qui ne s'endort jamais affame les tâches moins prioritaires. On donne la priorité la plus haute à la tâche la plus urgente.
-
-## Partie 5 — Travail noté : feu tricolore avec bouton piéton
-
-!!! warning "Travail à rendre, noté"
-    Cette partie est **évaluée**. Elle vérifie que vous avez compris les parties 1 à 4 : les broches et la LED RGB, la lecture des boutons et l'anti-rebond, les tâches FreeRTOS, leurs périodes et leurs priorités. Il n'y a **pas de corrigé** ici : à vous de concevoir et d'écrire le programme. Vous pouvez réutiliser tout le code des parties 1 à 4.
-
-On part du projet de la partie 4. La LED RGB devient un **feu tricolore** pour les voitures : **vert**, **orange** (rouge + vert, `JAUNE`), **rouge**. Le bouton **SW2** est le **bouton piéton**.
-
-**5.1 Cahier des charges**
-
-| N° | Exigence |
-| --- | --- |
-| F1 | Cycle normal : **vert 6 s → orange 2 s → rouge 5 s →** vert… Le feu démarre au **rouge**. |
-| F2 | À chaque changement d'état, le terminal affiche le temps en ms depuis le démarrage et l'état, par exemple `[ 13000 ms] VERT`. |
-| F3 | Un appui sur **SW2** pendant le vert affiche `Demande pieton enregistree` et **raccourcit le vert** : on passe à l'orange sans attendre la fin des 6 s… |
-| F4 | … mais le vert dure **au moins 2 s** au total (les voitures doivent pouvoir passer). |
-| F5 | Après une demande piéton, le rouge dure **8 s** au lieu de 5 s. Un appui pendant l'orange ou le rouge **ne compte pas**. Garder le doigt appuyé ne compte qu'**une** fois. |
-| F6 | **Deux tâches** au moins : une tâche **Feu** (les couleurs et les durées) et une tâche **Bouton**, périodique (toutes les 20 ms), qui lit SW2 avec `GPIO_PinRead` et le signale à la tâche Feu par une variable partagée (`volatile bool demandePieton`). Priorités choisies et justifiées. Aucune attente active : uniquement `vTaskDelay` / `vTaskDelayUntil`. |
-| Bonus | **Télémétrie** : une troisième tâche affiche toutes les secondes l'état du feu (`[ 4000 ms] TELEM : etat VERT, demande 0`). **Mode nuit** : un appui sur **SW3** met le feu en **orange clignotant** (1 Hz) ; un nouvel appui revient au cycle normal, **en commençant par le rouge**. |
-
-**5.2 Une machine à états**
-
-Un feu tricolore est une **machine à états** : à chaque instant, il est dans un état (vert, orange, rouge) ; il change d'état au bout d'une durée ou sur un événement (bouton).
-
-```
-        6 s (ou SW2, après 2 s minimum)
- VERT ─────────────────────────────────► ORANGE
-  ▲                                        │ 2 s
-  │       5 s (8 s après une demande)      ▼
-  └────────────────────────────────────── ROUGE
-```
-
-Point de départ imposé pour la tâche Feu : un `switch` sur l'état courant. Le cas `FEU_VERT` est donné **dans sa version la plus simple** (il ne gère pas encore le bouton) ; tout le reste est à écrire.
-
-```c
-#define DUREE_VERT_MS          6000
-#define DUREE_VERT_MIN_MS      2000
-#define DUREE_ORANGE_MS        2000
-#define DUREE_ROUGE_MS         5000
-#define DUREE_ROUGE_PIETON_MS  8000
-
-typedef enum { FEU_VERT, FEU_ORANGE, FEU_ROUGE } etat_feu_t;
-
-static unsigned int Maintenant_ms(void)
-{
-    return (unsigned int)(xTaskGetTickCount() * portTICK_PERIOD_MS);
-}
-
-static void tache_feu(void *pvParameters)
-{
-    etat_feu_t etat = FEU_ROUGE;
-
-    for (;;)
-    {
-        switch (etat)
-        {
-            case FEU_VERT:
-                LED_Couleur(VERT);
-                PRINTF("[%6u ms] VERT\r\n", Maintenant_ms());
-                vTaskDelay(pdMS_TO_TICKS(DUREE_VERT_MS));
-                etat = FEU_ORANGE;
-                break;
-
-            case FEU_ORANGE:
-                /* A ecrire */
-                break;
-
-            case FEU_ROUGE:
-                /* A ecrire */
-                break;
-        }
-    }
-}
-```
-
-**5.3 Indications**
-
-- Avancez **exigence par exigence** et testez sur la carte après chacune : F1 et F2, puis F3, puis F4, puis F5.
-- **Tâche Bouton** : configurer SW2 en entrée comme en partie 3 (`BOUTON_Init`, sans `EnableIRQ`). Toutes les 20 ms, lire la broche. Pour qu'un appui maintenu ne compte qu'une fois, mémoriser l'état lu la fois précédente et ne réagir qu'au **passage de 1 à 0**. Lire toutes les 20 ms suffit aussi comme anti-rebond : pourquoi ?
-- **Tâche Feu, pendant le vert** : au lieu d'un seul `vTaskDelay` de 6 s, attendre par **petites tranches** (par exemple 100 ms) et regarder `demandePieton` entre deux tranches.
-- Qui remet `demandePieton` à `false`, et à quel moment, pour qu'un appui pendant le rouge soit oublié ?
-- Quelle tâche doit être la plus prioritaire ? Pensez à la règle de la partie 4.5.
-
-**5.4 Tests à faire et à noter (à rendre)**
-
-| Test | Résultat attendu | Obtenu (copie du terminal) | OK ? |
-| --- | --- | --- | --- |
-| Aucun appui pendant 30 s | Vert 6 s, orange 2 s, rouge 5 s, en boucle | | |
-| SW2 à 1 s de vert | Le vert dure 2 s, puis orange, puis rouge **8 s** | | |
-| SW2 à 4 s de vert | Orange tout de suite, puis rouge 8 s | | |
-| SW2 pendant le rouge, puis plus rien | Le vert suivant dure 6 s (l'appui est oublié) | | |
-| SW2 appuyé 10 fois très vite pendant le vert | Une seule demande enregistrée | | |
-| Bonus : SW3 à n'importe quel moment | Orange clignotant ; SW3 à nouveau : retour au rouge | | |
-
-**5.5 Questions (à rendre)**
-
-1. Dessinez la machine à états de **votre** programme (avec le mode nuit si vous l'avez fait) : états, transitions, et ce qui déclenche chaque transition.
-2. Pourquoi faut-il démarrer (et revenir du mode nuit) par le **rouge**, plutôt que par le vert ?
-3. Quelle est la précision des durées affichées dans le terminal ? D'où vient-elle ?
-4. Quelles priorités et quelles périodes avez-vous données à vos tâches ? Que se passerait-il si la tâche Bouton faisait une attente active en étant la plus prioritaire ?
-5. Comment ajouteriez-vous un **feu piéton** (bonhomme rouge / vert) sur deux autres broches ? Faudrait-il une deuxième tâche ? Justifiez.
-
-**5.6 Ce qu'il faut rendre**
-
-1. Le fichier source **`freertos_hello.c`** complet et commenté, renommé `feu_NOM1_NOM2.c`.
-2. Un **compte rendu** (PDF, 3 pages maximum) : le tableau de tests rempli avec les copies du terminal, et les réponses aux questions de la partie 5.5.
-3. Une **démonstration** sur la carte à l'enseignant (ou une courte vidéo si demandé).
-
-Date limite et modalités de dépôt : celles indiquées par l'enseignant.
-
-**5.7 Barème indicatif (sur 20)**
-
-| Critère | Points |
-| --- | --- |
-| F1, F2 : cycle normal, durées justes, affichage | 4 |
-| F3, F4 : bouton piéton, vert raccourci, vert minimal de 2 s | 5 |
-| F5 : rouge allongé, appuis pendant orange / rouge ignorés, anti-rebond | 3 |
-| F6 : architecture (tâches Feu et Bouton, variable partagée, priorités justifiées, aucune attente active) | 3 |
-| Qualité du code : lisibilité, constantes nommées, commentaires | 2 |
-| Compte rendu : tests et réponses aux questions | 3 |
-| **Bonus** : tâche télémétrie, mode nuit | +2 |
 
 ## Dépannage, synthèse et sources
 
